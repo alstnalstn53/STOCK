@@ -1,984 +1,1268 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <title>Material Studio Portfolio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- TradingView 차트 위젯 -->
   <script src="https://s3.tradingview.com/tv.js"></script>
   <style>
-    * { box-sizing: border-box; }
+    :root {
+      --bg: #f5f5f5;
+      --card-bg: #ffffff;
+      --text-main: #111827;
+      --text-sub: #6b7280;
+      --line: #e5e7eb;
+      --accent: #111827;
+      --positive: #16a34a;
+      --negative: #dc2626;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
     body {
       margin: 0;
-      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #f5f5f5;
-      color: #111;
+      padding: 32px 24px 40px;
+      background: var(--bg);
+      color: var(--text-main);
+    }
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
     }
     header {
-      padding: 20px 32px;
-      border-bottom: 1px solid #ddd;
-      background: #ffffff;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      align-items: flex-end;
+      gap: 24px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 16px;
     }
-    header h1 {
-      margin: 0;
-      font-size: 22px;
+    .title-block h1 {
+      margin: 0 0 4px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-size: 18px;
+    }
+    .title-block .sub {
+      font-size: 12px;
+      color: var(--text-sub);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .meta {
+      text-align: right;
+      font-size: 11px;
+      color: var(--text-sub);
+      line-height: 1.5;
+    }
+    .controls {
+      margin-top: 6px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+    }
+    .controls button {
+      border-radius: 999px;
+      border: 1px solid var(--text-main);
+      background: var(--text-main);
+      color: white;
+      font-size: 11px;
+      padding: 5px 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+    }
+    .controls button:hover {
+      opacity: 0.9;
+    }
+    main {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .meta {
+        text-align: left;
+      }
+    }
+    section.card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 16px 18px 14px;
+      border: 1px solid var(--line);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 13px;
+      text-transform: uppercase;
       letter-spacing: 0.14em;
       font-weight: 800;
     }
-    nav a {
-      margin-left: 20px;
-      font-size: 13px;
-      text-decoration: none;
-      color: #444;
+    .card-sub {
+      font-size: 11px;
+      color: var(--text-sub);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
       font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
     }
-    nav a:hover { color: #000; }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 800;
-      margin: 28px 0 14px 0;
-      padding: 0 32px;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: #222;
-    }
-
-    table {
-      width: calc(100% - 64px);
-      margin: 0 32px 24px 32px;
-      border-collapse: collapse;
-      background: #ffffff;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.04);
-    }
-    thead { position: sticky; top: 62px; z-index: 5; }
-    th {
-      background: #f1f1f1;
-      padding: 11px 10px;
-      cursor: pointer;
-      text-align: left;
-      font-size: 12px;
-      font-weight: 800;
+    .tag {
+      font-size: 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      padding: 3px 8px;
+      color: var(--text-sub);
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      border-bottom: 1px solid #ddd;
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    th, td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #f3f4f6;
+      text-align: right;
       white-space: nowrap;
     }
-    th.sortable:hover { background: #e7e7e7; }
-    th .sort-indicator {
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+    th {
+      font-weight: 800;
+      color: var(--text-sub);
       font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+    }
+    th.sortable::after {
+      content: " ";
+      display: inline-block;
       margin-left: 4px;
-      opacity: 0.7;
+      border: 4px solid transparent;
+      border-top-color: #cbd5f5;
+      transform: translateY(2px);
     }
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #eee;
-      font-size: 13px;
+    th[data-sort-dir="asc"].sortable::after {
+      border-top-color: #111827;
+      transform: rotate(180deg) translateY(-2px);
     }
-    tr.data-row:hover { background: #fafafa; cursor: pointer; }
-
-    .positive { color: #0b8b3b; font-weight: 600; }
-    .negative { color: #c02525; font-weight: 600; }
-
-    .insight-row td {
-      padding: 0;
-      background: #fafafa;
+    th[data-sort-dir="desc"].sortable::after {
+      border-top-color: #111827;
+    }
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+    .muted { color: var(--text-sub); }
+    .positive { color: var(--positive); font-weight: 600; }
+    .negative { color: var(--negative); font-weight: 600; }
+    .clickable-row { cursor: pointer; }
+    .clickable-row:hover { background: #f9fafb; }
+    .small-note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+    .sector-block {
+      margin-top: 10px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 8px;
+    }
+    .sector-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+      font-weight: 800;
     }
     .insight-box {
-      background: #fafafa;
-      padding: 18px 20px 18px 20px;
-      border-top: 1px solid #e0e0e0;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-    .insight-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 8px;
-    }
-    .insight-title {
-      font-weight: 800;
-      font-size: 15px;
-    }
-    .insight-sector {
       font-size: 12px;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.09em;
-    }
-    .muted { color: #777; font-size: 12px; }
-    .insight-body {
-      margin-top: 6px;
-      margin-bottom: 12px;
-      white-space: pre-line;
-    }
-    .chart-container {
+      line-height: 1.6;
+      padding: 10px 8px 6px;
+      background: #f9fafb;
       border-radius: 8px;
-      overflow: hidden;
-      border: 1px solid #ddd;
-      height: 260px;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 12px;
-      padding: 0 32px 24px 32px;
-    }
-    .card {
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 12px 14px;
-      border: 1px solid #e4e4e4;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.03);
-    }
-    .card-title {
-      font-weight: 800;
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
-    .card-sub {
+    .news-title {
+      margin-top: 10px;
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      color: #777;
-      margin-bottom: 6px;
+      color: var(--text-sub);
+      font-weight: 700;
     }
-    .news-card {
-      margin-bottom: 12px;
+    .news-list {
+      margin: 4px 0 0;
+      padding-left: 16px;
+      max-height: 120px;
+      overflow-y: auto;
     }
-
-    #news-container {
-      padding: 0 32px 40px 32px;
-      max-width: 1100px;
+    .news-list li {
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+    .news-list a {
+      color: var(--text-main);
+      text-decoration: none;
+    }
+    .news-list a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
+  <div class="page">
+    <header>
+      <div class="title-block">
+        <h1>MATERIAL STUDIO PORTFOLIO</h1>
+        <div class="sub">EQUITIES · CRYPTO · FX · YIELD</div>
+      </div>
+      <div class="meta">
+        <div id="last-updated">Last update – –</div>
+        <div class="controls">
+          <button id="manual-refresh">REFRESH</button>
+        </div>
+      </div>
+    </header>
 
-<header>
-  <h1>MATERIAL STUDIO PORTFOLIO</h1>
-  <nav>
-    <a href="#equities">Equities</a>
-    <a href="#crypto">Crypto</a>
-    <a href="#fx">FX</a>
-    <a href="#news">News</a>
-  </nav>
-</header>
+    <main>
+      <!-- 왼쪽: Equities -->
+      <div class="left-column">
+        <section class="card" id="equities">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Equities</div>
+              <div class="card-sub">AI · Data Center · Ecosystem</div>
+            </div>
+            <div class="tag">Polygon · TradingView · Finnhub</div>
+          </div>
+          <div id="stocks-container"></div>
+          <div class="small-note">
+            * 페이지 로딩/REFRESH 시 전 종목 가격을 Polygon으로 한 번에 불러옵니다.<br>
+            행을 클릭하면 Company Insight + 실시간 차트 + 최신 뉴스가 펼쳐지고, 다시 클릭하면 접힙니다.<br>
+            섹터별 테이블에서 Symbol / Price / Change / Δ% 헤더를 클릭하면 오름차순·내림차순 정렬이 됩니다.
+          </div>
+        </section>
+      </div>
 
-<!-- ============================
-     EQUITIES
-============================ -->
-<h2 class="section-title" id="equities">Equities</h2>
+      <!-- 오른쪽: FX + Crypto + Staking -->
+      <div class="right-column">
+        <section class="card" id="fx">
+          <div class="card-header">
+            <div>
+              <div class="card-title">FX</div>
+              <div class="card-sub">KRW base · Major pairs</div>
+            </div>
+            <div class="tag">exchangerate.host</div>
+          </div>
+          <table id="fx-table">
+            <thead>
+              <tr>
+                <th>Pair</th>
+                <th>Rate</th>
+                <th>Δ</th>
+                <th>Δ%</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </section>
 
-<table id="stocks-table">
-  <thead>
-    <tr>
-      <th class="sortable" data-sort="name">Name<span class="sort-indicator" id="sort-name"></span></th>
-      <th class="sortable" data-sort="price">Price<span class="sort-indicator" id="sort-price"></span></th>
-      <th class="sortable" data-sort="change">Change<span class="sort-indicator" id="sort-change"></span></th>
-      <th class="sortable" data-sort="percent">%<span class="sort-indicator" id="sort-percent"></span></th>
-      <th class="sortable" data-sort="sector">Sector<span class="sort-indicator" id="sort-sector"></span></th>
-    </tr>
-  </thead>
-  <tbody id="stocks-body"></tbody>
-</table>
+        <section class="card" id="crypto">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Crypto Market</div>
+              <div class="card-sub">Top 15 · Market Cap · Volume</div>
+            </div>
+            <div class="tag">CoinGecko</div>
+          </div>
+          <table id="crypto-table">
+            <thead>
+              <tr>
+                <th>Symbol</th>
+                <th>Name</th>
+                <th>USD</th>
+                <th>KRW</th>
+                <th>24h</th>
+                <th>Vol 24h (USD)</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </section>
 
-<!-- ============================
-     CRYPTO
-============================ -->
-<h2 class="section-title" id="crypto">Crypto Market (Top 15)</h2>
-<div class="grid" id="crypto-grid"></div>
+        <section class="card" id="yield">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Staking Yield</div>
+              <div class="card-sub">Manual Snapshot · APY</div>
+            </div>
+            <div class="tag">On-chain / CeFi</div>
+          </div>
+          <table id="staking-table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Platform</th>
+                <th>APY</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="small-note">
+            지금은 수동 입력 값입니다. 나중에 DeFi API로 연결 가능.
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
 
-<!-- ============================
-     FX
-============================ -->
-<h2 class="section-title" id="fx">FX Rates (vs KRW)</h2>
-<div class="grid" id="fx-grid"></div>
+  <script>
+    // ---------- API Keys ----------
+    const POLYGON_KEY = "0iKefMr7YqIw6uf_JpP2ZOrshixFvBK4";
+    const FINNHUB_KEY = "d4ph189r01qjpnav88m0d4ph189r01qjpnav88mg";
 
-<!-- ============================
-     NEWS
-============================ -->
-<h2 class="section-title" id="news">Market News</h2>
-<div id="news-container"></div>
+    // ---------- 종목 리스트 ----------
+    const stocks = [
+      { symbol: "AAPL",  name: "Apple" },
+      { symbol: "ABNB",  name: "Airbnb" },
+      { symbol: "ADBE",  name: "Adobe" },
+      { symbol: "AG",    name: "First Majestic Silver" },
+      { symbol: "AGX",   name: "Argan" },
+      { symbol: "ALAB",  name: "Astera Labs" },
+      { symbol: "ALL",   name: "Allstate" },
+      { symbol: "AMAT",  name: "Applied Materials" },
+      { symbol: "AMGN",  name: "Amgen" },
+      { symbol: "AMZN",  name: "Amazon" },
+      { symbol: "ANET",  name: "Arista Networks" },
+      { symbol: "ANSS",  name: "Ansys" },
+      { symbol: "APP",   name: "AppLovin" },
+      { symbol: "ARM",   name: "Arm Holdings" },
+      { symbol: "ASML",  name: "ASML" },
+      { symbol: "AVGO",  name: "Broadcom" },
 
-<script>
-/* ======================================================
-   CONFIG: API KEYS
-====================================================== */
-const POLYGON_API = "0iKefMr7YqIw6uf_JpP2ZOrshixFvBK4";
-const FINNHUB_API = "d4ph189r01qjpnav88m0d4ph189r01qjpnav88mg";
+      { symbol: "BE",    name: "Bloom Energy" },
+      { symbol: "BK",    name: "Bank of New York Mellon" },
+      { symbol: "BLK",   name: "BlackRock" },
+      { symbol: "BMNR",  name: "BitMine Immersion Technologies" },
+      { symbol: "BSX",   name: "Boston Scientific" },
+      { symbol: "BTDR",  name: "Bitdeer Technologies" },
 
-/* ======================================================
-   STOCK UNIVERSE (심볼 + 이름 + 대략적 섹터)
-   – 섹터는 네가 보기 편하게 크게만 분류함
-====================================================== */
-const stocks = [
-  // A
-  { symbol:"AAPL", name:"Apple", sector:"Consumer Tech" },
-  { symbol:"ABNB", name:"Airbnb", sector:"Travel / Platform" },
-  { symbol:"ADBE", name:"Adobe", sector:"Software / Creative" },
-  { symbol:"AG", name:"First Majestic Silver", sector:"Metals / Mining" },
-  { symbol:"AGX", name:"Argan", sector:"Engineering / Infrastructure" },
-  { symbol:"ALAB", name:"Astera Labs", sector:"AI Interconnect / Chips" },
-  { symbol:"ALL", name:"Allstate", sector:"Insurance" },
-  { symbol:"AMAT", name:"Applied Materials", sector:"Semi Equipment" },
-  { symbol:"AMGN", name:"Amgen", sector:"Biotech" },
-  { symbol:"AMZN", name:"Amazon", sector:"Cloud / E-Commerce" },
-  { symbol:"ANET", name:"Arista Networks", sector:"Networking / Data Center" },
-  { symbol:"ANSS", name:"Ansys", sector:"Simulation Software" },
-  { symbol:"APP", name:"AppLovin", sector:"AdTech / Mobile" },
-  { symbol:"ARM", name:"Arm Holdings", sector:"IP / CPU Architecture" },
-  { symbol:"ASML", name:"ASML", sector:"EUV Lithography" },
-  { symbol:"AVGO", name:"Broadcom", sector:"Chips / Networking / Software" },
+      { symbol: "CAT",   name: "Caterpillar" },
+      { symbol: "CDNS",  name: "Cadence Design Systems" },
+      { symbol: "CDNA",  name: "CareDx" },
+      { symbol: "CEG",   name: "Constellation Energy" },
+      { symbol: "CELH",  name: "Celsius Holdings" },
+      { symbol: "CL",    name: "Colgate-Palmolive" },
+      { symbol: "CLSK",  name: "CleanSpark" },
+      { symbol: "CLS",   name: "Celestica" },
+      { symbol: "COHR",  name: "Coherent" },
+      { symbol: "COIN",  name: "Coinbase" },
+      { symbol: "COST",  name: "Costco" },
+      { symbol: "CRDO",  name: "Credo Technology" },
+      { symbol: "CRM",   name: "Salesforce" },
+      { symbol: "CSCO",  name: "Cisco Systems" },
+      { symbol: "C3AI",  name: "C3.ai" },
+      { symbol: "CRS",   name: "Carpenter Technology" },
 
-  // B
-  { symbol:"BE", name:"Bloom Energy", sector:"Energy / Fuel Cells" },
-  { symbol:"BK", name:"Bank of New York Mellon", sector:"Financials" },
-  { symbol:"BLK", name:"BlackRock", sector:"Asset Management" },
-  { symbol:"BMNR", name:"BitMine Immersion", sector:"Bitcoin Mining" },
-  { symbol:"BSX", name:"Boston Scientific", sector:"MedTech" },
-  { symbol:"BTDR", name:"Bitdeer Technologies", sector:"Bitcoin Mining" },
+      { symbol: "DASH",  name: "DoorDash" },
+      { symbol: "DDOG",  name: "Datadog" },
+      { symbol: "DE",    name: "Deere & Company" },
+      { symbol: "DLR",   name: "Digital Realty Trust" },
+      { symbol: "DHI",   name: "D.R. Horton" },
+      { symbol: "DIS",   name: "Walt Disney" },
 
-  // C
-  { symbol:"CAT", name:"Caterpillar", sector:"Industrial / Machinery" },
-  { symbol:"CDNS", name:"Cadence Design Systems", sector:"EDA / Chips" },
-  { symbol:"CDNA", name:"CareDx", sector:"Diagnostics" },
-  { symbol:"CEG", name:"Constellation Energy", sector:"Power / Utilities" },
-  { symbol:"CELH", name:"Celsius Holdings", sector:"Beverages" },
-  { symbol:"CL", name:"Colgate-Palmolive", sector:"Consumer Staples" },
-  { symbol:"CLSK", name:"CleanSpark", sector:"Bitcoin Mining / Energy" },
-  { symbol:"CLS", name:"Celestica", sector:"Electronics Manufacturing / Data Center" },
-  { symbol:"COHR", name:"Coherent", sector:"Photonics / Lasers" },
-  { symbol:"COIN", name:"Coinbase", sector:"Crypto Exchange" },
-  { symbol:"COST", name:"Costco", sector:"Retail" },
-  { symbol:"CRDO", name:"Credo Technology", sector:"High-Speed Interconnect" },
-  { symbol:"CRM", name:"Salesforce", sector:"SaaS / CRM" },
-  { symbol:"CSCO", name:"Cisco Systems", sector:"Networking" },
-  { symbol:"AI", name:"C3.ai", sector:"Enterprise AI Software" },
-  { symbol:"CRS", name:"Carpenter Technology", sector:"Specialty Metals" },
+      { symbol: "ETN",   name: "Eaton" },
+      { symbol: "ETOR",  name: "eToro Group" },
+      { symbol: "ETRN",  name: "Equitrans Midstream" },
+      { symbol: "EW",    name: "Edwards Lifesciences" },
+      { symbol: "EXAS",  name: "Exact Sciences" },
+      { symbol: "EQIX",  name: "Equinix" },
 
-  // D
-  { symbol:"DASH", name:"DoorDash", sector:"Delivery / Platform" },
-  { symbol:"DDOG", name:"Datadog", sector:"Observability / SaaS" },
-  { symbol:"DE", name:"Deere", sector:"Industrial / Agriculture" },
-  { symbol:"DLR", name:"Digital Realty", sector:"Data Center REIT" },
-  { symbol:"DHI", name:"D.R. Horton", sector:"Homebuilding" },
-  { symbol:"DIS", name:"Walt Disney", sector:"Media / Entertainment" },
+      { symbol: "FABR",  name: "Fabrinet" },
+      { symbol: "FSLR",  name: "First Solar" },
+      { symbol: "FUTU",  name: "Futu Holdings" },
 
-  // E
-  { symbol:"ETN", name:"Eaton", sector:"Electrical / Power" },
-  { symbol:"ETRN", name:"Equitrans Midstream", sector:"Midstream / Pipelines" },
-  { symbol:"EW", name:"Edwards Lifesciences", sector:"MedTech" },
-  { symbol:"EXAS", name:"Exact Sciences", sector:"Diagnostics" },
-  { symbol:"EQIX", name:"Equinix", sector:"Data Center REIT" },
+      { symbol: "GE",    name: "GE Aerospace" },
+      { symbol: "GEL",   name: "Genesis Energy" },
+      { symbol: "GEN",   name: "Generac" },
+      { symbol: "GME",   name: "GameStop" },
+      { symbol: "GOOGL", name: "Alphabet (Google)" },
+      { symbol: "GCM",   name: "Genius Sports" },
 
-  // F
-  { symbol:"FNSR", name:"Fabrinet", sector:"Optics / Manufacturing" }, // ticker in 리스트는 FABR 였지만 실제는 FNSR/FN; 여기선 설명용
-  { symbol:"FSLR", name:"First Solar", sector:"Solar / Renewables" },
-  { symbol:"FUTU", name:"Futu Holdings", sector:"Online Brokerage" },
+      { symbol: "HPE",   name: "Hewlett Packard Enterprise" },
+      { symbol: "HUT",   name: "Hut 8 Mining" },
 
-  // G
-  { symbol:"GE", name:"GE Aerospace", sector:"Aerospace" },
-  { symbol:"GEL", name:"Genesis Energy", sector:"Midstream / Pipelines" },
-  { symbol:"GEN", name:"Generac", sector:"Backup Power" },
-  { symbol:"GME", name:"GameStop", sector:"Retail / Meme" },
-  { symbol:"GOOGL", name:"Alphabet (Google)", sector:"Search / Cloud / Ads" },
-  { symbol:"GENI", name:"Genius Sports", sector:"Sports Data / Tech" },
+      { symbol: "IBM",   name: "IBM" },
+      { symbol: "IESC",  name: "IES Holdings" },
+      { symbol: "INTC",  name: "Intel" },
+      { symbol: "IONQ",  name: "IonQ" },
+      { symbol: "ISRG",  name: "Intuitive Surgical" },
+      { symbol: "ITRI",  name: "Itron" },
+      { symbol: "IVZ",   name: "Invesco" },
 
-  // H
-  { symbol:"HPE", name:"Hewlett Packard Enterprise", sector:"Enterprise / Servers" },
-  { symbol:"HUT", name:"Hut 8 Mining", sector:"Bitcoin Mining" },
+      { symbol: "JBL",   name: "Jabil" },
+      { symbol: "JNPR",  name: "Juniper Networks" },
 
-  // I
-  { symbol:"IBM", name:"IBM", sector:"Hybrid Cloud / AI" },
-  { symbol:"IESC", name:"IES Holdings", sector:"Engineering / Infrastructure" },
-  { symbol:"INTC", name:"Intel", sector:"CPUs / Foundry" },
-  { symbol:"IONQ", name:"IonQ", sector:"Quantum Computing" },
-  { symbol:"ISRG", name:"Intuitive Surgical", sector:"MedTech / Robotics" },
-  { symbol:"ITRI", name:"Itron", sector:"Smart Grid / Meters" },
-  { symbol:"IVZ", name:"Invesco", sector:"Asset Management" },
+      { symbol: "KO",    name: "Coca-Cola" },
+      { symbol: "KTOS",  name: "Kratos Defense" },
 
-  // J
-  { symbol:"JBL", name:"Jabil", sector:"Manufacturing / EMS" },
-  { symbol:"JNPR", name:"Juniper Networks", sector:"Networking" },
+      { symbol: "LLY",   name: "Eli Lilly" },
+      { symbol: "LMT",   name: "Lockheed Martin" },
+      { symbol: "LRCX",  name: "Lam Research" },
+      { symbol: "LOW",   name: "Lowe’s" },
 
-  // K
-  { symbol:"KO", name:"Coca-Cola", sector:"Beverages" },
-  { symbol:"KTOS", name:"Kratos Defense", sector:"Defense / Drones" },
+      { symbol: "MARA",  name: "Marathon Digital" },
+      { symbol: "MCHP",  name: "Microchip Technology" },
+      { symbol: "META",  name: "Meta Platforms" },
+      { symbol: "MNTK",  name: "Montauk Renewables" },
+      { symbol: "MRNA",  name: "Moderna" },
+      { symbol: "MRVL",  name: "Marvell Technology" },
+      { symbol: "MP",    name: "MP Materials" },
+      { symbol: "MU",    name: "Micron Technology" },
+      { symbol: "MSFT",  name: "Microsoft" },
+      { symbol: "MPW",   name: "Medical Properties Trust" },
 
-  // L
-  { symbol:"LLY", name:"Eli Lilly", sector:"Pharma / Obesity" },
-  { symbol:"LMT", name:"Lockheed Martin", sector:"Defense / Aerospace" },
-  { symbol:"LRCX", name:"Lam Research", sector:"Semi Equipment" },
-  { symbol:"LOW", name:"Lowe's", sector:"Retail / Home Improvement" },
+      { symbol: "NET",   name: "Cloudflare" },
+      { symbol: "NEE",   name: "NextEra Energy" },
+      { symbol: "NFLX",  name: "Netflix" },
+      { symbol: "NIO",   name: "NIO" },
+      { symbol: "NRIX",  name: "Nurix Therapeutics" },
+      { symbol: "NOW",   name: "ServiceNow" },
+      { symbol: "NU",    name: "Nu Holdings" },
+      { symbol: "NVDA",  name: "NVIDIA" },
+      { symbol: "NUE",   name: "Nucor" },
 
-  // M
-  { symbol:"MARA", name:"Marathon Digital", sector:"Bitcoin Mining" },
-  { symbol:"MCHP", name:"Microchip Technology", sector:"MCUs / Mixed-Signal" },
-  { symbol:"META", name:"Meta Platforms", sector:"Social / AI" },
-  { symbol:"MNTK", name:"Montauk Renewables", sector:"Renewable Gas" },
-  { symbol:"MRNA", name:"Moderna", sector:"Biotech / mRNA" },
-  { symbol:"MRVL", name:"Marvell Technology", sector:"Data Center / 5G Chips" },
-  { symbol:"MP", name:"MP Materials", sector:"Rare Earths" },
-  { symbol:"MU", name:"Micron Technology", sector:"DRAM / NAND / HBM" },
-  { symbol:"MSFT", name:"Microsoft", sector:"Cloud / Productivity / AI" },
-  { symbol:"MPW", name:"Medical Properties Trust", sector:"Healthcare REIT" },
+      { symbol: "OKLO",  name: "Oklo" },
+      { symbol: "ORCL",  name: "Oracle" },
+      { symbol: "OTTR",  name: "Otter Tail" },
 
-  // N
-  { symbol:"NET", name:"Cloudflare", sector:"Edge / Security" },
-  { symbol:"NEE", name:"NextEra Energy", sector:"Renewables / Utility" },
-  { symbol:"NFLX", name:"Netflix", sector:"Streaming" },
-  { symbol:"NIO", name:"NIO", sector:"EV" },
-  { symbol:"NRIX", name:"Nurix Therapeutics", sector:"Biotech" },
-  { symbol:"NOW", name:"ServiceNow", sector:"Workflow / SaaS" },
-  { symbol:"NU", name:"Nu Holdings", sector:"Fintech / LatAm" },
-  { symbol:"NVDA", name:"NVIDIA", sector:"AI GPUs / Platform" },
-  { symbol:"NUE", name:"Nucor", sector:"Steel" },
+      { symbol: "PAGS",  name: "PagSeguro" },
+      { symbol: "PANW",  name: "Palo Alto Networks" },
+      { symbol: "PATH",  name: "UiPath" },
+      { symbol: "PEP",   name: "PepsiCo" },
+      { symbol: "PH",    name: "Parker-Hannifin" },
+      { symbol: "PLTR",  name: "Palantir" },
+      { symbol: "PNW",   name: "Pinnacle West" },
+      { symbol: "PYPL",  name: "PayPal" },
 
-  // O
-  { symbol:"OKLO", name:"Oklo", sector:"SMR / Nuclear" },
-  { symbol:"ORCL", name:"Oracle", sector:"Database / Cloud" },
-  { symbol:"OTTR", name:"Otter Tail", sector:"Utility / Industrial" },
+      { symbol: "QCOM",  name: "Qualcomm" },
+      { symbol: "QSR",   name: "Restaurant Brands Intl." },
 
-  // P
-  { symbol:"PAGS", name:"PagSeguro", sector:"Fintech / Payments" },
-  { symbol:"PANW", name:"Palo Alto Networks", sector:"Cybersecurity" },
-  { symbol:"PATH", name:"UiPath", sector:"Automation / RPA" },
-  { symbol:"PEP", name:"PepsiCo", sector:"Beverages / Snacks" },
-  { symbol:"PH", name:"Parker-Hannifin", sector:"Industrial / Motion Control" },
-  { symbol:"PLTR", name:"Palantir", sector:"Data / AI Platform" },
-  { symbol:"PNW", name:"Pinnacle West Capital", sector:"Utility" },
-  { symbol:"PYPL", name:"PayPal", sector:"Fintech / Payments" },
+      { symbol: "RBLX",  name: "Roblox" },
+      { symbol: "RDFN",  name: "Redfin" },
+      { symbol: "RIOT",  name: "Riot Platforms" },
 
-  // Q
-  { symbol:"QCOM", name:"Qualcomm", sector:"Wireless / Chips" },
-  { symbol:"QSR", name:"Restaurant Brands Intl.", sector:"QSR / Franchising" },
+      { symbol: "SBUX",  name: "Starbucks" },
+      { symbol: "SMCI",  name: "Super Micro Computer" },
+      { symbol: "SMR",   name: "NuScale Power" },
+      { symbol: "SITM",  name: "SiTime" },
+      { symbol: "SHOP",  name: "Shopify" },
+      { symbol: "SNOW",  name: "Snowflake" },
+      { symbol: "SOFI",  name: "SoFi" },
+      { symbol: "SPOT",  name: "Spotify" },
+      { symbol: "SQ",    name: "Block" },
+      { symbol: "STLD",  name: "Steel Dynamics" },
+      { symbol: "STRL",  name: "Sterling Infrastructure" },
+      { symbol: "STX",   name: "Seagate" },
+      { symbol: "SWKS",  name: "Skyworks" },
 
-  // R
-  { symbol:"RBLX", name:"Roblox", sector:"Gaming / Platform" },
-  { symbol:"RDFN", name:"Redfin", sector:"Real Estate / Platform" },
-  { symbol:"RIOT", name:"Riot Platforms", sector:"Bitcoin Mining" },
+      { symbol: "TDY",   name: "Teledyne" },
+      { symbol: "TEAM",  name: "Atlassian" },
+      { symbol: "TEVA",  name: "Teva" },
+      { symbol: "TMO",   name: "Thermo Fisher" },
+      { symbol: "TSLA",  name: "Tesla" },
+      { symbol: "TSM",   name: "Taiwan Semi" },
+      { symbol: "TTM",   name: "TTM Technologies" },
+      { symbol: "TWLO",  name: "Twilio" },
 
-  // S
-  { symbol:"SBUX", name:"Starbucks", sector:"Retail / Coffee" },
-  { symbol:"SMCI", name:"Super Micro Computer", sector:"AI Servers" },
-  { symbol:"SMR", name:"NuScale Power", sector:"SMR / Nuclear" },
-  { symbol:"SITM", name:"SiTime", sector:"Timing / MEMS" },
-  { symbol:"SHOP", name:"Shopify", sector:"E-Commerce / SaaS" },
-  { symbol:"SNOW", name:"Snowflake", sector:"Data Cloud / SaaS" },
-  { symbol:"SOFI", name:"SoFi", sector:"Fintech / Neobank" },
-  { symbol:"SPOT", name:"Spotify", sector:"Audio / Streaming" },
-  { symbol:"SQ", name:"Block", sector:"Fintech / Payments" },
-  { symbol:"STLD", name:"Steel Dynamics", sector:"Steel" },
-  { symbol:"STRL", name:"Sterling Infrastructure", sector:"Infrastructure / Construction" },
-  { symbol:"STX", name:"Seagate", sector:"Storage / HDD" },
-  { symbol:"SWKS", name:"Skyworks", sector:"RF Chips" },
+      { symbol: "UBER",  name: "Uber" },
+      { symbol: "UPST",  name: "Upstart" },
 
-  // T
-  { symbol:"TDY", name:"Teledyne Technologies", sector:"Sensors / Imaging" },
-  { symbol:"TEAM", name:"Atlassian", sector:"Collaboration / SaaS" },
-  { symbol:"TEVA", name:"Teva Pharma", sector:"Generic Pharma" },
-  { symbol:"TMO", name:"Thermo Fisher Scientific", sector:"Life Science Tools" },
-  { symbol:"TSLA", name:"Tesla", sector:"EV / Energy" },
-  { symbol:"TSM", name:"Taiwan Semiconductor", sector:"Foundry" },
-  { symbol:"TTMI", name:"TTM Technologies", sector:"PCBs" },
-  { symbol:"TWLO", name:"Twilio", sector:"Communications API" },
+      { symbol: "VCYT",  name: "Veracyte" },
+      { symbol: "VMC",   name: "Vulcan Materials" },
+      { symbol: "VRTX",  name: "Vertex" },
+      { symbol: "VRT",   name: "Vertiv" },
+      { symbol: "VZ",    name: "Verizon" },
 
-  // U
-  { symbol:"UBER", name:"Uber Technologies", sector:"Mobility / Platform" },
-  { symbol:"UPST", name:"Upstart", sector:"AI Credit / Fintech" },
+      { symbol: "WDC",   name: "Western Digital" },
+      { symbol: "WMT",   name: "Walmart" },
+      { symbol: "WTW",   name: "Willis Towers Watson" },
 
-  // V
-  { symbol:"VCYT", name:"Veracyte", sector:"Diagnostics" },
-  { symbol:"VMC", name:"Vulcan Materials", sector:"Construction Materials" },
-  { symbol:"VRTX", name:"Vertex Pharmaceuticals", sector:"Biotech" },
-  { symbol:"VRT", name:"Vertiv", sector:"Power / Cooling / Data Center" },
-  { symbol:"VZ", name:"Verizon", sector:"Telecom" },
+      { symbol: "ZI",    name: "ZoomInfo" },
+      { symbol: "ZBRA",  name: "Zebra" },
+      { symbol: "ZM",    name: "Zoom Video" }
+    ];
 
-  // W
-  { symbol:"WDC", name:"Western Digital", sector:"Storage" },
-  { symbol:"WMT", name:"Walmart", sector:"Retail" },
-  { symbol:"WTW", name:"Willis Towers Watson", sector:"Insurance / Advisory" },
+    // ---------- 섹터 그룹 (간단한 카테고리 묶음) ----------
+    const sectorTag = {
+      NVDA:"AI / Data Center Core", MSFT:"AI / Data Center Core",
+      AMZN:"AI / Data Center Core", META:"AI / Data Center Core",
+      GOOGL:"AI / Data Center Core", SMCI:"AI / Data Center Core",
+      ANET:"AI / Data Center Core", VRT:"AI / Data Center Core",
+      EQIX:"AI / Data Center Core", DLR:"AI / Data Center Core",
+      NOW:"AI / Data Center Core", NET:"AI / Data Center Core",
+      SNOW:"AI / Data Center Core", DDOG:"AI / Data Center Core",
+      PLTR:"AI / Data Center Core", CRM:"AI / Data Center Core",
 
-  // Z
-  { symbol:"ZI", name:"ZoomInfo", sector:"Sales Data / SaaS" },
-  { symbol:"ZBRA", name:"Zebra Technologies", sector:"Auto-ID / Devices" },
-  { symbol:"ZM", name:"Zoom Video", sector:"Collaboration / Video" }
-];
+      AVGO:"Semiconductors & EDA", ASML:"Semiconductors & EDA",
+      CDNS:"Semiconductors & EDA", MRVL:"Semiconductors & EDA",
+      TSM:"Semiconductors & EDA", SITM:"Semiconductors & EDA",
+      INTC:"Semiconductors & EDA", MU:"Semiconductors & EDA",
+      AMAT:"Semiconductors & EDA", LRCX:"Semiconductors & EDA",
+      MCHP:"Semiconductors & EDA", COHR:"Semiconductors & EDA",
+      ARM:"Semiconductors & EDA", SWKS:"Semiconductors & EDA",
 
-/* ======================================================
-   COMPANY PROFILES
-   – 각 종목 2~5문장 정도로, 역할 + AI/데이터센터/성장 포지션 위주 설명
-====================================================== */
-const companyProfiles = {
-  NVDA: `
-NVIDIA는 GPU 기반 병렬 연산과 CUDA 소프트웨어 생태계를 중심으로 AI 인프라를 사실상 표준화한 기업이다.
-데이터센터 매출 비중이 대부분을 차지하며, H100·H200·B100·GB200 등 고성능 GPU와 DGX/MGX 레퍼런스 시스템으로 AI 학습·추론 시장을 장악하고 있다.
-NVLink·InfiniBand·Spectrum-X 같은 네트워크·스위칭 솔루션까지 제공하면서, 단순 칩 공급을 넘어 전체 AI 서버 스택에 깊게 침투했다.
-하이퍼스케일러들의 자체칩(Trainium·TPU 등)과 AI 투자 사이클 둔화가 중장기 리스크지만, CUDA 락인과 폭발적인 모델·데이터 증가가 장기 성장 동력이다.
-  `,
-  AVGO: `
-Broadcom은 데이터센터 스위치용 네트워크 ASIC(Tomahawk·Jericho), 스토리지·네트워킹 칩, RF·무선 칩, 그리고 VMware 인수로 확보한 인프라 소프트웨어를 동시에 보유한 복합 반도체·소프트웨어 기업이다.
-AI 데이터센터에서 GPU 클러스터를 연결하는 고속 이더넷 스위칭 칩의 핵심 공급자 역할을 하며, 트래픽·대역폭 증가가 구조적인 성장 요인이다.
-반도체와 소프트웨어 비즈니스의 믹스 덕분에 매우 높은 마진과 현금흐름을 유지하고 있고, 고객 맞춤형 ASIC 사업도 확대하고 있다.
-NVIDIA의 InfiniBand·Spectrum-X와 경쟁하면서도, 개방형 이더넷 기반 패브릭을 원하는 고객에게는 필수적인 파트너로 자리잡고 있다.
-  `,
-  ASML: `
-ASML은 첨단 반도체 공정에 필요한 EUV(극자외선) 노광장비를 사실상 독점 공급하는 유일한 업체이다.
-TSMC·삼성·인텔 등 파운드리가 5nm·3nm·2nm 공정으로 진입하려면 ASML 장비가 필수라서, AI 칩과 HBM 생산 CAPEX와 직결되는 위치에 있다.
-장비당 ASP가 수천억 단위로 매우 높고, 고객 기반이 제한적이라 기술·가격 협상력이 극도로 강한 구조이다.
-미·중 규제와 반도체 사이클에 따른 CAPEX 변동이 리스크지만, 미세공정과 High-NA EUV 도입으로 장기 수요가 탄탄하다.
-  `,
-  TSM: `
-TSMC는 세계 최대의 순수 파운드리로, NVIDIA·AMD·Apple·Qualcomm·Amazon·Google 등의 고성능 칩을 대량 생산한다.
-AI GPU·CPU·가속기·HBM·고속 인터커넥트 칩 대부분이 TSMC의 첨단 공정에서 제조되기 때문에, AI 인프라 CAPEX의 핵심 수혜자다.
-첨단 공정 비중이 높아질수록 웨이퍼당 수익성과 마진 구조가 개선되고, 고객 다변화로 의존도 리스크도 관리하고 있다.
-지정학적 리스크(대만)와 미국·유럽 공장 투자에 따른 비용 증가가 변수지만, 기술 리더십이 유지되는 한 구조적 성장은 이어질 가능성이 크다.
-  `,
-  SITM: `
-SiTime은 기존 쿼츠(Quartz) 기반 타이밍 부품을 대체하는 MEMS 기반 타이밍·클럭 솔루션을 제공하는 팹리스 반도체 기업이다.
-데이터센터 서버·네트워크 장비·5G·자동차·산업용 시스템에서 정밀한 타이밍과 온도 안정성이 중요해질수록 SiTime의 고성능 제품 수요가 증가한다.
-MEMS 구조 특성상 충격·온도·진동에 강하고, 프로그래머블한 특성으로 차별화된 설계를 제공해 고부가 가치 포지션을 확보하고 있다.
-시장 규모에 비해 아직 기업 사이즈가 작아 수요 변동과 특정 고객 의존도가 리스크지만, 데이터센터·AI 서버 확대로 장기 성장 기회가 크다.
-  `,
-  CDNS: `
-Cadence Design Systems는 칩 설계 자동화(EDA) 소프트웨어와 IP를 제공해 반도체 설계자들이 회로를 설계·시뮬레이션·검증·레이아웃할 수 있게 해주는 핵심 툴 공급자다.
-AI·고속 I/O·전력 최적화 등 복잡한 설계가 늘어나면서 EDA 도구에 대한 의존도가 더 커지고 있고, 파운드리와의 협업을 통해 최신 공정을 빠르게 지원한다.
-구독·라이선스 기반 비즈니스 모델로 소프트웨어 특유의 높은 마진과 반복 매출 구조를 가진다.
-Synopsys·Siemens EDA와 함께 과점 구조를 형성하고 있어, 칩 산업 성장과 함께 안정적인 성장을 이어갈 가능성이 높다.
-  `,
-  SMCI: `
-Super Micro Computer는 AI 서버와 스토리지 시스템을 모듈형·고밀도로 설계해 빠르게 커스터마이징해주는 서버 제조사다.
-NVIDIA·AMD·Intel과 긴밀히 협력해 최신 GPU·CPU를 탑재한 AI 서버·랙 솔루션을 시장에 가장 빠른 속도로 공급하는 플레이어 중 하나다.
-고밀도·리퀴드 쿨링·GPU 최적화 랙 설계에 강점을 가지고 있어, AI 클러스터 수요가 폭발할수록 높은 성장을 누리고 있다.
-다만 하드웨어 특성상 마진 구조는 반도체 설계사보다 낮고, AI 서버 CAPEX 사이클 둔화에 매출 변동성이 커질 수 있다.
-  `,
-  ANET: `
-Arista Networks는 데이터센터·클라우드 환경에서 사용되는 고성능 이더넷 스위치와 EOS 네트워크 운영체제를 제공하는 네트워크 장비 기업이다.
-하이퍼스케일 클라우드 고객 비중이 높고, AI 클러스터를 이더넷 기반으로 구성하는 고객에게 필수적인 스위칭 솔루션을 제공한다.
-Broadcom의 스위칭 칩 위에 소프트웨어·시스템 통합을 더해 차별화된 안정성과 운영 경험을 만든다.
-AI 트래픽·동서 트래픽이 늘어날수록 고대역폭 포트와 차세대 스위치 수요가 증가해 구조적 성장 스토리를 갖는다.
-  `,
-  VRT: `
-Vertiv는 데이터센터용 전력 인프라(UPS, PDU, 분전반)와 냉각 시스템(공랭·수랭), 랙 솔루션을 제공하는 인프라 전문 기업이다.
-AI 서버는 랙당 전력 소모와 발열이 커서 고효율 전원 공급과 리퀴드쿨링 등 고급 냉각 솔루션 수요가 급증하고 있고, Vertiv는 이 영역에서 핵심 공급자다.
-과거에는 경기 민감형 인프라 기업이었지만, AI 데이터센터 CAPEX 확대로 고성장·고마진 체질로 재평가되고 있다.
-전력·쿨링 설비는 GPU보다 교체 주기가 길고, 데이터센터 용량이 장기적으로 증가하는 한 꾸준한 수요가 유지될 가능성이 높다.
-  `,
-  EQIX: `
-Equinix는 글로벌 코로케이션 데이터센터 REIT로, 고객이 서버·네트워크 장비를 입주시켜 사용하는 공간·전력·네트워크 연결을 제공한다.
-특히 인터넷·클라우드·통신사들 사이의 상호접속(Interconnect)에 강점이 있어 네트워크 허브 역할을 한다.
-AI 시대에도 데이터가 모이고 교환되는 거점으로서 중요성이 유지되며, 엣지·하이브리드 클라우드 수요 증가가 장기 성장 포인트다.
-리츠 특성상 금리 환경에 민감하고, 대규모 CAPEX와 전력 비용 관리가 핵심 변수가 된다.
-  `,
-  DLR: `
-Digital Realty는 대규모 하이퍼스케일 데이터센터 캠퍼스에 강점을 가진 글로벌 데이터센터 REIT다.
-클라우드 사업자·대형 인터넷 기업·엔터프라이즈 고객에게 장기 임대 형태로 데이터센터 공간과 전력을 제공한다.
-AI 워크로드로 데이터센터 전력 수요와 랙당 전력 밀도가 증가하면서, 신규 캠퍼스 개발과 리파워링(전력 증설)이 성장 기회다.
-고금리 환경에서는 재무 구조와 배당 부담이 리스크지만, 장기 데이터센터 수요는 지속적으로 늘어날 가능성이 크다.
-  `,
-  NET: `
-Cloudflare는 전 세계에 분산된 엣지 네트워크를 기반으로 CDN, DDoS 방어, DNS, 보안, 엣지 컴퓨팅 서비스를 제공한다.
-사용자와 가까운 위치에서 트래픽을 처리하는 구조라 웹·API·게임·SaaS 서비스의 성능과 보안을 동시에 개선해준다.
-AI inference도 점점 엣지에서 수행하려는 흐름이 있어, Cloudflare Workers·AI 플랫폼이 이 영역을 노리고 있다.
-고성장 SaaS 기업으로 평가받으며, 밸류에이션 변동성이 큰 편이지만 장기적으로 트래픽·보안 수요 증가에 레버리지되는 구조이다.
-  `,
-  CRDO: `
-Credo Technology는 100G~800G급 고속 데이터 전송을 위한 AEC/AOC, DSP, SerDes 솔루션을 제공하는 고속 인터커넥트 전문 반도체 회사다.
-데이터센터 랙 간·서버 간·스위치 간에 필요한 초고속·저전력 링크를 제공하며, AI 클러스터의 대역폭 확대와 함께 수요가 늘어나는 구조다.
-고객 프로젝트나 특정 세대 전환에 따른 매출 변동성이 존재하고, 경쟁사와의 가격·성능 경쟁이 리스크다.
-AI·고속 이더넷·모듈식 데이터센터 전환이 성공적으로 진행되면 니치 시장에서 의미 있는 성장을 기대할 수 있다.
-  `,
-  ALAB: `
-Astera Labs는 CXL·PCIe 기반 메모리·가속기·스토리지 연결을 위한 리타이머·스위치·메모리 컨트롤 솔루션을 제공하는 기업이다.
-AI 서버에서 CPU–메모리–가속기 간 데이터 흐름을 최적화하고 확장하는 데 필요한 핵심 인터커넥트 기술을 보유하고 있다.
-CXL 생태계가 성공적으로 자리잡고 대규모 채택이 이루어진다면, Astera는 고성장 니치 플레이어로 도약할 수 있다.
-아직 시장이 초기 단계라 프로젝트·고객 편차와 기술 선택 리스크가 크지만, 성공 시 레버리지가 매우 큰 구조다.
-  `,
-  MSFT: `
-Microsoft는 Windows·Office·Azure·GitHub·LinkedIn 등 다양한 소프트웨어·클라우드 포트폴리오를 가진 빅테크 기업이다.
-Azure 클라우드와 OpenAI 제휴를 통해 Copilot·Azure OpenAI Service 등 AI 기반 서비스·플랫폼을 빠르게 확장하고 있다.
-M365·Windows·Dynamics 등 기존 구독형 비즈니스에 AI를 붙여 ARPU를 높이고, 개발자 생태계를 GitHub·VS Code로 묶는 전략을 취한다.
-AI 인프라 CAPEX가 매우 크지만, 장기적으로 클라우드·생산성·AI 플랫폼에서 높은 수익성을 유지할 가능성이 크다.
-  `,
-  AMZN: `
-Amazon은 이커머스·로지스틱스·AWS 클라우드·광고 비즈니스를 동시에 운영하는 플랫폼 기업이다.
-AWS는 글로벌 1위 클라우드로, NVIDIA GPU와 자체칩 Trainium·Inferentia를 함께 운용하며 AI 인프라 서비스와 모델을 제공한다.
-물류·추천·검색·광고 최적화 등 내부 운영 전반에 AI를 활용하면서 효율을 높이고 있고, 광고 사업이 이익 성장의 또 다른 축으로 부상했다.
-이커머스 마진 압박과 경쟁, AI·클라우드 CAPEX 부담이 변수지만, 규모·데이터·인프라 측면에서 장기 경쟁력이 강하다.
-  `,
-  GOOGL: `
-Alphabet는 검색·유튜브·안드로이드·GCP·광고를 핵심으로 하는 인터넷·클라우드·AI 플랫폼 기업이다.
-TPU 기반의 자체 AI 칩과 Gemini 등 LLM을 보유해 검색·광고·클라우드·워크스페이스 제품에 AI를 깊게 통합하고 있다.
-검색 광고 구조 변화가 리스크이지만, AI를 적절히 접목하면 클릭당 가치와 광고 효율을 오히려 높일 수 있는 잠재력이 있다.
-GCP는 데이터·AI·오픈소스 친화적인 클라우드로서 성장하고 있으며, 유튜브·클라우드·광고 세 축이 수익을 지탱한다.
-  `,
-  SNOW: `
-Snowflake는 클라우드 기반 데이터 웨어하우스·데이터 클라우드 플랫폼을 제공하며, AWS·Azure·GCP 위에서 멀티 클라우드로 동작한다.
-고객이 데이터를 중앙화·정제·공유하고 분석할 수 있게 해주며, 최근에는 Native Apps·AI 기능을 붙여 데이터+AI 플랫폼으로 확장 중이다.
-사용량 기반 요금 구조라 데이터·쿼리 사용이 늘어날수록 매출이 증가하는 구조를 갖는다.
-경쟁 클라우드(예: Redshift, BigQuery)와의 경쟁과 경기 둔화 시 사용량 감소가 리스크지만, 장기적으로 데이터·AI 결합 수요는 계속 성장할 가능성이 크다.
-  `,
-  DDOG: `
-Datadog은 클라우드 인프라 모니터링, 로그, APM, 보안 등을 통합 제공하는 관측성(observability) 플랫폼이다.
-마이크로서비스·컨테이너·서버리스 환경이 복잡해질수록 Datadog의 통합 대시보드와 알림 체계가 중요해진다.
-AI 서비스를 포함한 모든 클라우드 기반 워크로드가 결국 모니터링 대상이 되기 때문에, 클라우드·SaaS 성장과 함께 구조적으로 따라가는 비즈니스다.
-구독형 고성장 SaaS 기업이라 밸류에이션 변동성이 크지만, 제품 스택 확장으로 고객당 매출 상승 여지가 크다.
-  `,
-  NOW: `
-ServiceNow는 IT·HR·보안·고객 서비스 등 기업 내 다양한 워크플로우를 디지털로 연결하고 자동화하는 플랫폼을 제공한다.
-AI와 자연어 처리를 활용해 티켓 분류·요약·자동 응답을 구현하고, Copilot 방식의 경험을 엔터프라이즈 워크플로우에 도입하고 있다.
-고객의 디지털 전환·업무 자동화 수요에 기반한 반복 매출 구조로, 업그레이드·모듈 추가를 통해 성장한다.
-엔터프라이즈 IT 예산·경기 사이클에 영향을 받지만, 플랫폼 잠금 효과와 높은 고객 유지율을 보유한다.
-  `,
-  CRM: `
-Salesforce는 세일즈·마케팅·서비스·커머스·데이터 클라우드 등 CRM 전반을 아우르는 SaaS 플랫폼이다.
-Einstein AI와 데이터 클라우드를 통해 고객 데이터를 통합·분석하고, 영업·마케팅 자동화와 추천 기능을 제공한다.
-구독형 매출 구조와 강한 고객 락인을 가지고 있지만, 성장 둔화와 마진 개선 이슈로 재평가를 받는 중이다.
-AI 기능을 제대로 상용화하면 기존 고객당 매출 증대와 신규 모듈 판매를 통해 성장 여지가 있다.
-  `,
-  PLTR: `
-Palantir는 Gotham·Foundry·AIP를 통해 정부·국방·산업·금융 등에서 데이터 통합·분석·의사결정 지원 플랫폼을 제공한다.
-AIP(AI Platform)를 통해 다양한 LLM과 모델을 실제 운영 현장 시나리오에 연결하고, 워크플로우·권한·보안을 관리한다.
-데이터를 단순히 저장·조회하는 수준을 넘어, 정책 결정·운영 최적화·리스크 관리까지 연결하는 고부가 가치 영역에 포지셔닝되어 있다.
-정부·국방 계약 특성상 프로젝트 수·규모 변동이 크지만, 상업 고객 비중을 늘리며 비즈니스를 다변화하고 있다.
-  `,
-  BE: `
-Bloom Energy는 고체산화물 연료전지(SOFC)를 기반으로 천연가스·수소 등에서 전기를 생산하는 분산 전력 솔루션을 제공한다.
-데이터센터·산업 시설에서 그리드에 의존하지 않는 온사이트 전원으로 사용될 수 있어, 전력 품질·탄소 배출 이슈를 동시에 해결하는 옵션이 된다.
-AI 데이터센터의 전력 수요와 에너지 전환 요구가 맞물리면 장기 수혜 가능성이 있지만, 초기 CAPEX와 경제성, 연료 공급이 핵심 변수다.
-정책·연료 가격·기술 경쟁 등 복합 리스크를 동반하는 고위험·고잠재력 에너지 테크 기업이다.
-  `,
-  SMR: `
-NuScale Power는 소형 모듈형 원자로(SMR) 설계를 개발하는 회사로, 기존 대형 원전보다 작은 규모·모듈형·표준화된 원자로를 지향한다.
-장기적으로 데이터센터·산업단지·원격 지역 등에 24/7 기저부하 전력을 공급하는 역할을 목표로 하고 있어, AI 데이터센터 전원 후보 중 하나다.
-규제·인허가·정치적 논쟁·원전 수용성 문제로 상용화까지 시간이 오래 걸릴 수 있고, 프로젝트 지연 리스크가 크다.
-하지만 성공 시 에너지·데이터센터·산업 전반에 매우 큰 구조적 기회를 가질 수 있는 테마다.
-  `,
-  OKLO: `
-Oklo는 마이크로 규모의 소형 원자로를 개발해 데이터센터·원격지·산업용 전원 공급을 목표로 하는 초기 단계 원자력 스타트업이다.
-기존 대형 원전보다 훨씬 작은 규모·모듈형 설계를 통해 설비를 빠르게 배치하고, 데이터센터와 1:1에 가까운 전원 공급을 지향한다.
-기술·규제·사회적 수용성 등의 리스크가 매우 크고, 상용화까지 긴 시간이 필요할 수 있는 하이리스크·하이리턴 테마다.
-성공할 경우 AI 데이터센터 전력 문제를 해결하는 핵심 솔루션 중 하나로 부상할 가능성이 있다.
-  `,
-  CEG: `
-Constellation Energy는 원자력 발전 비중이 높은 전력 회사로, 미국에서 큰 규모의 원전 포트폴리오를 운영한다.
-데이터센터·산업체와 장기 PPA를 맺을 경우, 탄소중립 목표를 갖는 대형 고객에게 매력적인 전원 옵션을 제공할 수 있다.
-AI·클라우드 데이터센터 전력 수요 확대와 탈탄소 정책이 겹치면 성장 기회를 얻지만, 규제·정치·원전 이슈가 리스크다.
-유틸리티 특성상 안정적 캐시플로우를 바탕으로 하되, 성장 스토리는 정책·전력 수요에 크게 좌우된다.
-  `,
-  NEE: `
-NextEra Energy는 풍력·태양광 발전을 중심으로 한 재생에너지 사업과 플로리다 지역 유틸리티를 동시에 운영한다.
-재생에너지 생산·전력 판매·배터리 저장 등을 통해 AI 데이터센터를 포함한 대형 고객의 탄소중립 요구를 만족시킬 수 있는 포지션이다.
-고금리·정책 변화에 따라 밸류에이션·CAPEX 부담이 변동하지만, 미국 내 재생에너지 확대의 핵심 플레이어 중 하나다.
-유틸리티·인프라 사업 특성상 장기 계약과 규제 환경이 수익성을 좌우한다.
-  `,
-  CLS: `
-Celestica는 서버·스토리지·네트워크 장비·통신·산업 시스템 등을 제조·조립·설계하는 EMS(전자 제조 서비스) 기업이다.
-하이퍼스케일 데이터센터와 네트워크 장비 고객을 대상으로 맞춤형 서버·랙·하드웨어를 생산하면서 AI·클라우드 CAPEX의 간접 수혜를 받고 있다.
-고객사와의 장기 관계·공정 기술이 진입장벽이지만, 제조업 특성상 마진이 높지 않고 경기·CAPEX에 민감하다.
-AI 서버·네트워크 장비 생산 비중이 커질수록 믹스 개선 효과를 기대할 수 있다.
-  `,
-  // --- 이하 종목들은 설명 길이를 2~3문장으로 유지해서 전체 코드 길이를 맞춤 ---
-  AAPL: `
-Apple은 아이폰·맥·아이패드·웨어러블·서비스를 중심으로 한 소비자 기술 기업이다.
-디바이스·OS·서비스를 수직 통합해 생태계 락인을 만들고 있고, 기기 내 온디바이스 AI·클라우드 AI를 결합해 사용자 경험을 강화하려 한다.
-  `,
-  ABNB: `
-Airbnb는 숙박·체험 예약 플랫폼으로, 개인 호스트와 여행자를 연결한다.
-수수료 기반의 플랫폼 모델로 순이익 구조를 개선했고, 여행·체류 트렌드 변화에 민감하다.
-  `,
-  ADBE: `
-Adobe는 포토샵·일러스트레이터 등 크리에이티브 툴과 디지털 경험(마케팅) 솔루션을 제공하는 소프트웨어 기업이다.
-구독형 모델로 전환하여 안정적인 반복 매출을 만들었고, 생성형 AI를 크리에이티브 워크플로우에 통합하고 있다.
-  `,
-  AG: `
-First Majestic Silver는 은과 금을 생산하는 귀금속 채굴 회사로, 은 가격과 금 가격에 높은 레버리지를 가진다.
-원자재 가격·생산비·정치·환경 규제에 민감한 전형적인 자원주이다.
-  `,
-  AGX: `
-Argan은 에너지·전력·산업 플랜트 건설 프로젝트에 참여하는 엔지니어링·건설 회사다.
-프로젝트 수·규모·마진에 따라 실적 변동성이 크고, 에너지 인프라 CAPEX와 연동된다.
-  `,
-  ALL: `
-Allstate는 미국의 손해보험 회사로, 자동차·주택·생명보험 상품을 판매한다.
-보험료율·손해율·투자수익률에 따라 수익성이 결정되는 전형적인 보험 비즈니스 구조다.
-  `,
-  AMAT: `
-Applied Materials는 반도체 웨이퍼 공정에 필요한 증착·식각·CMP 등 다양한 공정 장비를 공급한다.
-메모리·로직·디스플레이 전반에 걸쳐 장비를 제공하며, AI 칩·HBM 생산 CAPEX 증대의 핵심 수혜업체 중 하나다.
-  `,
-  AMGN: `
-Amgen은 바이오 의약품을 개발·판매하는 대형 바이오텍으로, 자가면역·암·골다공증 등 영역에서 제품 포트폴리오를 보유한다.
-특허 만료·신약 개발 성공 여부가 장기 성장과 수익성을 좌우한다.
-  `,
-  ARM: `
-Arm Holdings는 모바일·서버·엣지 기기의 CPU 설계 IP를 라이선스로 제공하는 회사다.
-저전력·고효율 설계로 스마트폰 시장에서 표준이 되었고, 데이터센터·AI 가속기도 Arm 아키텍처를 채택하는 사례가 늘고 있다.
-  `,
-  APP: `
-AppLovin은 모바일 앱 마케팅·수익화 플랫폼을 운영하며, 게임 퍼블리싱도 병행하는 AdTech 기업이다.
-광고 수요와 모바일 게임 시장 환경에 따라 매출이 크게 변동할 수 있다.
-  `,
-  BK: `
-BNY Mellon은 글로벌 커스터디·자산서비스·자산운용 등을 제공하는 금융기관이다.
-예치자산·금리·수수료 수익이 핵심 수익원이며, 전통적인 금융 인프라 플레이어다.
-  `,
-  BLK: `
-BlackRock은 세계 최대 자산운용사로, ETF·펀드·기관운용 등에서 막대한 운용자산(AUM)을 관리한다.
-ETF·패시브 투자 확대로 구조적 수혜를 받고 있으며, 수수료 기반 비즈니스로 안정적인 현금흐름을 창출한다.
-  `,
-  BMNR: `
-BitMine Immersion은 비트코인 채굴에 특화된 기업으로, 침수 냉각(Immersion Cooling) 기반 인프라를 활용한다.
-비트코인 가격과 네트워크 난이도, 전기료에 수익성이 크게 좌우되는 고위험 자산이다.
-  `,
-  BSX: `
-Boston Scientific은 심혈관·내시경·비뇨기 등 다양한 의료기기를 제공하는 글로벌 메드텍 기업이다.
-고령화와 의료 수요 증가에 따라 구조적인 성장 여지가 있다.
-  `,
-  BTDR: `
-Bitdeer는 비트코인 채굴 및 호스팅 서비스를 제공하는 기업이다.
-채굴 난이도·비트코인 가격·전력비에 실적이 크게 연동된다.
-  `,
-  CAT: `
-Caterpillar는 건설·광산·에너지·운송용 중장비를 제조하는 글로벌 장비 업체다.
-인프라 투자·자원 채굴 CAPEX와 경기 사이클에 민감한 포지션이다.
-  `,
-  CDNA: `
-CareDx는 이식 환자를 위한 진단·모니터링 솔루션을 제공하는 바이오 진단 회사다.
-특정 니치 영역에 강점을 가지며, 보험 커버리지·임상 결과에 따라 성장성이 달라진다.
-  `,
-  CELH: `
-Celsius Holdings는 기능성 에너지 음료 브랜드를 운영하며, 급성장하는 프리미엄 음료 시장에 포지셔닝했다.
-유통 채널 확대와 브랜드 파워가 매출 확장의 핵심이며, 경쟁 심화와 밸류에이션이 리스크다.
-  `,
-  CL: `
-Colgate-Palmolive는 치약·비누·가정용품 등 생활 필수 소비재를 글로벌하게 판매하는 기업이다.
-경기 변동과 상관없이 비교적 안정적인 수요를 가진 방어적 소비재다.
-  `,
-  CLSK: `
-CleanSpark는 비트코인 채굴 사업을 운영하며, 효율적인 전력 운용과 확장을 통해 해시레이트를 늘리고 있다.
-비트코인 가격과 전력 비용에 크게 민감한 고위험 성장주다.
-  `,
-  COHR: `
-Coherent는 레이저·포토닉스 솔루션을 제공하며, 통신·산업·디스플레이·의료 등 다양한 시장에 진출해 있다.
-데이터센터·통신용 광모듈과 산업용 레이저 수요가 성장 포인트이며, 경기와 CAPEX에 민감하다.
-  `,
-  COIN: `
-Coinbase는 미국 기반 디지털 자산 거래소로, 리테일·기관 고객에게 거래·커스터디·스테이킹·온체인 솔루션을 제공한다.
-거래량·암호화폐 가격·규제 환경에 실적과 밸류에이션이 크게 영향을 받는다.
-  `,
-  COST: `
-Costco는 멤버십 기반의 창고형 할인점으로, 저마진·고회전 구조와 충성도 높은 고객층이 특징이다.
-멤버십 성장과 기존 점포의 매출 성장, 신흥국 확장이 장기적인 성장 동력이다.
-  `,
-  CSCO: `
-Cisco Systems는 엔터프라이즈·서비스 프로바이더용 네트워크 장비·보안 솔루션을 제공하는 전통적인 네트워크 강자다.
-데이터센터 AI 영역에서는 고성능 스위치·실리콘원 칩·보안 솔루션 등으로 참여하지만, 클라우드 네이티브 경쟁과 성장 둔화가 부담이다.
-  `,
-  AI: `
-C3.ai는 다양한 산업을 대상으로 AI 모델·워크플로우를 제공하는 엔터프라이즈 AI 소프트웨어 회사다.
-구체적인 수익화·성장 트랙 레코드에 대해 시장의 의심과 기대가 공존하는 종목이다.
-  `,
-  CRS: `
-Carpenter Technology는 항공·에너지·방산용 특수 합금과 금속 소재를 공급하는 회사다.
-항공·에너지 CAPEX와 국방 지출이 수요를 결정한다.
-  `,
-  D  
+      BE:"Energy / Power / Nuclear", CEG:"Energy / Power / Nuclear",
+      NEE:"Energy / Power / Nuclear", SMR:"Energy / Power / Nuclear",
+      OKLO:"Energy / Power / Nuclear", MNTK:"Energy / Power / Nuclear",
+      ETN:"Energy / Power / Nuclear", PNW:"Energy / Power / Nuclear",
 
-// NOTE: 생략 경고: 메시지 길이 제한 때문에 여기서부터 나머지 종목 설명을 모두 싣기에는 한계가 있어서,
-// 위와 같은 형식으로 각 티커에 대해 2–4문장 설명을 companyProfiles에 계속 추가하면 완전한 버전이 된다.
-// 구조는 그대로이므로, 네가 원하는 만큼 내 설명을 이어붙여 완성하면 된다.
-};
+      BLK:"Financials / Brokers", BK:"Financials / Brokers",
+      NU:"Financials / Brokers", SOFI:"Financials / Brokers",
+      COIN:"Financials / Brokers", FUTU:"Financials / Brokers",
+      ETOR:"Financials / Brokers", IVZ:"Financials / Brokers",
+      PYPL:"Financials / Brokers", UPST:"Financials / Brokers",
 
-/* ======================================================
-   STOCK DATA FETCHING (Polygon snapshot, 배치로 빠르게)
-====================================================== */
-let stockData = [];  // {symbol,name,sector,price,change,percent}
-let currentSort = { key: "name", direction: "asc" };
+      MARA:"Crypto Miners", RIOT:"Crypto Miners",
+      BTDR:"Crypto Miners", HUT:"Crypto Miners",
+      BMNR:"Crypto Miners", CLSK:"Crypto Miners",
 
-function chunkArray(arr, size) {
-  const res = [];
-  for (let i = 0; i < arr.length; i += size) {
-    res.push(arr.slice(i, i + size));
-  }
-  return res;
-}
+      LLY:"Healthcare / Bio", AMGN:"Healthcare / Bio",
+      MRNA:"Healthcare / Bio", ISRG:"Healthcare / Bio",
+      EXAS:"Healthcare / Bio", VRTX:"Healthcare / Bio",
+      TEVA:"Healthcare / Bio", EW:"Healthcare / Bio",
+      CDNA:"Healthcare / Bio", VCYT:"Healthcare / Bio",
+      NRIX:"Healthcare / Bio", TMO:"Healthcare / Bio",
+      BSX:"Healthcare / Bio", MPW:"Healthcare / Bio",
 
-async function loadStockPrices() {
-  const chunks = chunkArray(stocks, 40); // Polygon snapshot tickers 최대 50개 기준 여유
-  const map = new Map();
+      AAPL:"Consumer / Brand", ABNB:"Consumer / Brand",
+      CELH:"Consumer / Brand", DIS:"Consumer / Brand",
+      NFLX:"Consumer / Brand", PEP:"Consumer / Brand",
+      SBUX:"Consumer / Brand", WMT:"Consumer / Brand",
+      SPOT:"Consumer / Brand", KO:"Consumer / Brand",
+      COST:"Consumer / Brand", RBLX:"Consumer / Brand",
+      GME:"Consumer / Brand", ZM:"Consumer / Brand",
 
-  for (const chunk of chunks) {
-    const tickers = chunk.map(s => s.symbol).join(",");
-    const url = `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(tickers)}&apiKey=${POLYGON_API}`;
-    try {
-      const res = await fetch(url);
-      const json = await res.json();
-      if (json.tickers) {
-        json.tickers.forEach(t => {
-          map.set(t.ticker, {
-            price: t.lastTrade ? t.lastTrade.p : null,
-            change: t.todaysChange,
-            percent: t.todaysChangePerc
+      CAT:"Industrial / Infra", DE:"Industrial / Infra",
+      STLD:"Industrial / Infra", VMC:"Industrial / Infra",
+      MP:"Industrial / Infra", OTTR:"Industrial / Infra",
+      STRL:"Industrial / Infra", KTOS:"Industrial / Infra",
+      LMT:"Industrial / Infra", GE:"Industrial / Infra",
+      PH:"Industrial / Infra", TDY:"Industrial / Infra",
+      IESC:"Industrial / Infra", GEL:"Industrial / Infra",
+      ETRN:"Industrial / Infra", CLS:"Industrial / Infra"
+    };
+
+    // ---------- 회사 설명 (조금 더 디테일하게) ----------
+    // 많이 이야기한 기업들은 더 길게 적어둔다.
+    const companyProfiles = {
+      NVDA: `
+NVIDIA는 GPU 하드웨어뿐 아니라 CUDA 소프트웨어 스택, 라이브러리, 개발툴, DGX/MGX 서버 레퍼런스 디자인까지 보유한 AI 인프라 플랫폼 기업이다.
+데이터센터 매출 비중이 압도적으로 높고, H100·H200·B100·GB200 같은 AI 학습/추론용 GPU가 성장의 중심이다.
+CUDA 생태계에 대한 락인 효과가 강해 경쟁사 GPU가 등장하더라도 프레임워크·툴체인·라이브러리 호환성에서 우위가 유지되고 있다.
+NVLink·InfiniBand·Spectrum-X 등 네트워크·스위칭 제품으로 GPU 사이의 통신까지 장악하려는 전략을 펼치며, AI 서버 전체 스택에서 존재감을 확대 중이다.
+AI 수요 둔화와 하이퍼스케일러의 자체 칩(Trainium·TPU 등)이 중장기 리스크지만, 단기~중기에는 구조적 성장성이 여전히 매우 강한 편이다.
+      `,
+      AVGO: `
+Broadcom은 네트워크 스위칭/라우팅 칩, 스토리지 컨트롤러, NIC, RF·무선 칩, 그리고 VMware 인수로 확보한 인프라 소프트웨어를 동시에 보유한 복합 반도체/소프트웨어 기업이다.
+AI 데이터센터에서는 Tomahawk·Jericho 계열 고성능 스위칭 ASIC이 이더넷 기반 AI 클러스터의 핵심 칩으로 쓰이며, 대역폭이 높아질수록 ASP가 올라가는 구조를 가진다.
+VMware를 통해 온프레미스·하이브리드 클라우드 가상화 소프트웨어를 판매하면서, 반도체 사이클과 무관한 반복매출 비중도 키우고 있다.
+반도체+소프트웨어 조합 덕분에 높은 마진과 견조한 현금창출력을 유지하며, 데이터센터 트래픽 증가에 따른 구조적 수혜가 기대되는 이름이다.
+      `,
+      SMCI: `
+Super Micro Computer는 GPU·CPU 서버, 스토리지, 랙 솔루션을 모듈형으로 빠르게 커스터마이징해 공급하는 서버 ODM/OEM 기업이다.
+NVIDIA·AMD·Intel 등과 긴밀히 협력하여 최신 GPU를 가장 빠르게 탑재한 AI 서버를 내놓는 것이 강점이며, 리퀴드 쿨링·고밀도 랙 설계 등 AI 특화 하드웨어 역량이 높다.
+전통 OEM(Dell, HPE 등) 대비 제품 출시 속도와 구성 유연성이 뛰어나 하이퍼스케일러·AI 특화 고객들의 수요를 적극적으로 받는 포지션이다.
+AI 서버 CAPEX에 높은 레버리지를 가지는 만큼 성장성은 크지만, CAPEX 사이클 둔화 시 매출 변동성·마진 변동성도 함께 커지는 리스크가 존재한다.
+      `,
+      VRT: `
+Vertiv는 데이터센터와 통신시설을 위한 전력 인프라(UPS, PDU), 냉각 시스템(공랭·수랭), 랙 및 모듈형 데이터센터 솔루션을 제공하는 회사다.
+GPU 기반 AI 서버는 랙당 수십 kW 이상까지 전력 소모가 증가하고 발열이 극심하기 때문에, 고밀도 파워·쿨링 인프라에 대한 수요가 구조적으로 늘어나고 있다.
+Vertiv는 리퀴드 쿨링, 인클로저, 고효율 UPS 등에서 제품 포트폴리오를 빠르게 확장하며 AI 데이터센터용 특화 솔루션 비중을 올리고 있다.
+과거에는 경기민감형 인프라 회사에 가까웠지만, 지금은 AI 데이터센터 CAPEX 파도에 올라탄 구조적 성장주로 재평가받고 있다.
+      `,
+      PLTR: `
+Palantir는 대규모·복잡한 데이터를 통합하고 분석해 의사결정으로 연결하는 데이터 플랫폼 기업으로, Gotham(정부/국방), Foundry(상업), AIP(AI Platform)를 보유하고 있다.
+기본적으로 데이터 파이프라인·모델·워크플로우를 한 번에 관리할 수 있는 소프트웨어를 제공하며, 정부·국방처럼 미션 크리티컬 분야에 깊숙이 들어가 있다.
+AIP는 LLM 및 다양한 AI 모델을 실제 운영 환경에 배포·통제·감사할 수 있게 하는 계층으로, “모델을 직접 만드는 회사”라기보다는 “모델을 활용한 의사결정 계층”에 포지셔닝되어 있다.
+정부 매출이 안정적인 캐시카우 역할을 하고, 상업 부분은 AI 도입 수요에 따라 고성장 잠재력이 있지만, 밸류에이션 변동성과 계약 구조에 따른 실적 변동성 리스크도 공존한다.
+      `,
+      CRDO: `
+Credo Technology는 100G~800G, 나아가 1.6T급 고속 데이터 전송을 위한 AEC(Active Electrical Cable), DSP, SerDes 솔루션을 제공하는 팹리스 반도체 기업이다.
+AI 데이터센터 내에서 GPU·CPU·NIC·스위치 사이를 저전력·저지연으로 연결하기 위해 고속 인터커넥트가 필수이고, Credo의 솔루션은 전기적 케이블 기반에서 거리·속도 제약을 완화해주는 역할을 한다.
+UALink, 고속 이더넷 기반 AI 클러스터 설계 트렌드와 맞물려 수요가 커질 수 있으나, 프로젝트별 변동성과 경쟁사의 진입(브로드컴, 마벨 등)이 리스크 요인이다.
+      `,
+      ALAB: `
+Astera Labs는 CXL, PCIe, 메모리 확장, 리타이머 등 CPU-메모리-가속기-스토리지 사이의 고속 인터커넥트 토폴로지 솔루션을 제공하는 팹리스 반도체 기업이다.
+AI 서버에서는 GPU 메모리(HBM) 외에도 CPU 메모리, 스토리지, 기타 가속기와의 데이터 이동 효율이 중요해지고 있으며, CXL 기반 메모리 풀링·확장 구조가 각광받고 있다.
+Astera의 제품은 이러한 CXL 토폴로지에서 필수적인 스위치/리타이머 역할을 하며, CXL 생태계가 본격적으로 열릴 경우 매출 레버리지가 크게 발생할 수 있다.
+다만 시장이 아직 초기 단계라 고객 채택 속도와 기술 표준 방향, 경쟁사의 진입 여부에 따라 실적과 밸류에이션 변동성이 클 수 있다.
+      `,
+      ASML: `
+ASML은 첨단 반도체 제조에 사용되는 노광장비, 특히 7nm 이하 공정에 필수적인 EUV(극자외선) 노광기를 사실상 독점 공급하는 기업이다.
+TSMC, 삼성, 인텔 등 파운드리와 IDM들이 3nm, 2nm 공정에 진입하기 위해서는 ASML 장비가 필수이며, High-NA EUV로 진화하면서 장비당 ASP와 기술 장벽이 더 높아지는 구조다.
+AI 칩, HBM, 고급 CPU/GPU를 생산하는 모든 첨단 공정 CAPEX가 ASML 장비 수요로 이어지기 때문에, AI 인프라 장기 CAPEX의 최상위에 있는 공급자라고 볼 수 있다.
+다만 미·중 수출 규제, 글로벌 반도체 CAPEX 사이클에 따른 주문 변동성이 리스크다.
+      `,
+      TSM: `
+TSMC는 전 세계 1위 파운드리로, NVIDIA·AMD·Apple·Qualcomm·자체 AI 칩을 만드는 빅테크 등 대부분의 첨단 칩을 생산하는 위탁 제조사이다.
+5nm, 3nm, 2nm 등 첨단 공정을 선도하며, AI GPU·CPU·가속기와 HBM, 모바일 AP까지 폭넓게 생산한다.
+공정이 미세해질수록 웨이퍼 ASP와 수익성이 올라가는 구조이며, AI 칩 비중이 커질수록 수익성이 좋아지는 방향이다.
+지리적 리스크(대만)와 미국·유럽 현지 공장 투자에 따른 CAPEX 부담이 중장기 변수로 존재하지만, 기술 우위 기반의 장기 구조적 성장 스토리는 여전히 유효하다.
+      `,
+      SITM: `
+SiTime은 기존 쿼츠 크리스털 기반 타이밍·클럭 소자를 대체하는 MEMS 기반 타이밍 솔루션을 제공하는 팹리스 기업이다.
+데이터센터 서버, 네트워크 장비, 5G 인프라, 자동차, 산업용 기기 등에서 정밀한 타이밍·클럭 제어가 필요하며, 온도·충격·전력 효율 측면에서 MEMS의 장점이 부각되고 있다.
+AI 서버·고속 스위치·라우터가 복잡해질수록 타이밍 솔루션의 품질과 유연성이 중요해져 장기 TAM이 넓어질 수 있는 구조지만, 아직 매출 규모가 작아 사이클·고객 의존도가 리스크 요인이다.
+      `,
+      CDNS: `
+Cadence Design Systems는 반도체 설계 자동화(EDA) 소프트웨어와 IP를 제공하는 회사로, 칩 설계자들이 회로 설계·검증·레이아웃·시뮬레이션을 수행할 때 필수적으로 사용하는 툴을 공급한다.
+AI칩·고속 인터커넥트·전력 최적화와 같이 복잡도가 높은 설계가 늘어날수록 EDA툴에 대한 의존도는 커지며, Fab/Foundry와의 공정 연계도 강화된다.
+소프트웨어 라이선스/구독 기반 비즈니스 모델 덕분에 높은 마진 구조를 유지하고 있으며, 글로벌 칩 설계 CAPEX와 함께 장기적으로 성장하는 올리고폴리 과점 산업의 핵심 플레이어 중 하나다.
+      `,
+      AMAT: `
+Applied Materials는 반도체 웨이퍼 공정 전반(증착, 식각, CMP, 검사 등)에 필요한 장비를 공급하는 종합 반도체 장비 회사이다.
+메모리·로직·파운드리 전 영역에 폭넓게 제품을 공급하며, 공정 미세화·3D 구조(HBM, 3D NAND 등)로 인해 웨이퍼당 공정 단계가 늘어나면서 장비 수요도 구조적으로 증가하는 편이다.
+AI 칩·HBM 투자 확대로 첨단 공정 CAPEX가 늘어나는 구간에서는 수혜를 받고, 반도체 업황이 꺾이는 구간에서는 주문이 줄어드는 명확한 사이클 산업 특성을 갖는다.
+      `,
+      LRCX: `
+Lam Research는 식각·증착 등 파운드리/메모리 공정에서 핵심이 되는 장비를 공급하는 회사로, 특히 메모리와 3D 구조 공정에 강점을 갖고 있다.
+HBM·3D NAND·고집적 DRAM과 같이 층수가 많아지고 구조가 복잡해질수록 식각·증착 공정의 난이도가 높아지며, Lam 장비의 중요성이 커진다.
+AI 시대에 메모리 대역폭과 용량이 중요해지면서 메모리 CAPEX가 장기적으로 늘어날 경우, Lam은 그 상단에 있는 장비 공급자로서 구조적 수혜를 볼 수 있다.
+      `,
+      MRVL: `
+Marvell Technology는 데이터센터, 5G 통신, 스토리지, 자동차 등에서 사용되는 고성능 SoC·네트워크·스토리지 컨트롤러를 설계하는 팹리스 반도체 기업이다.
+AI 데이터센터에서는 커스텀 ASIC·가속기, 고속 네트워크·스토리지 솔루션에서 역할을 할 수 있으며, 특히 하이퍼스케일러들의 자체 AI 칩 설계 프로젝트에 참여하는 구조가 관심 포인트다.
+5G·클라우드·자동차 등 다변화된 엔드마켓을 가지고 있어 특정 영역 사이클에 대한 완충 역할도 수행한다.
+      `,
+      MU: `
+Micron Technology는 DRAM·NAND·HBM 등 메모리 반도체를 공급하는 기업으로, 서버·PC·모바일·자동차·산업용 등 전 영역에 메모리를 공급한다.
+AI 학습용 GPU에는 대용량·초고대역폭 메모리인 HBM이 필수로 탑재되며, HBM CAPEX·라인 전환이 본격화될수록 Micron의 수익성이 개선될 수 있다.
+메모리 산업 특성상 공급·수요 불균형에 따라 가격 변동성과 실적 변동성이 크지만, AI 시대에는 고부가 메모리 비중이 늘어나는 방향이라 장기 체질은 개선되는 중이다.
+      `,
+      MSFT: `
+Microsoft는 Windows, Office, Azure, GitHub, LinkedIn, Dynamics, Xbox 등 광범위한 포트폴리오를 보유한 빅테크로, 최근에는 Copilot과 Azure OpenAI를 중심으로 AI 플랫폼 회사로 재정의되고 있다.
+Azure 클라우드는 NVIDIA GPU와 자체 AI 칩(MAIA, Azure Cobalt 등)을 조합하여 AI 인프라를 구축하고 있으며, OpenAI와의 전략적 파트너십을 통해 GPT 계열 모델을 가장 먼저 상용화해왔다.
+Office/M365, Windows, 서버, Azure 등 핵심 비즈니스가 반복매출 구조라 캐시플로우가 매우 강하고, AI 도입이 성공적으로 자리잡으면 클라우드 ARPU 상승과 Copilot 프리미엄을 통한 추가 수익이 기대된다.
+      `,
+      AMZN: `
+Amazon은 이커머스·프라임·물류·광고와 함께 AWS 클라우드를 보유한 빅테크로, AWS가 회사 전체 이익의 상당 부분을 책임져왔다.
+AWS는 NVIDIA GPU와 자체 칩 Trainium/Inferentia를 통해 AI 학습·추론 인프라를 제공하고, Amazon Bedrock 및 다양한 AI 서비스로 고객에게 모델/플랫폼을 제공하는 구조다.
+또한 물류/재고/추천/검색에 AI를 깊게 적용하며, 리테일+광고+클라우드 영역에서 동시다발적으로 AI를 도입하는 케이스 스터디 역할을 하고 있다.
+      `,
+      GOOGL: `
+Alphabet(구글)은 검색, 유튜브, 안드로이드, GCP, 지도, 광고 네트워크 등을 보유한 빅테크로, 광고와 클라우드를 두 축으로 성장해왔다.
+TPU라는 자체 AI 가속기를 설계·운영하며, Gemini 등 LLM을 통해 검색·광고·클라우드·워크스페이스 전반에 AI를 녹이고 있다.
+광고 비즈니스 구조가 AI 도입으로 어떻게 변화할지에 대한 불확실성은 있지만, 제대로 모네타이즈할 경우 클릭당 가치 상승 여지도 있는 상태다.
+      `,
+      NET: `
+Cloudflare는 글로벌 CDN, DDoS 방어, DNS, WAF, Zero Trust 보안, 엣지 컴퓨팅(Workers) 플랫폼을 제공하는 인터넷 인프라 기업이다.
+사용자와 가까운 네트워크 엣지에서 서비스를 처리하는 구조라, API·웹서비스·게임·AI inference를 빠르게 제공하는 데 적합하다.
+AI 모델 추론을 엣지에서 수행하려는 흐름과 함께 Workers AI, 벡터 DB 등의 서비스도 확장 중이며, 구독형 SaaS 모델이라 높은 성장률과 마진을 목표로 하고 있다.
+      `,
+      SNOW: `
+Snowflake는 클라우드 기반 데이터 웨어하우스·데이터 클라우드를 제공하는 기업으로, AWS·Azure·GCP 위에서 고객 데이터를 저장·분석·공유하는 플랫폼이다.
+AI 모델의 연료가 되는 정제된 데이터·메타데이터·카탈로그를 관리하는 역할을 하며, 최근에는 Snowflake Cortex, Native Apps 등으로 AI·애플리케이션 계층까지 확장하고 있다.
+고객이 Snowflake 위에 데이터를 모으면 클라우드간 전환 비용이 커지는 데이터 락인 효과가 있고, 사용량 기반 요금제로 데이터/쿼리 사용량 증가에 따라 매출이 확대된다.
+      `,
+      DDOG: `
+Datadog은 클라우드 인프라 모니터링, APM, 로그 관리, 보안, RUM 등 관측성(Observability) 플랫폼을 제공하는 SaaS 기업이다.
+마이크로서비스·컨테이너·서버리스 등 복잡한 클라우드 환경에서 서비스 상태와 성능을 한 눈에 볼 수 있게 하는 도구로, 클라우드 채택과 함께 구조적으로 성장해왔다.
+AI 서비스도 결국 API와 마이크로서비스 형태로 돌아가기 때문에, AI 관련 워크로드 증가 역시 관측성 니즈를 키우는 방향으로 작용한다.
+      `,
+      NOW: `
+ServiceNow는 IT·업무 워크플로우 자동화를 위한 플랫폼으로, ITSM, HR, 보안, 운영, 고객 서비스 등 기업 내 다양한 프로세스를 디지털로 연결해준다.
+LLM과 AI를 결합해 티켓 분류·요약·자동응답·추천 워크플로우 등을 구현하는 방향으로 진화 중이며, 'AI로 업무 흐름을 실제로 바꾸는' 계층에 포지셔닝되어 있다.
+대부분 구독형 라이선스 기반이라 반복매출 구조가 탄탄하고, 대형 엔터프라이즈 고객으로 확장하면서 장기 성장성이 높게 평가된다.
+      `,
+      CRM: `
+Salesforce는 세일즈·마케팅·서비스·커머스·데이터 클라우드 등 CRM 중심의 SaaS 포트폴리오를 제공하는 기업이다.
+고객·매출·캠페인 데이터를 데이터 클라우드에 모아두고, Einstein AI와 GPT를 활용해 리드 점수화, 개인화 마케팅, 자동 이메일 작성, 영업 인사이트 추천 등을 제공한다.
+CRM 데이터에 AI를 붙이는 구조라 고객 이탈이 어려운 편이고, 모듈 간 크로스셀링·업셀링 여지가 크다는 점이 강점이다.
+      `,
+      BE: `
+Bloom Energy는 고체산화물 연료전지(SOFC)를 기반으로 하는 분산 전력 솔루션을 제공하는 회사다.
+천연가스·수소를 연료로 전력을 생산하며, 데이터센터·상업시설·산업현장에서 그리드 의존도를 낮추고 안정적인 전력을 제공하려는 수요를 겨냥하고 있다.
+AI 데이터센터의 전력 수요와 그리드 제약이 심해질수록 온사이트 파워·분산 발전 솔루션에 대한 관심이 커질 수 있으나, 경제성과 정책 환경에 따라 수요 변동성이 크다는 리스크가 있다.
+      `,
+      SMR: `
+NuScale Power는 소형 모듈형 원자로(SMR) 설계를 개발하는 회사로, 기존 대형 원전보다 작은 단위로 모듈화된 원자로를 제공하는 것을 목표로 한다.
+장기적으로 데이터센터·산업·원격지역에 24/7 탄소중립 전력을 공급하기 위한 옵션으로 거론되지만, 아직 인허가·상용화 단계에서 시간이 많이 필요하다.
+정책·규제·사회적 수용성 등 비즈니스 외부 변수에 상당히 의존하는 구조다.
+      `,
+      OKLO: `
+Oklo는 더 작은 스케일의 마이크로 원자로를 개발해 데이터센터·원격지역 등에서 자체 전원으로 사용하는 모델을 지향하는 초기 단계 기업이다.
+데이터센터의 전력 수요를 SMR보다 더 작은 단위로 맞추려는 비전이 있지만, 기술·규제·정책 불확실성이 극도로 높은 영역이다.
+장기적인 옵션성(옵션 플레이)에 가깝고, 단기 수익성·실적 가시성은 매우 낮은 편이다.
+      `,
+      COIN: `
+Coinbase는 미국 중심의 암호화폐 거래소로, 리테일·기관을 대상으로 현물·파생상품 거래, 커스터디, 스테이킹, 온체인 인프라 등을 제공한다.
+규제 준수와 보안 측면에서 비교적 신뢰도 높은 거래소라는 인식을 갖고 있으며, 온체인 경제와 전통 금융 사이를 잇는 브리지 역할을 한다.
+비트코인·알트코인 가격과 거래량에 민감하게 반응하는 수익 구조지만, 장기적으로 ETF, 기관 커스터디, 온체인 결제 등 새로운 비즈니스 라인을 추가하려 하고 있다.
+      `,
+      MARA: `
+Marathon Digital은 대규모 비트코인 채굴 인프라를 운영하는 회사로, 해시레이트 확대와 전력 계약을 통해 채굴 효율을 높이는 데 집중한다.
+비트코인 가격에 높은 레버리지를 가지는 구조라 상승장에서는 이익 레버리지가 크게 나타나지만, 하락장에서는 손실·자본 조달 리스크가 커지는 전형적인 고변동 채굴주다.
+일부 채굴 인프라는 향후 AI/HPC 콜로케이션으로 전환하는 옵션이 거론되기도 하지만, 현재 매출 구조는 비트코인 채굴에 거의 전적으로 의존하고 있다.
+      `,
+      RIOT: `
+Riot Platforms는 북미 기반 비트코인 채굴 기업으로, 장기 전력 계약을 기반으로 해시레이트를 확장하고 있다.
+비트코인 가격과 난이도, 전력비용에 따라 실적 변동성이 크며, 채굴 장비 CAPEX·전력 인프라 투자에 대한 재무 레버리지 리스크가 있다.
+      `,
+      BTDR: `
+Bitdeer는 비트코인 채굴·클라우드 마이닝·호스팅을 제공하는 기업으로, 채굴 인프라를 직접 운영하거나 고객에게 임대하는 비즈니스 모델을 가지고 있다.
+해시레이트와 비트코인 가격에 높은 레버리지 구조를 가지며, 자본집약·전력집약적인 비즈니스 특성상 사이클 변동성이 크다.
+      `,
+      HUT: `
+Hut 8 Mining은 북미 기반 비트코인 채굴 기업으로, 데이터센터 인프라와 전력 계약을 바탕으로 채굴과 호스팅 사업을 병행한다.
+장기적으로 일부 데이터센터 용량을 AI/HPC로 전환할 가능성이 거론되지만, 현재 매출은 비트코인 가격과 채굴 환경에 크게 좌우된다.
+      `,
+      CLSK: `
+CleanSpark는 비트코인 채굴 기업으로, 상대적으로 효율적인 장비·전력 조합으로 해시레이트당 비용을 낮추려는 전략을 취하고 있다.
+비트코인 채굴에 따른 수익성은 시장 사이클과 난이도에 따라 크게 변동하며, 전력비·CAPEX 관리가 핵심 변수다.
+      `,
+      AAPL: `
+Apple은 아이폰·맥·아이패드·워치·에어팟 등 하드웨어와 iOS·맥OS·App Store·서비스 구독을 결합한 생태계를 구축한 빅테크다.
+하드웨어 교체주기와 서비스 구독이 결합된 구조라 강한 락인 효과와 꾸준한 현금창출력을 보유하고 있으며, 자체 칩 설계(Apple Silicon)로 성능·전력 효율을 끌어올렸다.
+AI 측면에서는 온디바이스 AI와 프라이버시를 강조하는 방향으로 전략을 짜고 있고, 생태계 내에서 서서히 노출을 늘리고 있다.
+      `,
+      ABNB: `
+Airbnb는 개인과 숙박 공간 제공자를 연결하는 숙박·체험 공유 플랫폼으로, 자산을 직접 보유하지 않고 수수료를 받는 마켓플레이스 모델이다.
+호텔 대비 다양한 숙소와 현지 경험을 제공하며, 여행 수요 회복과 함께 구조적 성장을 이어왔다.
+규제·세금 이슈, 거시 환경에 따른 여행 수요 변동이 주요 변수다.
+      `,
+      ADBE: `
+Adobe는 포토샵, 프리미어, 일러스트레이터, 애크로뱃 등 크리에이티브 및 문서 소프트웨어를 제공하는 기업으로, 대부분을 구독형 Creative Cloud·Document Cloud로 전환하였다.
+창작·디자인·영상·마케팅 등 디지털 콘텐츠 제작 툴의 사실상 표준에 가까우며, AI 이미지·영상 생성 기능(Firefly 등)을 내장해 워크플로우 생산성을 높이는 방향으로 진화하고 있다.
+구독형 소프트웨어 특성상 높은 마진과 반복매출 구조를 바탕으로 안정적인 성장 스토리를 가지고 있다.
+      `,
+      AG: `
+First Majestic Silver는 은(실버) 중심의 귀금속 채굴 기업으로, 은 가격에 레버리지된 플레이 성격이 강하다.
+실물 은 수급뿐 아니라 금리, 달러, 금/은 가격 스프레드 등 거시 변수에 민감하게 반응하며, 변동성이 큰 편이다.
+      `,
+      AGX: `
+Argan은 발전소·산업 인프라 EPC(설계·조달·시공) 프로젝트를 수행하는 엔지니어링 회사다.
+가스발전, 재생에너지 등 발전 프로젝트 수주에 따라 실적이 크게 좌우되며, 프로젝트 수·규모에 따라 분기별 변동성이 크다.
+      `,
+      ALL: `
+Allstate는 자동차·주택·생명보험 등을 제공하는 대형 손해보험사다.
+보험료율·손해율·투자수익률에 따라 실적이 좌우되며, 장기적으로는 보험료 인상과 리스크 관리 능력이 경쟁력의 핵심이다.
+      `,
+      AMGN: `
+Amgen은 바이오의약품 중심의 빅파마로, 항체·재조합 단백질 기반 치료제 포트폴리오를 보유하고 있다.
+만성 질환·희귀질환 분야에서 캐시카우 제품과 파이프라인을 동시에 운영하며, 바이오시밀러와의 경쟁·특허만료 리스크를 관리하는 구조다.
+      `,
+      ANET: `
+Arista Networks는 클라우드 데이터센터용 고성능 스위치와 EOS 네트워크 운영체제를 제공하는 네트워킹 회사다.
+하이퍼스케일러·클라우드 고객 비중이 높으며, AI 클러스터를 이더넷 기반으로 구성하는 흐름에서 고대역폭 스위치 수요가 증가하는 구조적 수혜를 받고 있다.
+Broadcom 스위칭 ASIC 위에 소프트웨어·시스템 통합 역량을 더해 차별화된 네트워크 솔루션을 제공한다.
+      `,
+      ANSS: `
+Ansys는 구조·유체·전자기 등 물리 시뮬레이션을 수행하는 CAE(Computer-Aided Engineering) 소프트웨어를 제공하는 기업이다.
+자동차·항공우주·반도체·전력 전자 등 복잡한 물리 환경을 가진 제품 설계에서 필수 도구로 자리잡고 있으며, 모델 복잡성이 높아질수록 CAE 의존도도 함께 증가한다.
+구독·라이선스 기반 비즈니스 모델로 높은 마진과 반복매출 구조를 가지고 있다.
+      `,
+      APP: `
+AppLovin은 모바일 광고·측정·수익화 플랫폼과 게임 퍼블리싱 사업을 동시에 운영하는 기업이다.
+기기·앱 사용 데이터를 활용해 퍼포먼스 광고를 최적화하고, 자사·파트너 게임의 수익화를 극대화하는 모델을 갖고 있다.
+광고 환경 규제(ATT 등) 변화와 경쟁사 대비 타게팅 성능이 핵심 변수다.
+      `,
+      ARM: `
+Arm Holdings는 모바일·임베디드 등 저전력 CPU 아키텍처 IP를 설계하고 라이선스로 수익을 내는 기업이다.
+스마트폰·IoT뿐 아니라 서버·AI 가속기·자동차 등으로 아키텍처 영향력을 확장하고 있으며, Arm 기반 칩의 출하량이 늘어날수록 로열티 수익이 늘어나는 구조다.
+x86 대비 전력 효율이 높다는 점이 서버·클라우드 분야에서도 점점 더 부각되고 있다.
+      `,
+      BE: companyProfiles.BE, // 위에서 이미 정의
+      BK: `
+BNY Mellon은 글로벌 자산보관·수탁·자산관리 업무에 특화된 금융사로, 금융 시스템의 백엔드 인프라 역할을 한다.
+자산운용사·기관투자자의 자산을 보관·정산·관리하면서 수수료 수익을 얻는 구조이며, 거래량·시장 규모에 연동되는 안정적인 비즈니스 모델을 갖고 있다.
+      `,
+      BLK: `
+BlackRock은 세계 최대 자산운용사로, iShares ETF·인덱스 펀드·액티브 펀드·대체투자 등 다양한 운용 상품을 제공한다.
+글로벌 자본시장 전체에 분산된 수수료 비즈니스라 시장 규모·자산가격 상승에 레버리지되는 구조이고, ETF·인덱스화 트렌드의 핵심 수혜자다.
+      `,
+      BMNR: `
+BitMine Immersion Technologies는 침지식 냉각(Immersion Cooling) 기반 암호화폐 채굴 인프라에 초점을 둔 기업이다.
+채굴 효율을 높이고 전력·쿨링 비용을 낮추는 방향으로 하드웨어·인프라를 설계하지만, 비트코인 가격과 난이도에 따른 변동성에서 자유롭지 않다.
+      `,
+      BSX: `
+Boston Scientific은 심혈관·신경계·비뇨기·내시경 등 다양한 영역의 의료기기를 제조하는 기업이다.
+고령화와 의료 기술 발전에 따라 구조적인 수요가 증가하는 분야에 강점이 있으며, 새로운 시술법과 디바이스 혁신이 성장을 견인한다.
+      `,
+      CAT: `
+Caterpillar는 건설·광산·에너지 분야에서 사용되는 중장비 대표 기업으로, 굴착기·덤프 트럭·엔진 등을 공급한다.
+인프라 투자·자원개발 CAPEX에 따라 실적이 크게 좌우되는 전형적인 경기민감 산업에 속하며, 글로벌 인프라 투자 확대의 장기 수혜를 볼 수 있다.
+      `,
+      CEG: companyProfiles.CEG || `
+Constellation Energy는 원자력·가스·재생에너지 발전 자산을 보유한 전력 회사로, 대형 발전소 운영을 통해 도매 전력을 공급한다.
+전력 가격·연료비·정책에 따라 실적이 달라지며, 탄소중립·원전 재평가 흐름과 데이터센터 전력 수요 증가가 장기 테마로 작용할 수 있다.
+      `,
+      CELH: `
+Celsius Holdings는 기능성 에너지 드링크를 제조·판매하는 회사로, 건강한 라이프스타일 이미지와 강한 브랜드 마케팅으로 고성장을 이어왔다.
+대형 유통망 입점과 인플루언서·SNS 마케팅을 결합해 빠르게 점유율을 높이는 전략을 취하고 있다.
+      `,
+      CL: `
+Colgate-Palmolive는 치약·칫솔·비누·세제 등 기초 생활용품을 제조·판매하는 글로벌 소비재 기업이다.
+경기 변동에도 수요가 크게 줄지 않는 방어적 성격을 가진 캐시카우 사업이며, 신흥국 성장과 프리미엄 제품 믹스 개선이 장기 성장 요소다.
+      `,
+      CLSK: companyProfiles.CLSK,
+      CLS: `
+Celestica는 서버·네트워크장비·산업·에너지 장비 등 다양한 하드웨어를 설계·제조하는 EMS/ODM 기업이다.
+AI 서버·통신·전력 인프라 등 고부가 프로젝트 비중이 늘어나면서 마진 구조가 과거보다 개선되는 추세며, 고객 다변화와 프로젝트 믹스가 핵심 변수다.
+      `,
+      COHR: `
+Coherent는 통신, 디스플레이, 반도체, 방산 등에서 사용되는 레이저·광학·포토닉스 제품을 제공하는 기업이다.
+광학통신과 고출력 레이저, 포토닉스 응용 분야가 성장하면서 장기적인 포지션이 좋아지고 있지만, 각 최종시장의 사이클 영향도 동시에 받는다.
+      `,
+      COST: `
+Costco는 멤버십 기반 창고형 할인점을 운영하는 소매업체로, 저마진·고회전 구조를 회원제와 결합해 높은 효율을 만든 기업이다.
+회원 수 증가와 동일점포 매출 성장이 주요 성장 동력이며, 멤버십 수수료는 경기 상황과 무관하게 비교적 안정적으로 유지되는 캐시카우 역할을 한다.
+      `,
+      // ... 이하 나머지 종목들도 비슷한 패턴으로 2~4문장 요약을 계속 추가 가능
+      // 여기서는 길이 제한 때문에 핵심·빈도 높은 종목 위주로 더 자세히 넣었고
+      // 나머지는 필요할 때 점진적으로 보강하면 됨.
+    };
+
+    // 비어 있는 종목에 기본 설명 넣기 (최소 한 줄이라도 나오게)
+    stocks.forEach(s => {
+      if (!companyProfiles[s.symbol]) {
+        companyProfiles[s.symbol] = `${s.name} (${s.symbol})에 대한 상세 리포트는 아직 요약 중입니다. 기본적으로 섹터 내에서 일반적인 역할을 수행하는 기업으로, 재무/성장성/리스크를 개별적으로 추가 분석해서 보는 것이 좋습니다.`;
+      }
+    });
+
+    const stakingManual = [
+      { asset: "AVAX", platform: "Bybit Earn",      apy: 7.5, note: "30d Lock (예시)" },
+      { asset: "SUI",  platform: "On-chain Staking", apy: 6.2, note: "Validator (예시)" },
+      { asset: "APT",  platform: "On-chain Staking", apy: 7.0, note: "예시 값" }
+    ];
+
+    let usdKrwRate = null;
+    let quoteCache = {};
+
+    function formatNumber(n, decimals = 2) {
+      if (n === null || n === undefined || isNaN(n)) return "–";
+      return Number(n).toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function setLastUpdated() {
+      const el = document.getElementById("last-updated");
+      const now = new Date();
+      const pad = (x) => String(x).padStart(2, "0");
+      el.textContent =
+        `Last update ${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} `
+        + `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    }
+
+    // ---------- Equities 테이블 ----------
+    function renderStocksTableSkeleton() {
+      const container = document.getElementById("stocks-container");
+      if (!container) return;
+
+      const groups = {};
+      for (const s of stocks) {
+        const sector = sectorTag[s.symbol] || "Other / Unclassified";
+        if (!groups[sector]) groups[sector] = [];
+        groups[sector].push(s);
+      }
+      const sectorNames = Object.keys(groups).sort();
+
+      const html = sectorNames.map((sector) => {
+        const rows = groups[sector]
+          .sort((a, b) => a.symbol.localeCompare(b.symbol))
+          .map((s) => `
+            <tr class="clickable-row" data-symbol="${s.symbol}">
+              <td>${s.symbol}</td>
+              <td>${s.name}</td>
+              <td id="price-${s.symbol}" class="muted">…</td>
+              <td id="chg-${s.symbol}" class="muted">…</td>
+              <td id="chgPct-${s.symbol}" class="muted">…</td>
+            </tr>
+          `).join("");
+        return `
+          <div class="sector-block">
+            <div class="sector-title">${sector}</div>
+            <table>
+              <thead>
+                <tr>
+                  <th data-col="symbol" class="sortable">Symbol</th>
+                  <th data-col="name">Name</th>
+                  <th data-col="price" class="sortable">Price (USD)</th>
+                  <th data-col="change" class="sortable">Change</th>
+                  <th data-col="changePct" class="sortable">Δ%</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }).join("");
+
+      container.innerHTML = html;
+
+      // 행 클릭 이벤트
+      document
+        .querySelectorAll("#stocks-container .clickable-row")
+        .forEach((row) => {
+          row.addEventListener("click", () => {
+            const sym = row.getAttribute("data-symbol");
+            toggleInsight(row, sym);
           });
         });
+
+      // 헤더 정렬 이벤트
+      attachSortingHandlers();
+    }
+
+    function attachSortingHandlers() {
+      const sectorBlocks = document.querySelectorAll("#stocks-container .sector-block");
+      sectorBlocks.forEach((block) => {
+        const table = block.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const headers = table.querySelectorAll("th");
+
+        headers.forEach((th, idx) => {
+          const col = th.getAttribute("data-col");
+          if (!col || (col !== "price" && col !== "change" && col !== "changePct" && col !== "symbol")) {
+            return;
+          }
+          th.classList.add("sortable");
+          th.addEventListener("click", () => {
+            const currentDir = th.getAttribute("data-sort-dir") || "none";
+            const newDir = currentDir === "asc" ? "desc" : "asc";
+            headers.forEach(h => h.removeAttribute("data-sort-dir"));
+            th.setAttribute("data-sort-dir", newDir);
+
+            const rows = Array.from(tbody.querySelectorAll("tr"))
+              .filter(r => !r.classList.contains("insight-row"));
+
+            rows.sort((a, b) => {
+              const aText = a.children[idx].innerText.replace(/,/g,"");
+              const bText = b.children[idx].innerText.replace(/,/g,"");
+              let comp = 0;
+              if (col === "symbol") {
+                comp = aText.localeCompare(bText);
+              } else {
+                const aVal = parseFloat(aText);
+                const bVal = parseFloat(bText);
+                if (isNaN(aVal) && isNaN(bVal)) comp = 0;
+                else if (isNaN(aVal)) comp = 1;
+                else if (isNaN(bVal)) comp = -1;
+                else comp = aVal - bVal;
+              }
+              return newDir === "asc" ? comp : -comp;
+            });
+
+            rows.forEach(r => tbody.appendChild(r));
+          });
+        });
+      });
+    }
+
+    function applyQuoteToRow(symbol, quote) {
+      const priceEl = document.getElementById(`price-${symbol}`);
+      const chgEl = document.getElementById(`chg-${symbol}`);
+      const chgPctEl = document.getElementById(`chgPct-${symbol}`);
+      if (!priceEl || !chgEl || !chgPctEl) return;
+
+      const cls =
+        quote.change > 0 ? "positive" :
+        quote.change < 0 ? "negative" : "muted";
+
+      priceEl.textContent = formatNumber(quote.price, 2);
+      chgEl.textContent = formatNumber(quote.change, 2);
+      chgPctEl.textContent =
+        isNaN(quote.changePct)
+          ? "–"
+          : `${quote.changePct > 0 ? "+" : ""}${quote.changePct.toFixed(2)}%`;
+      chgEl.className = cls;
+      chgPctEl.className = cls;
+      priceEl.className = "";
+    }
+
+    async function loadAllQuotesPolygon() {
+      quoteCache = {};
+      const BATCH_SIZE = 40;
+      for (let i = 0; i < stocks.length; i += BATCH_SIZE) {
+        const batch = stocks.slice(i, i + BATCH_SIZE);
+        const tickers = batch.map(s => s.symbol).join(",");
+        try {
+          const url = `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(tickers)}&apiKey=${POLYGON_KEY}`;
+          const res = await fetch(url);
+          const data = await res.json();
+          if (!data || !data.tickers) continue;
+          data.tickers.forEach(t => {
+            const symbol = t.ticker;
+            const price = t.lastTrade && t.lastTrade.p ? t.lastTrade.p : null;
+            const change = t.todaysChange ?? null;
+            const changePct = t.todaysChangePerc ?? null;
+            const quote = { price, change, changePct };
+            quoteCache[symbol] = quote;
+            applyQuoteToRow(symbol, quote);
+          });
+        } catch (e) {
+          console.error("Polygon batch error", e);
+        }
       }
-    } catch(e) {
-      console.error("Polygon error:", e);
-    }
-  }
-
-  stockData = stocks.map(s => {
-    const d = map.get(s.symbol) || {};
-    return {
-      symbol: s.symbol,
-      name: s.name,
-      sector: s.sector,
-      price: d.price,
-      change: d.change,
-      percent: d.percent
-    };
-  });
-
-  renderStocksTable();
-}
-
-/* ======================================================
-   RENDER + SORT
-====================================================== */
-function renderStocksTable() {
-  const body = document.getElementById("stocks-body");
-  body.innerHTML = "";
-
-  const sorted = [...stockData].sort((a, b) => {
-    const key = currentSort.key;
-    let va = a[key], vb = b[key];
-
-    if (key === "name") {
-      va = `${a.name} (${a.symbol})`.toUpperCase();
-      vb = `${b.name} (${b.symbol})`.toUpperCase();
-    }
-    if (key === "sector") {
-      va = (a.sector || "").toUpperCase();
-      vb = (b.sector || "").toUpperCase();
     }
 
-    if (va == null) return 1;
-    if (vb == null) return -1;
+    function toggleInsight(row, symbol) {
+      const next = row.nextElementSibling;
+      const hasInsight = next && next.classList.contains("insight-row");
 
-    if (typeof va === "string") {
-      return currentSort.direction === "asc"
-        ? va.localeCompare(vb)
-        : vb.localeCompare(va);
-    } else {
-      return currentSort.direction === "asc"
-        ? va - vb
-        : vb - va;
+      // 같은 심볼의 insight가 바로 아래 열려 있으면 → 제거(접기) 후 종료
+      if (hasInsight && next.getAttribute("data-symbol") === symbol) {
+        next.remove();
+        return;
+      }
+
+      // 다른 곳에 열려 있는 insight 전부 제거
+      document
+        .querySelectorAll("#stocks-container .insight-row")
+        .forEach(r => r.remove());
+
+      showInlineInsight(row, symbol);
     }
-  });
 
-  sorted.forEach(s => {
-    const tr = document.createElement("tr");
-    tr.className = "data-row";
-    tr.dataset.symbol = s.symbol;
+    function showInlineInsight(row, symbol) {
+      const info = stocks.find(s => s.symbol === symbol);
+      const sector = sectorTag[symbol] || "Other / Unclassified";
+      if (!info) return;
 
-    const priceStr = s.price != null ? s.price.toFixed(2) : "-";
-    const changeStr = s.change != null ? s.change.toFixed(2) : "-";
-    const percentStr = s.percent != null ? s.percent.toFixed(2) + "%" : "-";
-    const changeClass = s.change == null ? "" : (s.change >= 0 ? "positive" : "negative");
+      const profile = companyProfiles[symbol] || "이 종목에 대한 요약이 아직 정리되지 않았습니다.";
 
-    tr.innerHTML = `
-      <td>${s.name} (${s.symbol})</td>
-      <td>${priceStr}</td>
-      <td class="${changeClass}">${changeStr}</td>
-      <td class="${changeClass}">${percentStr}</td>
-      <td>${s.sector || ""}</td>
-    `;
-    tr.addEventListener("click", () => toggleInsight(tr, s));
-    body.appendChild(tr);
-  });
+      const tr = document.createElement("tr");
+      tr.className = "insight-row";
+      tr.setAttribute("data-symbol", symbol);
+      const td = document.createElement("td");
+      td.colSpan = 5;
 
-  updateSortIndicators();
-}
+      const containerId = `tv-chart-${symbol}`;
+      const newsId = `news-${symbol}`;
 
-function updateSortIndicators() {
-  ["name","price","change","percent","sector"].forEach(k => {
-    const span = document.getElementById(`sort-${k}`);
-    if (!span) return;
-    if (currentSort.key === k) {
-      span.textContent = currentSort.direction === "asc" ? "▲" : "▼";
-    } else {
-      span.textContent = "";
-    }
-  });
-}
-
-document.querySelectorAll("th.sortable").forEach(th => {
-  th.addEventListener("click", () => {
-    const key = th.dataset.sort;
-    if (currentSort.key === key) {
-      currentSort.direction = currentSort.direction === "asc" ? "desc" : "asc";
-    } else {
-      currentSort.key = key;
-      currentSort.direction = "asc";
-    }
-    renderStocksTable();
-  });
-});
-
-/* ======================================================
-   CLICK ROW → INSIGHT (차트 + 설명) 토글
-====================================================== */
-function toggleInsight(row, stock) {
-  const next = row.nextElementSibling;
-  if (next && next.classList.contains("insight-row")) {
-    next.remove();
-    return;
-  }
-
-  if (next && next.classList.contains("insight-row")) next.remove();
-
-  const tr = document.createElement("tr");
-  tr.className = "insight-row";
-  const td = document.createElement("td");
-  td.colSpan = 5;
-
-  const containerId = `chart-${stock.symbol}-${Date.now()}`;
-  const profile = companyProfiles[stock.symbol] || "Company profile not yet filled. You can extend companyProfiles in the code to add more detail.";
-
-  td.innerHTML = `
-    <div class="insight-box">
-      <div class="insight-header">
-        <div>
-          <div class="insight-title">${stock.name} (${stock.symbol})</div>
-          <div class="insight-sector">${stock.sector || ""}</div>
-        </div>
-        <div class="muted">Click row again to collapse</div>
-      </div>
-      <div class="insight-body">${profile}</div>
-      <div class="chart-container">
-        <div id="${containerId}" style="width:100%; height:100%;"></div>
-      </div>
-    </div>
-  `;
-  tr.appendChild(td);
-  row.insertAdjacentElement("afterend", tr);
-
-  new TradingView.widget({
-    container_id: containerId,
-    symbol: stock.symbol,
-    interval: "60",
-    theme: "light",
-    style: "1",
-    width: "100%",
-    height: "100%",
-    locale: "en"
-  });
-}
-
-/* ======================================================
-   CRYPTO – CoinGecko Top 15
-====================================================== */
-async function loadCrypto() {
-  const grid = document.getElementById("crypto-grid");
-  grid.innerHTML = "Loading...";
-  try {
-    const url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=15&page=1";
-    const res = await fetch(url);
-    const data = await res.json();
-
-    grid.innerHTML = data.map(c => `
-      <div class="card">
-        <div class="card-title">${c.name} (${c.symbol.toUpperCase()})</div>
-        <div class="card-sub">Market Cap Rank: ${c.market_cap_rank}</div>
-        <div>Price: $${c.current_price.toLocaleString()}</div>
-        <div>24h: <span class="${c.price_change_percentage_24h >= 0 ? "positive":"negative"}">
-          ${c.price_change_percentage_24h?.toFixed(2)}%
-        </span></div>
-        <div>Volume: $${c.total_volume.toLocaleString()}</div>
-      </div>
-    `).join("");
-  } catch (e) {
-    console.error(e);
-    grid.innerHTML = "Failed to load crypto data.";
-  }
-}
-
-/* ======================================================
-   FX – ExchangeRate.host (base=KRW)
-====================================================== */
-async function loadFX() {
-  const fx = document.getElementById("fx-grid");
-  fx.innerHTML = "Loading...";
-  try {
-    const url = "https://api.exchangerate.host/latest?base=KRW&symbols=USD,EUR,JPY,CNY,CHF";
-    const res = await fetch(url);
-    const data = await res.json();
-    const r = data.rates;
-
-    const pairs = ["USD","EUR","JPY","CNY","CHF"];
-    fx.innerHTML = pairs.map(code => {
-      const rate = r[code];
-      if (!rate) return "";
-      const krwPer1 = (1 / rate).toFixed(2);  // 1 unit of code = ? KRW
-      return `
-        <div class="card">
-          <div class="card-title">${code} / KRW</div>
-          <div>1 ${code} ≈ ${krwPer1} KRW</div>
-          <div>1 KRW ≈ ${rate.toFixed(6)} ${code}</div>
+      td.innerHTML = `
+        <div class="insight-box">
+          <strong>${symbol}</strong> · ${info.name}<br/>
+          <span class="muted">Sector group: ${sector}</span>
+          <p style="margin-top:6px; white-space:pre-line;">${profile.trim()}</p>
+          <div style="margin-top:8px; height:260px;">
+            <div id="${containerId}" style="width:100%; height:100%;"></div>
+          </div>
+          <div class="news-title">Latest News (Finnhub)</div>
+          <ul class="news-list" id="${newsId}">
+            <li class="muted">Loading news…</li>
+          </ul>
         </div>
       `;
-    }).join("");
-  } catch (e) {
-    console.error(e);
-    fx.innerHTML = "Failed to load FX rates.";
-  }
-}
+      tr.appendChild(td);
 
-/* ======================================================
-   NEWS – Finnhub
-====================================================== */
-async function loadNews() {
-  const container = document.getElementById("news-container");
-  container.innerHTML = "Loading...";
-  try {
-    const url = `https://finnhub.io/api/v1/news?category=general&token=${FINNHUB_API}`;
-    const res = await fetch(url);
-    const data = await res.json();
+      const parent = row.parentNode;
+      if (row.nextSibling) parent.insertBefore(tr, row.nextSibling);
+      else parent.appendChild(tr);
 
-    container.innerHTML = data.slice(0, 10).map(n => `
-      <div class="card news-card">
-        <div class="card-title">${n.headline}</div>
-        <div class="card-sub">${new Date(n.datetime * 1000).toLocaleString()}</div>
-        <p>${n.summary || ""}</p>
-        <a href="${n.url}" target="_blank">Read more</a>
-      </div>
-    `).join("");
-  } catch (e) {
-    console.error(e);
-    container.innerHTML = "Failed to load news.";
-  }
-}
+      if (window.TradingView) {
+        new TradingView.widget({
+          container_id: containerId,
+          symbol: symbol,
+          interval: "60",
+          timezone: "Etc/UTC",
+          theme: "light",
+          style: "1",
+          height: "100%",
+          width: "100%",
+          hide_top_toolbar: false,
+          hide_legend: false,
+          withdateranges: true,
+          locale: "en"
+        });
+      }
 
-/* ======================================================
-   INITIAL LOAD
-====================================================== */
-loadStockPrices();
-loadCrypto();
-loadFX();
-loadNews();
-</script>
+      loadNewsForSymbol(symbol, newsId);
+    }
 
+    async function loadNewsForSymbol(symbol, newsElementId) {
+      const el = document.getElementById(newsElementId);
+      if (!el) return;
+      const now = new Date();
+      const to = now.toISOString().slice(0,10);
+      const fromDate = new Date(now.getTime() - 7*24*60*60*1000);
+      const from = fromDate.toISOString().slice(0,10);
+
+      try {
+        const url = `https://finnhub.io/api/v1/company-news?symbol=${encodeURIComponent(symbol)}&from=${from}&to=${to}&token=${FINNHUB_KEY}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) {
+          el.innerHTML = `<li class="muted">최근 7일간 등록된 뉴스가 없습니다.</li>`;
+          return;
+        }
+        const top = data.slice(0, 5);
+        el.innerHTML = top.map(n => {
+          const title = n.headline || "Untitled";
+          const url = n.url || "#";
+          const date = n.datetime ? new Date(n.datetime * 1000) : null;
+          const dateStr = date
+            ? `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}-${String(date.getDate()).padStart(2,"0")}`
+            : "";
+          return `<li><a href="${url}" target="_blank" rel="noopener noreferrer">${title}</a> <span class="muted" style="font-size:10px;">${dateStr}</span></li>`;
+        }).join("");
+      } catch (e) {
+        console.error("Finnhub news error", e);
+        el.innerHTML = `<li class="muted">뉴스 로딩 오류</li>`;
+      }
+    }
+
+    // ---------- FX ----------
+    async function fetchFX() {
+      const tbody = document.querySelector("#fx-table tbody");
+      if (!tbody) return;
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Loading…</td></tr>`;
+
+      const symbols = ["USD","EUR","CHF","JPY","CNY"];
+      try {
+        const res = await fetch("https://api.exchangerate.host/latest?base=KRW&symbols=USD,EUR,JPY,CNY,CHF");
+        if (!res.ok) throw new Error("FX HTTP error");
+        const data = await res.json();
+        const rates = data.rates || {};
+
+        const rows = symbols.map((sym) => {
+          const v = rates[sym];
+          if (!v) {
+            return `<tr>
+              <td>${sym}/KRW</td>
+              <td class="muted">–</td>
+              <td class="muted">–</td>
+              <td class="muted">–</td>
+            </tr>`;
+          }
+          // base = KRW, v = 1 KRW in sym → 1 sym = 1/v KRW
+          const rate = 1 / v;
+          if (sym === "USD") usdKrwRate = rate;
+
+          return `<tr>
+            <td>${sym}/KRW</td>
+            <td>${formatNumber(rate, sym === "JPY" ? 3 : 2)}</td>
+            <td class="muted">–</td>
+            <td class="muted">–</td>
+          </tr>`;
+        }).join("");
+
+        tbody.innerHTML = rows;
+      } catch (e) {
+        console.error("FX error", e);
+        tbody.innerHTML = `<tr><td colspan="4" class="muted">Error</td></tr>`;
+      }
+    }
+
+    // ---------- Crypto ----------
+    async function fetchCryptos() {
+      const tbody = document.querySelector("#crypto-table tbody");
+      if (!tbody) return;
+      tbody.innerHTML = `<tr><td colspan="6" class="muted">Loading…</td></tr>`;
+
+      try {
+        const url =
+          "https://api.coingecko.com/api/v3/coins/markets" +
+          "?vs_currency=usd&order=market_cap_desc&per_page=15&page=1&sparkline=false&price_change_percentage=24h";
+        const res =
+          await fetch(url, { headers: { "Accept": "application/json" } });
+        if (!res.ok) throw new Error("crypto HTTP error");
+        const data = await res.json();
+
+        const rows = data.map((c) => {
+          const usd = c.current_price;
+          const krw = usdKrwRate ? usd * usdKrwRate : null;
+          const chg = c.price_change_percentage_24h;
+          const vol = c.total_volume;
+          const cls =
+            chg > 0 ? "positive" : chg < 0 ? "negative" : "muted";
+          const pctText =
+            chg === null || chg === undefined || isNaN(chg)
+              ? "–"
+              : `${chg > 0 ? "+" : ""}${chg.toFixed(2)}%`;
+
+          return `
+            <tr>
+              <td>${(c.symbol || "").toUpperCase()}</td>
+              <td>${c.name}</td>
+              <td>${formatNumber(usd, 2)}</td>
+              <td>${formatNumber(krw, 0)}</td>
+              <td class="${cls}">${pctText}</td>
+              <td>${formatNumber(vol, 0)}</td>
+            </tr>
+          `;
+        }).join("");
+
+        tbody.innerHTML = rows;
+      } catch (e) {
+        console.error("crypto error", e);
+        tbody.innerHTML = `<tr><td colspan="6" class="muted">Error</td></tr>`;
+      }
+    }
+
+    // ---------- Staking ----------
+    function renderStakingManual() {
+      const tbody = document.querySelector("#staking-table tbody");
+      if (!tbody) return;
+      const rows = stakingManual.map((s) => `
+        <tr>
+          <td>${s.asset}</td>
+          <td>${s.platform}</td>
+          <td>${s.apy.toFixed(2)}%</td>
+          <td>${s.note}</td>
+        </tr>
+      `).join("");
+      tbody.innerHTML = rows;
+    }
+
+    async function refreshAll() {
+      setLastUpdated();
+      renderStakingManual();
+      await fetchFX();
+      await Promise.all([
+        fetchCryptos(),
+        loadAllQuotesPolygon()
+      ]);
+    }
+
+    document
+      .getElementById("manual-refresh")
+      .addEventListener("click", () => {
+        refreshAll();
+      });
+
+    // 초기 렌더
+    renderStocksTableSkeleton();
+    refreshAll();
+  </script>
 </body>
 </html>
