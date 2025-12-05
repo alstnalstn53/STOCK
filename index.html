@@ -2,8 +2,10 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>Market Studio – Yahoo + FX + Crypto</title>
+  <title>Material Studio Portfolio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- TradingView 차트 위젯 -->
+  <script src="https://s3.tradingview.com/tv.js"></script>
   <style>
     :root {
       --bg: #f5f5f5;
@@ -41,8 +43,8 @@
     }
     .title-block h1 {
       margin: 0 0 4px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
+      font-weight: 600;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
       font-size: 18px;
     }
@@ -112,13 +114,14 @@
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
-      font-weight: 500;
+      font-weight: 700;
     }
     .card-sub {
       font-size: 11px;
       color: var(--text-sub);
       letter-spacing: 0.12em;
       text-transform: uppercase;
+      font-weight: 600;
     }
     .tag {
       font-size: 10px;
@@ -146,7 +149,7 @@
       text-align: left;
     }
     th {
-      font-weight: 500;
+      font-weight: 700;
       color: var(--text-sub);
       font-size: 11px;
       text-transform: uppercase;
@@ -176,6 +179,7 @@
       letter-spacing: 0.12em;
       color: var(--text-sub);
       margin-bottom: 4px;
+      font-weight: 700;
     }
     .insight-box {
       font-size: 12px;
@@ -190,8 +194,8 @@
   <div class="page">
     <header>
       <div class="title-block">
-        <h1>Market Studio</h1>
-        <div class="sub">Equities · Crypto · FX · Yield</div>
+        <h1>MATERIAL STUDIO PORTFOLIO</h1>
+        <div class="sub">EQUITIES · CRYPTO · FX · YIELD</div>
       </div>
       <div class="meta">
         <div id="last-updated">Last update – –</div>
@@ -204,24 +208,25 @@
     <main>
       <!-- 왼쪽: Equities -->
       <div class="left-column">
-        <section class="card">
+        <section class="card" id="equities">
           <div class="card-header">
             <div>
               <div class="card-title">Equities</div>
               <div class="card-sub">AI · Data Center · Ecosystem</div>
             </div>
-            <div class="tag">Yahoo Finance via CORS proxy</div>
+            <div class="tag">Alpha Vantage · On click</div>
           </div>
           <div id="stocks-container"></div>
           <div class="small-note">
-            행을 클릭하면 바로 아래에 간단한 Company Insight가 나타납니다.
+            * 행을 클릭하면 해당 종목 가격·등락과 Company Insight + 실시간 차트가 아래에 나타납니다.<br>
+            (무료 API 제한 때문에 이렇게 “클릭 로딩” 구조로 설계.)
           </div>
         </section>
       </div>
 
       <!-- 오른쪽: FX + Crypto + Staking -->
       <div class="right-column">
-        <section class="card">
+        <section class="card" id="fx">
           <div class="card-header">
             <div>
               <div class="card-title">FX</div>
@@ -242,11 +247,11 @@
           </table>
         </section>
 
-        <section class="card">
+        <section class="card" id="crypto">
           <div class="card-header">
             <div>
               <div class="card-title">Crypto Market</div>
-              <div class="card-sub">Top 15 · Market Cap</div>
+              <div class="card-sub">Top 15 · Market Cap · Volume</div>
             </div>
             <div class="tag">CoinGecko</div>
           </div>
@@ -258,13 +263,14 @@
                 <th>USD</th>
                 <th>KRW</th>
                 <th>24h</th>
+                <th>Vol 24h (USD)</th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </section>
 
-        <section class="card">
+        <section class="card" id="yield">
           <div class="card-header">
             <div>
               <div class="card-title">Staking Yield</div>
@@ -292,7 +298,10 @@
   </div>
 
   <script>
-    // ---------- 데이터 정의 ----------
+    // ---------- Alpha Vantage 키 ----------
+    const ALPHAVANTAGE_KEY = "R7DXANGD15UFEE8K";
+
+    // ---------- 종목 리스트 ----------
     const stocks = [
       { symbol: "AAPL",  name: "Apple" },
       { symbol: "ABNB",  name: "Airbnb" },
@@ -464,106 +473,236 @@
       { symbol: "ZM",    name: "Zoom Video" }
     ];
 
+    // ---------- 섹터 그룹 ----------
     const sectorTag = {
-      NVDA:"AI / Data Center Core",
-      MSFT:"AI / Data Center Core",
-      AMZN:"AI / Data Center Core",
-      META:"AI / Data Center Core",
-      GOOGL:"AI / Data Center Core",
-      SMCI:"AI / Data Center Core",
-      ANET:"AI / Data Center Core",
-      VRT:"AI / Data Center Core",
-      EQIX:"AI / Data Center Core",
-      DLR:"AI / Data Center Core",
-      NOW:"AI / Data Center Core",
-      NET:"AI / Data Center Core",
-      SNOW:"AI / Data Center Core",
-      DDOG:"AI / Data Center Core",
-      PLTR:"AI / Data Center Core",
-      CRM:"AI / Data Center Core",
+      NVDA:"AI / Data Center Core", MSFT:"AI / Data Center Core",
+      AMZN:"AI / Data Center Core", META:"AI / Data Center Core",
+      GOOGL:"AI / Data Center Core", SMCI:"AI / Data Center Core",
+      ANET:"AI / Data Center Core", VRT:"AI / Data Center Core",
+      EQIX:"AI / Data Center Core", DLR:"AI / Data Center Core",
+      NOW:"AI / Data Center Core", NET:"AI / Data Center Core",
+      SNOW:"AI / Data Center Core", DDOG:"AI / Data Center Core",
+      PLTR:"AI / Data Center Core", CRM:"AI / Data Center Core",
 
-      AVGO:"Semiconductors & EDA",
-      ASML:"Semiconductors & EDA",
-      CDNS:"Semiconductors & EDA",
-      MRVL:"Semiconductors & EDA",
-      TSM:"Semiconductors & EDA",
-      SITM:"Semiconductors & EDA",
-      INTC:"Semiconductors & EDA",
-      MU:"Semiconductors & EDA",
-      AMAT:"Semiconductors & EDA",
-      LRCX:"Semiconductors & EDA",
-      MCHP:"Semiconductors & EDA",
-      COHR:"Semiconductors & EDA",
-      ARM:"Semiconductors & EDA",
-      SWKS:"Semiconductors & EDA",
+      AVGO:"Semiconductors & EDA", ASML:"Semiconductors & EDA",
+      CDNS:"Semiconductors & EDA", MRVL:"Semiconductors & EDA",
+      TSM:"Semiconductors & EDA", SITM:"Semiconductors & EDA",
+      INTC:"Semiconductors & EDA", MU:"Semiconductors & EDA",
+      AMAT:"Semiconductors & EDA", LRCX:"Semiconductors & EDA",
+      MCHP:"Semiconductors & EDA", COHR:"Semiconductors & EDA",
+      ARM:"Semiconductors & EDA", SWKS:"Semiconductors & EDA",
 
-      BE:"Energy / Power / Nuclear",
-      CEG:"Energy / Power / Nuclear",
-      NEE:"Energy / Power / Nuclear",
-      SMR:"Energy / Power / Nuclear",
-      OKLO:"Energy / Power / Nuclear",
-      MNTK:"Energy / Power / Nuclear",
-      ETN:"Energy / Power / Nuclear",
-      PNW:"Energy / Power / Nuclear",
+      BE:"Energy / Power / Nuclear", CEG:"Energy / Power / Nuclear",
+      NEE:"Energy / Power / Nuclear", SMR:"Energy / Power / Nuclear",
+      OKLO:"Energy / Power / Nuclear", MNTK:"Energy / Power / Nuclear",
+      ETN:"Energy / Power / Nuclear", PNW:"Energy / Power / Nuclear",
 
-      BLK:"Financials / Brokers",
-      BK:"Financials / Brokers",
-      NU:"Financials / Brokers",
-      SOFI:"Financials / Brokers",
-      COIN:"Financials / Brokers",
-      FUTU:"Financials / Brokers",
-      ETOR:"Financials / Brokers",
-      IVZ:"Financials / Brokers",
-      PYPL:"Financials / Brokers",
-      UPST:"Financials / Brokers",
+      BLK:"Financials / Brokers", BK:"Financials / Brokers",
+      NU:"Financials / Brokers", SOFI:"Financials / Brokers",
+      COIN:"Financials / Brokers", FUTU:"Financials / Brokers",
+      ETOR:"Financials / Brokers", IVZ:"Financials / Brokers",
+      PYPL:"Financials / Brokers", UPST:"Financials / Brokers",
 
-      MARA:"Crypto Miners",
-      RIOT:"Crypto Miners",
-      BTDR:"Crypto Miners",
-      HUT:"Crypto Miners",
-      BMNR:"Crypto Miners",
-      CLSK:"Crypto Miners",
+      MARA:"Crypto Miners", RIOT:"Crypto Miners",
+      BTDR:"Crypto Miners", HUT:"Crypto Miners",
+      BMNR:"Crypto Miners", CLSK:"Crypto Miners",
 
-      LLY:"Healthcare / Bio",
-      AMGN:"Healthcare / Bio",
-      MRNA:"Healthcare / Bio",
-      ISRG:"Healthcare / Bio",
-      EXAS:"Healthcare / Bio",
-      VRTX:"Healthcare / Bio",
-      TEVA:"Healthcare / Bio",
-      EW:"Healthcare / Bio",
-      CDNA:"Healthcare / Bio",
-      VCYT:"Healthcare / Bio",
-      NRIX:"Healthcare / Bio",
-      TMO:"Healthcare / Bio",
+      LLY:"Healthcare / Bio", AMGN:"Healthcare / Bio",
+      MRNA:"Healthcare / Bio", ISRG:"Healthcare / Bio",
+      EXAS:"Healthcare / Bio", VRTX:"Healthcare / Bio",
+      TEVA:"Healthcare / Bio", EW:"Healthcare / Bio",
+      CDNA:"Healthcare / Bio", VCYT:"Healthcare / Bio",
+      NRIX:"Healthcare / Bio", TMO:"Healthcare / Bio",
+      BSX:"Healthcare / Bio", MPW:"Healthcare / Bio",
 
-      AAPL:"Consumer / Brand",
-      ABNB:"Consumer / Brand",
-      CELH:"Consumer / Brand",
-      DIS:"Consumer / Brand",
-      NFLX:"Consumer / Brand",
-      PEP:"Consumer / Brand",
-      SBUX:"Consumer / Brand",
-      WMT:"Consumer / Brand",
-      SPOT:"Consumer / Brand",
-      KO:"Consumer / Brand",
-      COST:"Consumer / Brand",
-      RBLX:"Consumer / Brand",
-      GME:"Consumer / Brand",
+      AAPL:"Consumer / Brand", ABNB:"Consumer / Brand",
+      CELH:"Consumer / Brand", DIS:"Consumer / Brand",
+      NFLX:"Consumer / Brand", PEP:"Consumer / Brand",
+      SBUX:"Consumer / Brand", WMT:"Consumer / Brand",
+      SPOT:"Consumer / Brand", KO:"Consumer / Brand",
+      COST:"Consumer / Brand", RBLX:"Consumer / Brand",
+      GME:"Consumer / Brand", ZM:"Consumer / Brand",
 
-      CAT:"Industrial / Infra",
-      DE:"Industrial / Infra",
-      STLD:"Industrial / Infra",
-      VMC:"Industrial / Infra",
-      MP:"Industrial / Infra",
-      OTTR:"Industrial / Infra",
-      STRL:"Industrial / Infra",
-      KTOS:"Industrial / Infra",
-      LMT:"Industrial / Infra",
-      GE:"Industrial / Infra",
-      PH:"Industrial / Infra",
-      TDY:"Industrial / Infra",
-      IESC:"Industrial / Infra"
+      CAT:"Industrial / Infra", DE:"Industrial / Infra",
+      STLD:"Industrial / Infra", VMC:"Industrial / Infra",
+      MP:"Industrial / Infra", OTTR:"Industrial / Infra",
+      STRL:"Industrial / Infra", KTOS:"Industrial / Infra",
+      LMT:"Industrial / Infra", GE:"Industrial / Infra",
+      PH:"Industrial / Infra", TDY:"Industrial / Infra",
+      IESC:"Industrial / Infra", GEL:"Industrial / Infra",
+      ETRN:"Industrial / Infra", CLS:"Industrial / Infra"
+    };
+
+    // ---------- 회사 설명: 전 종목 ----------
+    const companyProfiles = {
+      AAPL: "아이폰·아이패드·맥·워치 등 하드웨어와 iOS·서비스 생태계를 가진 빅테크. 프리미엄 소비자 디바이스와 서비스 구독 모델 중심.",
+      ABNB: "숙박·체험 공유 플랫폼. 개인 호스트와 여행자를 연결하는 마켓플레이스를 운영.",
+      ADBE: "포토샵·일러스트레이터·프리미어 등 크리에이티브 소프트웨어와 디지털 마케팅/분석 툴을 제공하는 SaaS 기업.",
+      AG: "은(실버) 중심의 귀금속 채굴 회사. 금·은 가격에 높은 레버리지로 반응.",
+      AGX: "전력·산업 플랜트 EPC(설계·조달·시공)와 유지보수 사업을 하는 인프라·건설 엔지니어링 기업.",
+      ALAB: "데이터센터용 CXL·PCIe 연결 솔루션, Smart Cable 모듈 등 고속 인터커넥트를 설계하는 팹리스. AI 서버 I/O 병목 해소에 초점.",
+      ALL: "자동차·주택·생명보험 등 손해보험 중심의 미국 보험사.",
+      AMAT: "반도체·디스플레이 제조 장비와 소재를 공급하는 장비 1티어 업체.",
+      AMGN: "바이오의약품 중심 제약사. 항체·재조합 단백질 기반 치료제 개발.",
+      AMZN: "이커머스와 클라우드(AWS)를 축으로 한 빅테크. AWS는 전 세계 데이터센터 인프라의 핵심 플랫폼.",
+      ANET: "클라우드·AI 데이터센터용 이더넷 스위치/네트워크 OS에 특화된 네트워킹 기업.",
+      ANSS: "구조·유체·전자기 해석 등 공학 시뮬레이션 소프트웨어를 제공하는 CAE 전문 업체.",
+      APP: "모바일 광고·측정·수익화 플랫폼(AppLovin). 게임 퍼블리싱도 병행.",
+      ARM: "저전력 CPU 아키텍처 IP를 라이선스하는 회사. 모바일·임베디드에서 데이터센터·AI 쪽으로 확장 중.",
+      ASML: "EUV·DUV 노광 장비를 독점 공급하는 반도체 장비 업체. 첨단 공정의 병목 포인트.",
+      AVGO: "Broadcom – 데이터센터·통신·스토리지용 고성능 칩과 인프라 소프트웨어를 가진 종합 반도체/소프트웨어 기업.",
+
+      BE: "고체산화물 연료전지(SOFC) 기반 분산 전력 솔루션을 제공하는 Bloom Energy.",
+      BK: "Bank of New York Mellon – 수탁·자산관리·서비스뱅킹에 특화된 글로벌 금융사.",
+      BLK: "BlackRock – 세계 최대 자산운용사. ETF·인덱스·액티브 운용 등 다양한 상품 제공.",
+      BMNR: "BitMine Immersion – 침지식 냉각을 활용한 암호화폐 채굴 인프라·호스팅에 집중.",
+      BSX: "Boston Scientific – 심혈관·신경계 등 의료기기 중심 헬스케어 기업.",
+      BTDR: "Bitdeer – 비트코인 채굴·클라우드 마이닝·호스팅 서비스를 제공하는 채굴 인프라 기업.",
+
+      CAT: "Caterpillar – 굴삭기·덤프·광산장비 등 중장비를 제조하는 글로벌 산업장비 기업.",
+      CDNS: "Cadence – 반도체 설계 자동화(EDA) 소프트웨어와 IP를 공급하는 핵심 툴 업체.",
+      CDNA: "CareDx – 장기 이식 환자 모니터링을 위한 진단 테스트와 서비스를 제공.",
+      CEG: "Constellation Energy – 원자력·청정발전을 중심으로 한 전력 발전/공급 기업.",
+      CELH: "Celsius Holdings – 기능성 에너지 드링크 브랜드를 전개하는 소비재 기업.",
+      CL: "Colgate-Palmolive – 치약·비누·세제 등 생활용품 글로벌 브랜드.",
+      CLSK: "CleanSpark – 비트코인 채굴과 에너지 효율성을 동시에 강조하는 채굴 회사.",
+      CLS: "Celestica – 서버·네트워크·산업·에너지 장비를 위탁 생산하는 EMS/ODM 업체.",
+      COHR: "Coherent – 레이저·광학·포토닉스 솔루션을 제공, 통신·반도체·산업·방산에 공급.",
+      COIN: "Coinbase – 미국 최대 암호화폐 거래소. 리테일/기관 거래와 커스터디 사업 운영.",
+      COST: "Costco – 멤버십 기반 대형 창고형 할인점 체인.",
+      CRDO: "Credo Technology – 100G/200G/400G/800G 이더넷용 액티브 전기 케이블(AEC)과 고속 SerDes를 제공하는 네트워킹 팹리스.",
+      CRM: "Salesforce – 클라우드 기반 CRM·세일즈·마케팅·플랫폼 SaaS를 제공.",
+      CSCO: "Cisco – 엔터프라이즈·서비스프로바이더 네트워크 장비, 보안, 협업 솔루션을 공급하는 대형 네트워킹 기업.",
+      C3AI: "C3.ai – 엔터프라이즈용 AI 플랫폼과 산업별 AI 애플리케이션을 제공하는 소프트웨어 기업.",
+      CRS: "Carpenter Technology – 특수 합금·고성능 금속 소재를 제조하는 소재 기업.",
+
+      DASH: "DoorDash – 음식 배달·라스트마일 물류 플랫폼.",
+      DDOG: "Datadog – 클라우드·마이크로서비스 환경의 모니터링·로그·APM·보안 플랫폼.",
+      DE: "Deere & Company – 트랙터·콤바인 등 농기계와 건설장비를 제조.",
+      DLR: "Digital Realty – 하이퍼스케일·기업용 데이터센터를 보유한 리츠(REIT).",
+      DHI: "D.R. Horton – 미국 최대 주택 건설사 중 하나.",
+      DIS: "Walt Disney – 콘텐츠·영화·IP·테마파크·스트리밍(Disney+)을 보유한 엔터테인먼트 그룹.",
+
+      ETN: "Eaton – 전력관리·배전·산업용 전력 장비를 공급하는 전기·산업 기업.",
+      ETOR: "eToro Group – 소셜 트레이딩·복사매매 기능을 가진 멀티자산 브로커 플랫폼.",
+      ETRN: "Equitrans Midstream – 천연가스 파이프라인과 미드스트림 자산을 보유.",
+      EW: "Edwards Lifesciences – 인공심장판막·중환자 모니터링 등 심혈관 의료기기 전문 기업.",
+      EXAS: "Exact Sciences – 대장암 비침습 진단(Cologuard) 등 분자진단 테스트 회사.",
+      EQIX: "Equinix – 글로벌 코로케이션·인터커넥트 데이터센터 리츠. 클라우드 허브 역할.",
+
+      FABR: "Fabrinet – 광통신·레이저·산업 장비를 위한 정밀 제조 EMS/ODM 업체.",
+      FSLR: "First Solar – 박막형 태양광 모듈과 발전 프로젝트를 제공하는 재생에너지 기업.",
+      FUTU: "Futu Holdings – 홍콩/중국 기반의 온라인 증권·트레이딩 플랫폼(Moomoo 등).",
+
+      GE: "GE Aerospace – 항공기 엔진과 관련 서비스에 집중하는 항공우주 기업.",
+      GEL: "Genesis Energy – 중간재 정제·파이프라인·터미널 등 에너지 인프라 운영.",
+      GEN: "Generac – 가정·상업용 발전기와 분산 에너지 솔루션을 제공.",
+      GME: "GameStop – 게임/전자기기 리테일 체인. 밈 주식으로 유명.",
+      GOOGL: "Alphabet – 구글 검색·유튜브·안드로이드·GCP 등을 보유한 빅테크. AI·클라우드 인프라 중심.",
+      GCM: "Genius Sports 계열 티커로, 스포츠 데이터·베팅 관련 데이터/미디어 솔루션 제공.",
+
+      HPE: "Hewlett Packard Enterprise – 서버·스토리지·네트워킹·서비스를 제공하는 엔터프라이즈 IT 인프라 업체.",
+      HUT: "Hut 8 Mining – 북미 기반 비트코인 채굴 및 데이터센터 인프라 기업.",
+
+      IBM: "IBM – 메인프레임·하이브리드 클라우드·컨설팅·AI 소프트웨어를 제공하는 전통 IT 기업.",
+      IESC: "IES Holdings – 전기·통신·기계 설비 등 산업·상업용 특수 시공을 수행.",
+      INTC: "Intel – CPU·칩셋·파운드리 사업을 영위하는 종합 반도체 기업.",
+      IONQ: "IonQ – 이온트랩 방식을 사용하는 양자컴퓨팅 하드웨어·클라우드 서비스 기업.",
+      ISRG: "Intuitive Surgical – 다빈치(da Vinci) 수술로봇 시스템을 개발·판매.",
+      ITRI: "Itron – 스마트 미터·그리드 관리 솔루션을 제공하는 전력·수도 계량 인프라 업체.",
+      IVZ: "Invesco – 자산운용사. ETF·뮤추얼펀드 등 다양한 투자 상품 제공.",
+
+      JBL: "Jabil – 다양한 산업의 전자제품을 제조·조립하는 글로벌 EMS 업체.",
+      JNPR: "Juniper Networks – 라우터·스위치·보안 제품을 제공하는 네트워크 장비 기업.",
+
+      KO: "Coca-Cola – 탄산음료·주스·차 등 음료 브랜드 포트폴리오를 가진 글로벌 소비재 기업.",
+      KTOS: "Kratos Defense – 무인기·미사일 표적·위성 통신 등 방산·국방 기술 기업.",
+
+      LLY: "Eli Lilly – 당뇨·비만·자면증 등 치료제와 항암제에서 강한 파이프라인을 가진 제약사.",
+      LMT: "Lockheed Martin – 전투기·미사일·우주 시스템 등 방산·항공우주 대표 기업.",
+      LRCX: "Lam Research – 식각·증착 등 반도체 제조 공정 장비를 공급.",
+      LOW: "Lowe’s – 미국 주택 리모델링·자재 유통 체인(홈디포와 경쟁).",
+
+      MARA: "Marathon Digital – 대규모 비트코인 채굴 기업. 저가 전력과 대형 설비에 집중.",
+      MCHP: "Microchip Technology – MCU·아날로그·혼합신호 반도체를 공급하는 팹리스/IDM.",
+      META: "Meta Platforms – 페이스북·인스타그램·와츠앱과 광고·리얼스·메타버스·AI를 전개하는 소셜/광고 플랫폼.",
+      MNTK: "Montauk Renewables – 바이오가스·재생 천연가스(RNG)를 생산하는 에너지 기업.",
+      MRNA: "Moderna – mRNA 플랫폼 기반 백신·치료제를 개발하는 바이오텍.",
+      MRVL: "Marvell – 데이터센터·5G·스토리지·자동차용 고속 칩/SoC를 설계하는 팹리스.",
+      MP: "MP Materials – 미국 내 희토류 광산과 정제 설비를 운영.",
+      MU: "Micron – DRAM·NAND·HBM 등 메모리 반도체를 제조.",
+      MSFT: "Microsoft – 윈도우·오피스·애저(Azure)·GitHub·LinkedIn을 보유한 종합 빅테크. Copilot·AI 인프라 중심.",
+      MPW: "Medical Properties Trust – 병원·의료시설에 특화된 헬스케어 리츠.",
+
+      NET: "Cloudflare – CDN·보안·엣지 컴퓨팅·서버리스 플랫폼을 제공하는 네트워크 서비스 기업.",
+      NEE: "NextEra Energy – 미국 최대 재생에너지 발전·송배전 회사.",
+      NFLX: "Netflix – 구독형 스트리밍 플랫폼. 오리지널 콘텐츠 제작에 집중.",
+      NIO: "NIO – 전기차 SUV·세단과 배터리 교환 인프라를 운영하는 중국 EV 회사.",
+      NRIX: "Nurix Therapeutics – 단백질 분해 기반 항암제/면역치료제 개발 바이오텍.",
+      NOW: "ServiceNow – IT 서비스 관리·워크플로우 자동화 SaaS 플랫폼.",
+      NU: "Nu Holdings – 브라질 중심의 디지털 은행/핀테크(Nubank).",
+      NVDA: "NVIDIA – GPU·AI 가속기·네트워킹·소프트웨어 스택을 제공하는 AI 인프라 핵심 반도체 기업.",
+      NUE: "Nucor – 전기로 기반 철강 생산 기업. 북미 철강 수요에 레버리지.",
+
+      OKLO: "Oklo – 데이터센터·원격 지역용 소형 원전/마이크로 원자로 개발사.",
+      ORCL: "Oracle – 데이터베이스·ERP 등 엔터프라이즈 소프트웨어와 클라우드 인프라를 제공.",
+      OTTR: "Otter Tail – 전력·제조·인프라를 아우르는 지역 기반 유틸리티/산업 기업.",
+
+      PAGS: "PagSeguro – 브라질 기반 결제·핀테크 플랫폼.",
+      PANW: "Palo Alto Networks – 네트워크/클라우드/엔드포인트 보안 플랫폼 기업.",
+      PATH: "UiPath – 로봇 프로세스 자동화(RPA) 소프트웨어를 제공.",
+      PEP: "PepsiCo – 음료·스낵·식품 브랜드를 보유한 글로벌 소비재 기업.",
+      PH: "Parker-Hannifin – 유압·공압·모션컨트롤 등 산업용 부품·시스템 공급.",
+      PLTR: "Palantir – 정부·기업을 위한 데이터 통합·분석·AI 플랫폼을 제공.",
+      PNW: "Pinnacle West Capital – 전력 유틸리티(Arizona Public Service)를 보유.",
+      PYPL: "PayPal – 온라인 결제·P2P 송금(Venmo) 플랫폼.",
+
+      QCOM: "Qualcomm – 모바일·통신용 SoC와 모뎀, 특허 라이선스 사업을 영위.",
+      QSR: "Restaurant Brands International – 버거킹·팀호튼·파파이스 등을 보유한 QSR 프랜차이즈 그룹.",
+
+      RBLX: "Roblox – 유저 생성 게임·메타버스 플랫폼.",
+      RDFN: "Redfin – 온라인 부동산 중개·리스트 플랫폼.",
+      RIOT: "Riot Platforms – 대형 비트코인 채굴 설비를 운영하는 채굴 기업.",
+
+      SBUX: "Starbucks – 글로벌 커피 체인. 매장 경험과 브랜드 파워에 강점.",
+      SMCI: "Super Micro Computer – AI 서버·고밀도 랙 솔루션을 제공하는 서버 ODM/OEM 업체.",
+      SMR: "NuScale Power – 소형 모듈형 원자로(SMR) 설계·인허가를 추진 중인 원전 기술 기업.",
+      SITM: "SiTime – MEMS 기반 타이밍/클럭 칩을 설계하는 전문 팹리스.",
+      SHOP: "Shopify – 온라인 상점 구축·결제·물류를 통합 제공하는 커머스 플랫폼.",
+      SNOW: "Snowflake – 클라우드 기반 데이터 웨어하우스·데이터 클라우드 서비스.",
+      SOFI: "SoFi – 디지털 뱅킹·대출·투자·카드 등을 제공하는 핀테크.",
+      SPOT: "Spotify – 음악·팟캐스트 스트리밍 플랫폼.",
+      SQ: "Block – 결제 단말기·캐시앱·비트코인 사업 등을 영위하는 핀테크.",
+      STLD: "Steel Dynamics – 철강 생산 및 가공 기업.",
+      STRL: "Sterling Infrastructure – 교통·공공 인프라 건설·엔지니어링 기업.",
+      STX: "Seagate – HDD·스토리지 솔루션을 제공하는 저장장치 기업.",
+      SWKS: "Skyworks Solutions – RF 프론트엔드·무선 통신용 아날로그 반도체 공급.",
+
+      TDY: "Teledyne – 센서·이미징·계측·우주·방산용 전자 장비를 제공.",
+      TEAM: "Atlassian – Jira·Confluence 등 협업·이슈트래킹 소프트웨어를 제공.",
+      TEVA: "Teva – 제네릭 의약품과 일부 브랜드 약을 보유한 제약사.",
+      TMO: "Thermo Fisher – 연구실 장비·시약·분석 장비를 공급하는 생명과학 인프라 기업.",
+      TSLA: "Tesla – 전기차·배터리·에너지 저장 시스템과 자율주행 소프트웨어를 개발.",
+      TSM: "TSMC – 세계 최대 파운드리. 첨단 공정에서 사실상 독점적 위치.",
+      TTM: "TTM Technologies – 인쇄회로기판(PCB) 및 관련 솔루션을 공급.",
+      TWLO: "Twilio – 메시지·통화·영상·인증 등 통신 API 플랫폼을 제공.",
+
+      UBER: "Uber – 라이드헤일링·배달(Uber Eats)·물류를 제공하는 플랫폼 기업.",
+      UPST: "Upstart – AI 기반 신용평가를 통해 대출을 중개하는 핀테크.",
+
+      VCYT: "Veracyte – 암 진단 등 분자병리 테스트를 제공하는 진단 회사.",
+      VMC: "Vulcan Materials – 골재·아스팔트·콘크리트 등 건설 자재 생산.",
+      VRTX: "Vertex – 낭포성 섬유증 등 희귀질환 치료제에 강점을 가진 바이오/제약사.",
+      VRT: "Vertiv – 데이터센터·통신 시설용 전력·쿨링·랙 인프라 솔루션.",
+      VZ: "Verizon – 미국 통신 캐리어. 무선·유선 통신 서비스 제공.",
+
+      WDC: "Western Digital – HDD·SSD·스토리지 시스템을 제조.",
+      WMT: "Walmart – 오프라인/온라인 리테일을 운영하는 세계 최대 유통업체.",
+      WTW: "Willis Towers Watson – 보험·리스크 관리·인사 컨설팅을 제공하는 브로커/컨설팅사.",
+
+      ZI: "ZoomInfo – B2B 영업·마케팅용 기업/연락처 데이터 플랫폼.",
+      ZBRA: "Zebra Technologies – 바코드·RFID·모바일 단말 등 현장 데이터 수집 장비 제공.",
+      ZM: "Zoom Video – 화상회의·협업 플랫폼."
     };
 
     const stakingManual = [
@@ -573,6 +712,7 @@
     ];
 
     let usdKrwRate = null;
+    const quoteCache = {};
 
     function formatNumber(n, decimals = 2) {
       if (n === null || n === undefined || isNaN(n)) return "–";
@@ -591,7 +731,7 @@
         + `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }
 
-    // ---------- Equities : 테이블 + Yahoo 가격 ----------
+    // ---------- Equities 테이블 ----------
     function renderStocksTableSkeleton() {
       const container = document.getElementById("stocks-container");
       if (!container) return;
@@ -611,7 +751,7 @@
             <tr class="clickable-row" data-symbol="${s.symbol}">
               <td>${s.symbol}</td>
               <td>${s.name}</td>
-              <td id="price-${s.symbol}">–</td>
+              <td id="price-${s.symbol}" class="muted">Click</td>
               <td id="chg-${s.symbol}" class="muted">–</td>
               <td id="chgPct-${s.symbol}" class="muted">–</td>
             </tr>
@@ -639,61 +779,85 @@
 
       container.innerHTML = html;
 
-      // 행 클릭 시 인사이트 삽입
       document
         .querySelectorAll("#stocks-container .clickable-row")
         .forEach((row) => {
           row.addEventListener("click", () => {
             const sym = row.getAttribute("data-symbol");
             showInlineInsight(row, sym);
+            loadQuote(sym);
           });
         });
     }
 
-    async function fetchYahooQuotes() {
+    async function loadQuote(symbol) {
+      if (quoteCache[symbol]) {
+        applyQuoteToRow(symbol, quoteCache[symbol]);
+        return;
+      }
+
+      const priceEl = document.getElementById(`price-${symbol}`);
+      const chgEl = document.getElementById(`chg-${symbol}`);
+      const chgPctEl = document.getElementById(`chgPct-${symbol}`);
+      if (!priceEl || !chgEl || !chgPctEl) return;
+
+      priceEl.textContent = "…";
+      chgEl.textContent = "…";
+      chgPctEl.textContent = "…";
+
       try {
-        const symbolsParam = stocks.map(s => s.symbol).join(",");
-        const yahooUrl =
-          `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbolsParam)}`;
-        // CORS 우회용 프록시
-        const proxied = `https://corsproxy.io/?${encodeURIComponent(yahooUrl)}`;
-
-        const res = await fetch(proxied);
-        if (!res.ok) throw new Error("Yahoo quote HTTP error");
+        const url =
+          `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${encodeURIComponent(symbol)}&apikey=${ALPHAVANTAGE_KEY}`;
+        const res = await fetch(url);
         const data = await res.json();
-        const results = data?.quoteResponse?.result || [];
-
-        for (const q of results) {
-          const sym = q.symbol;
-          const price = q.regularMarketPrice;
-          const change = q.regularMarketChange;
-          const changePct = q.regularMarketChangePercent;
-
-          const priceEl = document.getElementById(`price-${sym}`);
-          const chgEl = document.getElementById(`chg-${sym}`);
-          const chgPctEl = document.getElementById(`chgPct-${sym}`);
-          if (!priceEl || !chgEl || !chgPctEl) continue;
-
-          const cls =
-            change > 0 ? "positive" : change < 0 ? "negative" : "muted";
-
-          priceEl.textContent = formatNumber(price, 2);
-          chgEl.textContent = formatNumber(change, 2);
-          chgPctEl.textContent =
-            changePct === null || changePct === undefined || isNaN(changePct)
-              ? "–"
-              : `${changePct > 0 ? "+" : ""}${changePct.toFixed(2)}%`;
-
-          chgEl.className = cls;
-          chgPctEl.className = cls;
+        const q = data["Global Quote"];
+        if (!q) {
+          priceEl.textContent = "No data";
+          chgEl.textContent = "API";
+          chgPctEl.textContent = "limit";
+          chgEl.className = "muted";
+          chgPctEl.className = "muted";
+          return;
         }
+        const quote = {
+          price: parseFloat(q["05. price"]),
+          change: parseFloat(q["09. change"]),
+          changePct: parseFloat((q["10. change percent"] || "").replace("%",""))
+        };
+        quoteCache[symbol] = quote;
+        applyQuoteToRow(symbol, quote);
       } catch (e) {
-        console.error("Yahoo quote error", e);
+        console.error(e);
+        priceEl.textContent = "Error";
+        chgEl.textContent = "–";
+        chgPctEl.textContent = "–";
+        chgEl.className = "muted";
+        chgPctEl.className = "muted";
       }
     }
 
+    function applyQuoteToRow(symbol, quote) {
+      const priceEl = document.getElementById(`price-${symbol}`);
+      const chgEl = document.getElementById(`chg-${symbol}`);
+      const chgPctEl = document.getElementById(`chgPct-${symbol}`);
+      if (!priceEl || !chgEl || !chgPctEl) return;
+
+      const cls =
+        quote.change > 0 ? "positive" :
+        quote.change < 0 ? "negative" : "muted";
+
+      priceEl.textContent = formatNumber(quote.price, 2);
+      chgEl.textContent = formatNumber(quote.change, 2);
+      chgPctEl.textContent =
+        isNaN(quote.changePct)
+          ? "–"
+          : `${quote.changePct > 0 ? "+" : ""}${quote.changePct.toFixed(2)}%`;
+      chgEl.className = cls;
+      chgPctEl.className = cls;
+      priceEl.className = "";
+    }
+
     function showInlineInsight(row, symbol) {
-      // 기존 insight-row 제거
       document
         .querySelectorAll("#stocks-container .insight-row")
         .forEach((r) => r.remove());
@@ -702,94 +866,83 @@
       const sector = sectorTag[symbol] || "Other / Unclassified";
       if (!info) return;
 
+      const profile = companyProfiles[symbol];
+
       const tr = document.createElement("tr");
       tr.className = "insight-row";
       const td = document.createElement("td");
       td.colSpan = 5;
+
+      const containerId = `tv-chart-${symbol}`;
+
       td.innerHTML = `
         <div class="insight-box">
           <strong>${symbol}</strong> · ${info.name}<br/>
           <span class="muted">Sector group: ${sector}</span>
-          <p style="margin-top:6px;">
-            여기에는 나중에 이 회사가 어떤 역할을 하는지, 데이터센터/AI에서
-            어떤 포지션인지, 마진 구조와 성장성, 생태계에서의 위치 등을
-            서술형으로 채워 넣을 수 있습니다.
-          </p>
+          <p style="margin-top:6px;">${profile}</p>
+          <div style="margin-top:8px; height:260px;">
+            <div id="${containerId}" style="width:100%; height:100%;"></div>
+          </div>
         </div>
       `;
       tr.appendChild(td);
 
-      // 클릭한 행 바로 뒤에 삽입
       const parent = row.parentNode;
-      if (row.nextSibling) {
-        parent.insertBefore(tr, row.nextSibling);
-      } else {
-        parent.appendChild(tr);
+      if (row.nextSibling) parent.insertBefore(tr, row.nextSibling);
+      else parent.appendChild(tr);
+
+      if (window.TradingView) {
+        new TradingView.widget({
+          container_id: containerId,
+          symbol: symbol,   // 필요하면 나중에 'NASDAQ:NVDA' 등으로 개별 튜닝
+          interval: "60",
+          timezone: "Etc/UTC",
+          theme: "light",
+          style: "1",
+          height: "100%",
+          width: "100%",
+          hide_top_toolbar: false,
+          hide_legend: false,
+          withdateranges: true,
+          locale: "en"
+        });
       }
     }
 
-    // ---------- FX : KRW 기준 여러 통화 + 등락폭 ----------
+    // ---------- FX ----------
     async function fetchFX() {
       const tbody = document.querySelector("#fx-table tbody");
       if (!tbody) return;
       tbody.innerHTML = `<tr><td colspan="4" class="muted">Loading…</td></tr>`;
 
-      const symbols = ["USD", "EUR", "CHF", "JPY", "CNY"];
-
+      const symbols = ["USD","EUR","CHF","JPY","CNY"];
       try {
-        // 오늘
-        const latestRes = await fetch(
+        const res = await fetch(
           `https://api.exchangerate.host/latest?base=KRW&symbols=${symbols.join(",")}`
         );
-        if (!latestRes.ok) throw new Error("FX latest HTTP error");
-        const latestData = await latestRes.json();
-        const latestRates = latestData.rates || {};
-
-        // 어제 (단순히 날짜 -1, 주말보정까지는 안 함)
-        const d = new Date();
-        d.setDate(d.getDate() - 1);
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, "0");
-        const day = String(d.getDate()).padStart(2, "0");
-        const yesterdayStr = `${y}-${m}-${day}`;
-
-        const prevRes = await fetch(
-          `https://api.exchangerate.host/${yesterdayStr}?base=KRW&symbols=${symbols.join(",")}`
-        );
-        const prevData = await prevRes.json();
-        const prevRates = prevData.rates || {};
-
-        usdKrwRate = 1 / (latestRates["USD"] || 0); // KRW→USD의 역수 = USD/KRW
+        if (!res.ok) throw new Error("FX HTTP error");
+        const data = await res.json();
+        const rates = data.rates || {};
 
         const rows = symbols.map((sym) => {
-          const krwPerSym = latestRates[sym];   // 1 KRW = ? sym
-          const prev = prevRates[sym];
-          if (!krwPerSym || !prev) {
-            return `
-              <tr>
-                <td>KRW/${sym}</td>
-                <td class="muted">–</td>
-                <td class="muted">–</td>
-                <td class="muted">–</td>
-              </tr>
-            `;
-          }
-          // 우리가 보기 편하게, "1 sym = ? KRW"로 뒤집자
-          const symPerKrw = 1 / krwPerSym;
-          const prevSymPerKrw = 1 / prev;
-          const delta = symPerKrw - prevSymPerKrw;
-          const pct = (delta / prevSymPerKrw) * 100;
-          const cls =
-            delta > 0 ? "positive" : delta < 0 ? "negative" : "muted";
-
-          return `
-            <tr>
+          const v = rates[sym];
+          if (!v) {
+            return `<tr>
               <td>${sym}/KRW</td>
-              <td>${formatNumber(symPerKrw, sym === "JPY" ? 3 : 2)}</td>
-              <td class="${cls}">${delta > 0 ? "+" : ""}${formatNumber(delta, sym === "JPY" ? 3 : 2)}</td>
-              <td class="${cls}">${pct > 0 ? "+" : ""}${pct.toFixed(2)}%</td>
-            </tr>
-          `;
+              <td class="muted">–</td>
+              <td class="muted">–</td>
+              <td class="muted">–</td>
+            </tr>`;
+          }
+          const rate = 1 / v; // 1 sym = ? KRW
+          if (sym === "USD") usdKrwRate = rate;
+
+          return `<tr>
+            <td>${sym}/KRW</td>
+            <td>${formatNumber(rate, sym === "JPY" ? 3 : 2)}</td>
+            <td class="muted">–</td>
+            <td class="muted">–</td>
+          </tr>`;
         }).join("");
 
         tbody.innerHTML = rows;
@@ -799,11 +952,11 @@
       }
     }
 
-    // ---------- Crypto : Top 15 시총 ----------
+    // ---------- Crypto ----------
     async function fetchCryptos() {
       const tbody = document.querySelector("#crypto-table tbody");
       if (!tbody) return;
-      tbody.innerHTML = `<tr><td colspan="5" class="muted">Loading…</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" class="muted">Loading…</td></tr>`;
 
       try {
         const url =
@@ -817,6 +970,7 @@
           const usd = c.current_price;
           const krw = usdKrwRate ? usd * usdKrwRate : null;
           const chg = c.price_change_percentage_24h;
+          const vol = c.total_volume;
           const cls =
             chg > 0 ? "positive" : chg < 0 ? "negative" : "muted";
           const pctText =
@@ -831,6 +985,7 @@
               <td>${formatNumber(usd, 2)}</td>
               <td>${formatNumber(krw, 0)}</td>
               <td class="${cls}">${pctText}</td>
+              <td>${formatNumber(vol, 0)}</td>
             </tr>
           `;
         }).join("");
@@ -838,11 +993,11 @@
         tbody.innerHTML = rows;
       } catch (e) {
         console.error("crypto error", e);
-        tbody.innerHTML = `<tr><td colspan="5" class="muted">Error</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="muted">Error</td></tr>`;
       }
     }
 
-    // ---------- Staking (수동) ----------
+    // ---------- Staking ----------
     function renderStakingManual() {
       const tbody = document.querySelector("#staking-table tbody");
       if (!tbody) return;
@@ -857,13 +1012,11 @@
       tbody.innerHTML = rows;
     }
 
-    // ---------- 전체 새로고침 ----------
     async function refreshAll() {
       setLastUpdated();
       renderStakingManual();
-      await fetchFX();        // usdKrwRate 먼저 확보
-      await fetchCryptos();   // 그 다음 crypto
-      await fetchYahooQuotes();
+      await fetchFX();
+      await fetchCryptos();
     }
 
     document
@@ -872,7 +1025,6 @@
         refreshAll();
       });
 
-    // 초기 렌더
     renderStocksTableSkeleton();
     refreshAll();
   </script>
