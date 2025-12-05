@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>Market Studio – Yahoo Edition</title>
+  <title>Market Studio – Yahoo + FX + Crypto</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -165,56 +165,6 @@
       font-size: 11px;
       color: var(--text-sub);
     }
-    .news-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 4px;
-    }
-    .news-column-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 4px;
-    }
-    .news-column-title {
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--text-sub);
-    }
-    .news-symbol-label {
-      font-size: 11px;
-      color: var(--text-sub);
-    }
-    .news-list {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .news-item {
-      padding: 6px 0;
-      border-bottom: 1px solid #f3f4f6;
-    }
-    .news-item:last-child {
-      border-bottom: none;
-    }
-    .news-title {
-      font-size: 12px;
-      margin-bottom: 2px;
-    }
-    .news-meta {
-      font-size: 10px;
-      color: var(--text-sub);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-    .news-title a {
-      color: var(--text-main);
-      text-decoration: none;
-    }
-    .news-title a:hover { text-decoration: underline; }
-
     .sector-block {
       margin-top: 10px;
       border-top: 1px solid #e5e7eb;
@@ -227,13 +177,13 @@
       color: var(--text-sub);
       margin-bottom: 4px;
     }
-
-    #company-insight {
+    .insight-box {
       font-size: 12px;
       line-height: 1.6;
-      min-height: 80px;
+      padding: 10px 8px 6px;
+      background: #f9fafb;
+      border-radius: 8px;
     }
-    #company-insight strong { font-weight: 600; }
   </style>
 </head>
 <body>
@@ -241,7 +191,7 @@
     <header>
       <div class="title-block">
         <h1>Market Studio</h1>
-        <div class="sub">Equities · Crypto · FX · Yield · News</div>
+        <div class="sub">Equities · Crypto · FX · Yield</div>
       </div>
       <div class="meta">
         <div id="last-updated">Last update – –</div>
@@ -252,7 +202,7 @@
     </header>
 
     <main>
-      <!-- 왼쪽 -->
+      <!-- 왼쪽: Equities -->
       <div class="left-column">
         <section class="card">
           <div class="card-header">
@@ -260,33 +210,43 @@
               <div class="card-title">Equities</div>
               <div class="card-sub">AI · Data Center · Ecosystem</div>
             </div>
-            <div class="tag">Yahoo Finance (unofficial)</div>
+            <div class="tag">Yahoo Finance via CORS proxy</div>
           </div>
           <div id="stocks-container"></div>
+          <div class="small-note">
+            행을 클릭하면 바로 아래에 간단한 Company Insight가 나타납니다.
+          </div>
+        </section>
+      </div>
+
+      <!-- 오른쪽: FX + Crypto + Staking -->
+      <div class="right-column">
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">FX</div>
+              <div class="card-sub">KRW base · Major pairs</div>
+            </div>
+            <div class="tag">exchangerate.host</div>
+          </div>
+          <table id="fx-table">
+            <thead>
+              <tr>
+                <th>Pair</th>
+                <th>Rate</th>
+                <th>Δ</th>
+                <th>Δ%</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </section>
 
         <section class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Company Insight</div>
-              <div class="card-sub">Sector · Role · Moat</div>
-            </div>
-            <div class="tag">Curated</div>
-          </div>
-          <div id="company-insight">
-            <div class="small-note">
-              왼쪽 Equities 섹션에서 종목을 클릭하면
-              이 영역에 간단한 섹터/역할/AI·데이터센터 포지션을 보여줄 수 있게
-              확장할 수 있습니다. 지금은 기본 안내만 표시합니다.
-            </div>
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Crypto</div>
-              <div class="card-sub">Spot · USD & KRW</div>
+              <div class="card-title">Crypto Market</div>
+              <div class="card-sub">Top 15 · Market Cap</div>
             </div>
             <div class="tag">CoinGecko</div>
           </div>
@@ -298,30 +258,6 @@
                 <th>USD</th>
                 <th>KRW</th>
                 <th>24h</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </section>
-      </div>
-
-      <!-- 오른쪽 -->
-      <div class="right-column">
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">FX</div>
-              <div class="card-sub">USD / KRW</div>
-            </div>
-            <div class="tag">Frankfurter</div>
-          </div>
-          <table id="fx-table">
-            <thead>
-              <tr>
-                <th>Pair</th>
-                <th>Rate</th>
-                <th>Base</th>
-                <th>Quote</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -348,21 +284,7 @@
             <tbody></tbody>
           </table>
           <div class="small-note">
-            지금은 수동 입력 값입니다. 나중에 DeFiLlama 같은 곳에서 자동화 가능.
-          </div>
-        </section>
-
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <div class="card-title">News</div>
-              <div class="card-sub">(옵션) Finnhub / 기타 API</div>
-            </div>
-            <div class="tag">Placeholder</div>
-          </div>
-          <div class="small-note">
-            지금은 뉴스 API를 연결하지 않았습니다. Finnhub 키를 쓰고 싶으면
-            여기에 바로 붙일 수 있게 구조는 미리 잡아둔 상태입니다.
+            지금은 수동 입력 값입니다. 나중에 DeFi API로 연결 가능.
           </div>
         </section>
       </div>
@@ -370,7 +292,7 @@
   </div>
 
   <script>
-    // ===== 데이터 정의 =====
+    // ---------- 데이터 정의 ----------
     const stocks = [
       { symbol: "AAPL",  name: "Apple" },
       { symbol: "ABNB",  name: "Airbnb" },
@@ -543,71 +465,65 @@
     ];
 
     const sectorTag = {
-      // AI / 데이터센터 코어
-      NVDA: "AI / Data Center Core",
-      MSFT: "AI / Data Center Core",
-      AMZN: "AI / Data Center Core",
-      META: "AI / Data Center Core",
+      NVDA:"AI / Data Center Core",
+      MSFT:"AI / Data Center Core",
+      AMZN:"AI / Data Center Core",
+      META:"AI / Data Center Core",
       GOOGL:"AI / Data Center Core",
-      SMCI: "AI / Data Center Core",
-      ANET: "AI / Data Center Core",
-      VRT:  "AI / Data Center Core",
-      EQIX: "AI / Data Center Core",
-      DLR:  "AI / Data Center Core",
-      NOW:  "AI / Data Center Core",
-      NET:  "AI / Data Center Core",
-      SNOW: "AI / Data Center Core",
-      DDOG: "AI / Data Center Core",
-      PLTR: "AI / Data Center Core",
-      CRM:  "AI / Data Center Core",
+      SMCI:"AI / Data Center Core",
+      ANET:"AI / Data Center Core",
+      VRT:"AI / Data Center Core",
+      EQIX:"AI / Data Center Core",
+      DLR:"AI / Data Center Core",
+      NOW:"AI / Data Center Core",
+      NET:"AI / Data Center Core",
+      SNOW:"AI / Data Center Core",
+      DDOG:"AI / Data Center Core",
+      PLTR:"AI / Data Center Core",
+      CRM:"AI / Data Center Core",
 
-      // 반도체 / EDA
-      AVGO: "Semiconductors & EDA",
-      ASML: "Semiconductors & EDA",
-      CDNS: "Semiconductors & EDA",
-      MRVL: "Semiconductors & EDA",
-      TSM:  "Semiconductors & EDA",
-      SITM: "Semiconductors & EDA",
-      INTC: "Semiconductors & EDA",
-      MU:   "Semiconductors & EDA",
-      AMAT: "Semiconductors & EDA",
-      LRCX: "Semiconductors & EDA",
-      MCHP: "Semiconductors & EDA",
-      COHR: "Semiconductors & EDA",
-      ARM:  "Semiconductors & EDA",
-      SWKS: "Semiconductors & EDA",
+      AVGO:"Semiconductors & EDA",
+      ASML:"Semiconductors & EDA",
+      CDNS:"Semiconductors & EDA",
+      MRVL:"Semiconductors & EDA",
+      TSM:"Semiconductors & EDA",
+      SITM:"Semiconductors & EDA",
+      INTC:"Semiconductors & EDA",
+      MU:"Semiconductors & EDA",
+      AMAT:"Semiconductors & EDA",
+      LRCX:"Semiconductors & EDA",
+      MCHP:"Semiconductors & EDA",
+      COHR:"Semiconductors & EDA",
+      ARM:"Semiconductors & EDA",
+      SWKS:"Semiconductors & EDA",
 
-      // 에너지 / 전력 / 원전
-      BE:   "Energy / Power / Nuclear",
-      CEG:  "Energy / Power / Nuclear",
-      NEE:  "Energy / Power / Nuclear",
-      SMR:  "Energy / Power / Nuclear",
-      OKLO: "Energy / Power / Nuclear",
-      MNTK: "Energy / Power / Nuclear",
-      ETN:  "Energy / Power / Nuclear",
-      PNW:  "Energy / Power / Nuclear",
+      BE:"Energy / Power / Nuclear",
+      CEG:"Energy / Power / Nuclear",
+      NEE:"Energy / Power / Nuclear",
+      SMR:"Energy / Power / Nuclear",
+      OKLO:"Energy / Power / Nuclear",
+      MNTK:"Energy / Power / Nuclear",
+      ETN:"Energy / Power / Nuclear",
+      PNW:"Energy / Power / Nuclear",
 
-      // 금융 / 브로커 / 자산운용
-      BLK:  "Financials / Brokers",
-      BK:   "Financials / Brokers",
-      NU:   "Financials / Brokers",
-      SOFI: "Financials / Brokers",
-      COIN: "Financials / Brokers",
-      FUTU: "Financials / Brokers",
-      ETOR: "Financials / Brokers",
-      IVZ:  "Financials / Brokers",
-      PYPL: "Financials / Brokers",
-      UPST: "Financials / Brokers",
+      BLK:"Financials / Brokers",
+      BK:"Financials / Brokers",
+      NU:"Financials / Brokers",
+      SOFI:"Financials / Brokers",
+      COIN:"Financials / Brokers",
+      FUTU:"Financials / Brokers",
+      ETOR:"Financials / Brokers",
+      IVZ:"Financials / Brokers",
+      PYPL:"Financials / Brokers",
+      UPST:"Financials / Brokers",
 
-      // 크립토 마이너
       MARA:"Crypto Miners",
       RIOT:"Crypto Miners",
       BTDR:"Crypto Miners",
-      HUT: "Crypto Miners",
+      HUT:"Crypto Miners",
       BMNR:"Crypto Miners",
       CLSK:"Crypto Miners",
 
-      // 헬스케어
       LLY:"Healthcare / Bio",
       AMGN:"Healthcare / Bio",
       MRNA:"Healthcare / Bio",
@@ -621,7 +537,6 @@
       NRIX:"Healthcare / Bio",
       TMO:"Healthcare / Bio",
 
-      // 컨슈머 / 브랜드
       AAPL:"Consumer / Brand",
       ABNB:"Consumer / Brand",
       CELH:"Consumer / Brand",
@@ -636,7 +551,6 @@
       RBLX:"Consumer / Brand",
       GME:"Consumer / Brand",
 
-      // 인더스트리 / 방산 / 인프라
       CAT:"Industrial / Infra",
       DE:"Industrial / Infra",
       STLD:"Industrial / Infra",
@@ -652,14 +566,6 @@
       IESC:"Industrial / Infra"
     };
 
-    const cryptos = [
-      { id: "bitcoin",      symbol: "BTC",  name: "Bitcoin" },
-      { id: "ethereum",     symbol: "ETH",  name: "Ethereum" },
-      { id: "avalanche-2",  symbol: "AVAX", name: "Avalanche" },
-      { id: "sui",          symbol: "SUI",  name: "Sui" },
-      { id: "aptos",        symbol: "APT",  name: "Aptos" }
-    ];
-
     const stakingManual = [
       { asset: "AVAX", platform: "Bybit Earn",      apy: 7.5, note: "30d Lock" },
       { asset: "SUI",  platform: "On-chain Staking", apy: 6.2, note: "Validator" },
@@ -668,7 +574,6 @@
 
     let usdKrwRate = null;
 
-    // ===== 유틸 =====
     function formatNumber(n, decimals = 2) {
       if (n === null || n === undefined || isNaN(n)) return "–";
       return Number(n).toLocaleString("en-US", {
@@ -686,7 +591,7 @@
         + `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }
 
-    // ===== Equities 렌더링 =====
+    // ---------- Equities : 테이블 + Yahoo 가격 ----------
     function renderStocksTableSkeleton() {
       const container = document.getElementById("stocks-container");
       if (!container) return;
@@ -734,11 +639,13 @@
 
       container.innerHTML = html;
 
-      document.querySelectorAll("#stocks-container .clickable-row")
+      // 행 클릭 시 인사이트 삽입
+      document
+        .querySelectorAll("#stocks-container .clickable-row")
         .forEach((row) => {
           row.addEventListener("click", () => {
             const sym = row.getAttribute("data-symbol");
-            showCompanyInsight(sym);
+            showInlineInsight(row, sym);
           });
         });
     }
@@ -746,8 +653,12 @@
     async function fetchYahooQuotes() {
       try {
         const symbolsParam = stocks.map(s => s.symbol).join(",");
-        const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbolsParam)}`;
-        const res = await fetch(url);
+        const yahooUrl =
+          `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbolsParam)}`;
+        // CORS 우회용 프록시
+        const proxied = `https://corsproxy.io/?${encodeURIComponent(yahooUrl)}`;
+
+        const res = await fetch(proxied);
         if (!res.ok) throw new Error("Yahoo quote HTTP error");
         const data = await res.json();
         const results = data?.quoteResponse?.result || [];
@@ -765,6 +676,7 @@
 
           const cls =
             change > 0 ? "positive" : change < 0 ? "negative" : "muted";
+
           priceEl.textContent = formatNumber(price, 2);
           chgEl.textContent = formatNumber(change, 2);
           chgPctEl.textContent =
@@ -780,78 +692,131 @@
       }
     }
 
-    // ===== Company Insight (간단 버전) =====
-    function showCompanyInsight(symbol) {
-      const box = document.getElementById("company-insight");
+    function showInlineInsight(row, symbol) {
+      // 기존 insight-row 제거
+      document
+        .querySelectorAll("#stocks-container .insight-row")
+        .forEach((r) => r.remove());
+
       const info = stocks.find(s => s.symbol === symbol);
       const sector = sectorTag[symbol] || "Other / Unclassified";
-      if (!info || !box) return;
+      if (!info) return;
 
-      box.innerHTML = `
-        <p><strong>${symbol}</strong> · ${info.name}</p>
-        <p class="muted" style="margin-top:4px;">Sector group: ${sector}</p>
-        <p style="margin-top:8px;">
-          이 종목에 대한 상세 프로필은 아직 텍스트로 작성하지 않았습니다.
-          나중에 섹터, 역할, AI·데이터센터 노출 정도, 마진/성장 특성 등을
-          여기에 서술형으로 채워 넣을 수 있습니다.
-        </p>
+      const tr = document.createElement("tr");
+      tr.className = "insight-row";
+      const td = document.createElement("td");
+      td.colSpan = 5;
+      td.innerHTML = `
+        <div class="insight-box">
+          <strong>${symbol}</strong> · ${info.name}<br/>
+          <span class="muted">Sector group: ${sector}</span>
+          <p style="margin-top:6px;">
+            여기에는 나중에 이 회사가 어떤 역할을 하는지, 데이터센터/AI에서
+            어떤 포지션인지, 마진 구조와 성장성, 생태계에서의 위치 등을
+            서술형으로 채워 넣을 수 있습니다.
+          </p>
+        </div>
       `;
-    }
+      tr.appendChild(td);
 
-    // ===== FX (USD/KRW) =====
-    async function fetchFX() {
-      const tbody = document.querySelector("#fx-table tbody");
-      if (!tbody) return;
-      tbody.innerHTML = `
-        <tr><td>USD/KRW</td><td colspan="3" class="muted">Loading…</td></tr>
-      `;
-      try {
-        const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=KRW");
-        if (!res.ok) throw new Error("FX HTTP error");
-        const data = await res.json();
-        const rate = data?.rates?.KRW;
-        usdKrwRate = rate || null;
-
-        tbody.innerHTML = `
-          <tr>
-            <td>USD/KRW</td>
-            <td>${formatNumber(rate, 2)}</td>
-            <td>USD</td>
-            <td>KRW</td>
-          </tr>
-        `;
-      } catch (e) {
-        console.error("FX error", e);
-        tbody.innerHTML = `
-          <tr>
-            <td>USD/KRW</td>
-            <td colspan="3" class="muted">Error</td>
-          </tr>
-        `;
+      // 클릭한 행 바로 뒤에 삽입
+      const parent = row.parentNode;
+      if (row.nextSibling) {
+        parent.insertBefore(tr, row.nextSibling);
+      } else {
+        parent.appendChild(tr);
       }
     }
 
-    // ===== Crypto =====
+    // ---------- FX : KRW 기준 여러 통화 + 등락폭 ----------
+    async function fetchFX() {
+      const tbody = document.querySelector("#fx-table tbody");
+      if (!tbody) return;
+      tbody.innerHTML = `<tr><td colspan="4" class="muted">Loading…</td></tr>`;
+
+      const symbols = ["USD", "EUR", "CHF", "JPY", "CNY"];
+
+      try {
+        // 오늘
+        const latestRes = await fetch(
+          `https://api.exchangerate.host/latest?base=KRW&symbols=${symbols.join(",")}`
+        );
+        if (!latestRes.ok) throw new Error("FX latest HTTP error");
+        const latestData = await latestRes.json();
+        const latestRates = latestData.rates || {};
+
+        // 어제 (단순히 날짜 -1, 주말보정까지는 안 함)
+        const d = new Date();
+        d.setDate(d.getDate() - 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        const yesterdayStr = `${y}-${m}-${day}`;
+
+        const prevRes = await fetch(
+          `https://api.exchangerate.host/${yesterdayStr}?base=KRW&symbols=${symbols.join(",")}`
+        );
+        const prevData = await prevRes.json();
+        const prevRates = prevData.rates || {};
+
+        usdKrwRate = 1 / (latestRates["USD"] || 0); // KRW→USD의 역수 = USD/KRW
+
+        const rows = symbols.map((sym) => {
+          const krwPerSym = latestRates[sym];   // 1 KRW = ? sym
+          const prev = prevRates[sym];
+          if (!krwPerSym || !prev) {
+            return `
+              <tr>
+                <td>KRW/${sym}</td>
+                <td class="muted">–</td>
+                <td class="muted">–</td>
+                <td class="muted">–</td>
+              </tr>
+            `;
+          }
+          // 우리가 보기 편하게, "1 sym = ? KRW"로 뒤집자
+          const symPerKrw = 1 / krwPerSym;
+          const prevSymPerKrw = 1 / prev;
+          const delta = symPerKrw - prevSymPerKrw;
+          const pct = (delta / prevSymPerKrw) * 100;
+          const cls =
+            delta > 0 ? "positive" : delta < 0 ? "negative" : "muted";
+
+          return `
+            <tr>
+              <td>${sym}/KRW</td>
+              <td>${formatNumber(symPerKrw, sym === "JPY" ? 3 : 2)}</td>
+              <td class="${cls}">${delta > 0 ? "+" : ""}${formatNumber(delta, sym === "JPY" ? 3 : 2)}</td>
+              <td class="${cls}">${pct > 0 ? "+" : ""}${pct.toFixed(2)}%</td>
+            </tr>
+          `;
+        }).join("");
+
+        tbody.innerHTML = rows;
+      } catch (e) {
+        console.error("FX error", e);
+        tbody.innerHTML = `<tr><td colspan="4" class="muted">Error</td></tr>`;
+      }
+    }
+
+    // ---------- Crypto : Top 15 시총 ----------
     async function fetchCryptos() {
       const tbody = document.querySelector("#crypto-table tbody");
       if (!tbody) return;
       tbody.innerHTML = `<tr><td colspan="5" class="muted">Loading…</td></tr>`;
 
       try {
-        const ids = cryptos.map(c => c.id).join(",");
         const url =
-          `https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(ids)}`
-          + "&vs_currencies=usd,krw&include_24hr_change=true";
+          "https://api.coingecko.com/api/v3/coins/markets" +
+          "?vs_currency=usd&order=market_cap_desc&per_page=15&page=1&sparkline=false&price_change_percentage=24h";
         const res = await fetch(url);
-        if (!res.ok) throw new Error("CG HTTP error");
+        if (!res.ok) throw new Error("crypto HTTP error");
         const data = await res.json();
 
-        const rows = cryptos.map((c) => {
-          const d = data[c.id] || {};
-          const usd = d.usd;
-          const krw = d.krw !== undefined ? d.krw :
-                      (usdKrwRate && usd ? usd * usdKrwRate : null);
-          const chg = d.usd_24h_change;
+        const rows = data.map((c) => {
+          const usd = c.current_price;
+          const krw = usdKrwRate ? usd * usdKrwRate : null;
+          const chg = c.price_change_percentage_24h;
           const cls =
             chg > 0 ? "positive" : chg < 0 ? "negative" : "muted";
           const pctText =
@@ -861,7 +826,7 @@
 
           return `
             <tr>
-              <td>${c.symbol}</td>
+              <td>${(c.symbol || "").toUpperCase()}</td>
               <td>${c.name}</td>
               <td>${formatNumber(usd, 2)}</td>
               <td>${formatNumber(krw, 0)}</td>
@@ -877,7 +842,7 @@
       }
     }
 
-    // ===== Staking (수동) =====
+    // ---------- Staking (수동) ----------
     function renderStakingManual() {
       const tbody = document.querySelector("#staking-table tbody");
       if (!tbody) return;
@@ -892,20 +857,22 @@
       tbody.innerHTML = rows;
     }
 
-    // ===== 전체 새로고침 =====
+    // ---------- 전체 새로고침 ----------
     async function refreshAll() {
       setLastUpdated();
       renderStakingManual();
-      await fetchFX();
-      await fetchCryptos();
+      await fetchFX();        // usdKrwRate 먼저 확보
+      await fetchCryptos();   // 그 다음 crypto
       await fetchYahooQuotes();
     }
 
-    document.getElementById("manual-refresh").addEventListener("click", () => {
-      refreshAll();
-    });
+    document
+      .getElementById("manual-refresh")
+      .addEventListener("click", () => {
+        refreshAll();
+      });
 
-    // 초기화
+    // 초기 렌더
     renderStocksTableSkeleton();
     refreshAll();
   </script>
