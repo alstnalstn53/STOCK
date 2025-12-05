@@ -43,8 +43,8 @@
     }
     .title-block h1 {
       margin: 0 0 4px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
+      font-weight: 700;
+      letter-spacing: 0.18em;
       text-transform: uppercase;
       font-size: 18px;
     }
@@ -53,6 +53,7 @@
       color: var(--text-sub);
       letter-spacing: 0.16em;
       text-transform: uppercase;
+      font-weight: 600;
     }
     .meta {
       text-align: right;
@@ -114,7 +115,7 @@
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
-      font-weight: 700;
+      font-weight: 800;
     }
     .card-sub {
       font-size: 11px;
@@ -132,6 +133,7 @@
       text-transform: uppercase;
       letter-spacing: 0.12em;
       white-space: nowrap;
+      font-weight: 600;
     }
     table {
       width: 100%;
@@ -149,18 +151,34 @@
       text-align: left;
     }
     th {
-      font-weight: 700;
+      font-weight: 800;
       color: var(--text-sub);
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      cursor: pointer;
+    }
+    th.sortable::after {
+      content: " ";
+      display: inline-block;
+      margin-left: 4px;
+      border: 4px solid transparent;
+      border-top-color: #cbd5f5;
+      transform: translateY(2px);
+    }
+    th[data-sort-dir="asc"].sortable::after {
+      border-top-color: #111827;
+      transform: rotate(180deg) translateY(-2px);
+    }
+    th[data-sort-dir="desc"].sortable::after {
+      border-top-color: #111827;
     }
     tbody tr:last-child td {
       border-bottom: none;
     }
     .muted { color: var(--text-sub); }
-    .positive { color: var(--positive); }
-    .negative { color: var(--negative); }
+    .positive { color: var(--positive); font-weight: 600; }
+    .negative { color: var(--negative); font-weight: 600; }
     .clickable-row { cursor: pointer; }
     .clickable-row:hover { background: #f9fafb; }
     .small-note {
@@ -179,7 +197,7 @@
       letter-spacing: 0.12em;
       color: var(--text-sub);
       margin-bottom: 4px;
-      font-weight: 700;
+      font-weight: 800;
     }
     .insight-box {
       font-size: 12px;
@@ -214,12 +232,13 @@
               <div class="card-title">Equities</div>
               <div class="card-sub">AI · Data Center · Ecosystem</div>
             </div>
-            <div class="tag">Alpha Vantage · On click</div>
+            <div class="tag">Alpha Vantage · TradingView</div>
           </div>
           <div id="stocks-container"></div>
           <div class="small-note">
-            * 행을 클릭하면 해당 종목 가격·등락과 Company Insight + 실시간 차트가 아래에 나타납니다.<br>
-            (무료 API 제한 때문에 이렇게 “클릭 로딩” 구조로 설계.)
+            * 페이지 로딩/REFRESH 시 전 종목 가격을 한 번에 불러옵니다.<br>
+            행을 클릭하면 Company Insight + 실시간 차트가 펼쳐지고, 다시 클릭하면 접힙니다.<br>
+            섹터별 테이블에서 Price / Change / Δ% 헤더를 클릭하면 오름차순·내림차순 정렬이 됩니다.
           </div>
         </section>
       </div>
@@ -232,7 +251,7 @@
               <div class="card-title">FX</div>
               <div class="card-sub">KRW base · Major pairs</div>
             </div>
-            <div class="tag">exchangerate.host</div>
+            <div class="tag">open.er-api.com</div>
           </div>
           <table id="fx-table">
             <thead>
@@ -533,176 +552,176 @@
       ETRN:"Industrial / Infra", CLS:"Industrial / Infra"
     };
 
-    // ---------- 회사 설명: 전 종목 ----------
+    // ---------- 회사 설명 (요약형) ----------
     const companyProfiles = {
-      AAPL: "아이폰·아이패드·맥·워치 등 하드웨어와 iOS·서비스 생태계를 가진 빅테크. 프리미엄 소비자 디바이스와 서비스 구독 모델 중심.",
-      ABNB: "숙박·체험 공유 플랫폼. 개인 호스트와 여행자를 연결하는 마켓플레이스를 운영.",
-      ADBE: "포토샵·일러스트레이터·프리미어 등 크리에이티브 소프트웨어와 디지털 마케팅/분석 툴을 제공하는 SaaS 기업.",
-      AG: "은(실버) 중심의 귀금속 채굴 회사. 금·은 가격에 높은 레버리지로 반응.",
-      AGX: "전력·산업 플랜트 EPC(설계·조달·시공)와 유지보수 사업을 하는 인프라·건설 엔지니어링 기업.",
-      ALAB: "데이터센터용 CXL·PCIe 연결 솔루션, Smart Cable 모듈 등 고속 인터커넥트를 설계하는 팹리스. AI 서버 I/O 병목 해소에 초점.",
-      ALL: "자동차·주택·생명보험 등 손해보험 중심의 미국 보험사.",
-      AMAT: "반도체·디스플레이 제조 장비와 소재를 공급하는 장비 1티어 업체.",
-      AMGN: "바이오의약품 중심 제약사. 항체·재조합 단백질 기반 치료제 개발.",
-      AMZN: "이커머스와 클라우드(AWS)를 축으로 한 빅테크. AWS는 전 세계 데이터센터 인프라의 핵심 플랫폼.",
-      ANET: "클라우드·AI 데이터센터용 이더넷 스위치/네트워크 OS에 특화된 네트워킹 기업.",
-      ANSS: "구조·유체·전자기 해석 등 공학 시뮬레이션 소프트웨어를 제공하는 CAE 전문 업체.",
-      APP: "모바일 광고·측정·수익화 플랫폼(AppLovin). 게임 퍼블리싱도 병행.",
-      ARM: "저전력 CPU 아키텍처 IP를 라이선스하는 회사. 모바일·임베디드에서 데이터센터·AI 쪽으로 확장 중.",
-      ASML: "EUV·DUV 노광 장비를 독점 공급하는 반도체 장비 업체. 첨단 공정의 병목 포인트.",
-      AVGO: "Broadcom – 데이터센터·통신·스토리지용 고성능 칩과 인프라 소프트웨어를 가진 종합 반도체/소프트웨어 기업.",
+      AAPL: "아이폰·맥·아이패드·워치와 iOS·서비스 구독으로 잠금효과가 강한 빅테크. 하드웨어+서비스 결합으로 꾸준한 현금창출.",
+      ABNB: "숙박·체험 공유 플랫폼. 자산을 직접 보유하지 않고 수수료를 취하는 마켓플레이스 구조.",
+      ADBE: "포토샵·프리미어·애크로뱃 등 크리에이티브/문서 소프트웨어를 구독형 SaaS로 전환한 고마진 기업.",
+      AG: "은(실버) 중심의 귀금속 채굴사. 금·은 가격에 레버리지된 플레이로 변동성이 크다.",
+      AGX: "발전소·인프라 EPC를 수행하는 엔지니어링 회사. 전력·산업 프로젝트 사이클에 연동.",
+      ALAB: "데이터센터용 CXL·PCIe·액티브 케이블 등 고속 인터커넥트 팹리스. AI 서버 I/O 병목 해소에 초점.",
+      ALL: "자동차·주택·생명보험 등 손해보험 포트폴리오를 가진 대형 보험사.",
+      AMAT: "웨이퍼 공정 장비 중심의 종합 반도체 장비사. 메모리·파운드리·로직 전반에 공급.",
+      AMGN: "바이오의약품 기반 빅파마. 항체·재조합 단백을 중심으로 포트폴리오 운영.",
+      AMZN: "이커머스+프라임 생태계와 AWS 클라우드로 성장하는 빅테크. 데이터센터 인프라의 핵심プレ이어.",
+      ANET: "클라우드/AI 데이터센터 스위치에 집중한 네트워킹 업체. 소프트웨어 정의 네트워크로 차별화.",
+      ANSS: "CAE(해석) 소프트웨어 리더. 자동차·우주·반도체 등 복잡한 제품 설계에 필수 툴.",
+      APP: "모바일 광고·측정·수익화 플랫폼. 퍼포먼스 광고와 게임 퍼블리싱을 병행.",
+      ARM: "저전력 CPU 아키텍처 IP를 라이선스. 모바일에서 서버·AI 가속기로 확장 중.",
+      ASML: "EUV/DUV 노광장비를 사실상 독점 공급. 첨단 반도체 공정의 병목 포인트.",
+      AVGO: "Broadcom – 네트워크·스토리지·무선·AI 칩과 인프라 소프트웨어를 가진 복합 반도체/소프트웨어 기업.",
 
-      BE: "고체산화물 연료전지(SOFC) 기반 분산 전력 솔루션을 제공하는 Bloom Energy.",
-      BK: "Bank of New York Mellon – 수탁·자산관리·서비스뱅킹에 특화된 글로벌 금융사.",
-      BLK: "BlackRock – 세계 최대 자산운용사. ETF·인덱스·액티브 운용 등 다양한 상품 제공.",
-      BMNR: "BitMine Immersion – 침지식 냉각을 활용한 암호화폐 채굴 인프라·호스팅에 집중.",
-      BSX: "Boston Scientific – 심혈관·신경계 등 의료기기 중심 헬스케어 기업.",
-      BTDR: "Bitdeer – 비트코인 채굴·클라우드 마이닝·호스팅 서비스를 제공하는 채굴 인프라 기업.",
+      BE: "고체산화물 연료전지(SOFC)를 활용한 분산 전력 솔루션. 데이터센터·상업시설용 친환경 전력원 지향.",
+      BK: "수탁·자산관리 특화 금융사. 거래/보관 인프라 역할로 금융 시스템의 필수 요소.",
+      BLK: "세계 최대 자산운용사. ETF·인덱스·액티브 운용으로 글로벌 자산에 레버리지.",
+      BMNR: "침지식 냉각 기반 암호화폐 채굴 인프라. 효율과 전력비 절감에 초점을 둠.",
+      BSX: "심혈관·신경계·비뇨기 등 의료기기에 강점. 고령화와 맞물린 구조적 성장 산업.",
+      BTDR: "Bitdeer – 비트코인 채굴·클라우드 마이닝·호스팅을 제공하는 채굴 인프라 플레이.",
 
-      CAT: "Caterpillar – 굴삭기·덤프·광산장비 등 중장비를 제조하는 글로벌 산업장비 기업.",
-      CDNS: "Cadence – 반도체 설계 자동화(EDA) 소프트웨어와 IP를 공급하는 핵심 툴 업체.",
-      CDNA: "CareDx – 장기 이식 환자 모니터링을 위한 진단 테스트와 서비스를 제공.",
-      CEG: "Constellation Energy – 원자력·청정발전을 중심으로 한 전력 발전/공급 기업.",
-      CELH: "Celsius Holdings – 기능성 에너지 드링크 브랜드를 전개하는 소비재 기업.",
-      CL: "Colgate-Palmolive – 치약·비누·세제 등 생활용품 글로벌 브랜드.",
-      CLSK: "CleanSpark – 비트코인 채굴과 에너지 효율성을 동시에 강조하는 채굴 회사.",
-      CLS: "Celestica – 서버·네트워크·산업·에너지 장비를 위탁 생산하는 EMS/ODM 업체.",
-      COHR: "Coherent – 레이저·광학·포토닉스 솔루션을 제공, 통신·반도체·산업·방산에 공급.",
-      COIN: "Coinbase – 미국 최대 암호화폐 거래소. 리테일/기관 거래와 커스터디 사업 운영.",
-      COST: "Costco – 멤버십 기반 대형 창고형 할인점 체인.",
-      CRDO: "Credo Technology – 100G/200G/400G/800G 이더넷용 액티브 전기 케이블(AEC)과 고속 SerDes를 제공하는 네트워킹 팹리스.",
-      CRM: "Salesforce – 클라우드 기반 CRM·세일즈·마케팅·플랫폼 SaaS를 제공.",
-      CSCO: "Cisco – 엔터프라이즈·서비스프로바이더 네트워크 장비, 보안, 협업 솔루션을 공급하는 대형 네트워킹 기업.",
-      C3AI: "C3.ai – 엔터프라이즈용 AI 플랫폼과 산업별 AI 애플리케이션을 제공하는 소프트웨어 기업.",
-      CRS: "Carpenter Technology – 특수 합금·고성능 금속 소재를 제조하는 소재 기업.",
+      CAT: "건설·광산·에너지용 중장비 대표 업체. 인프라·자원 사이클에 연동.",
+      CDNS: "Cadence – 반도체 설계 자동화(EDA)와 IP를 제공하는 필수 툴 벤더.",
+      CDNA: "장기이식 환자 모니터링용 진단 테스트. 이식 후 거부반응 관리에 집중.",
+      CEG: "원자력·천연가스를 포함한 발전 포트폴리오. 전력 시장 구조 변화의 수혜주.",
+      CELH: "기능성 에너지 드링크 브랜드. 건강 이미지와 강한 브랜드로 고성장.",
+      CL: "치약·비누·세제 등 필수 소비재 브랜드. 방어적 성격의 글로벌 소비재.",
+      CLSK: "비트코인 채굴 + 에너지 효율/재생에너지 스토리 결합.",
+      CLS: "Celestica – 서버·네트워크·산업·에너지 장비 생산을 맡는 EMS/ODM. AI 서버 공급망의 일부.",
+      COHR: "레이저·광학·포토닉스 기업. 통신·디스플레이·반도체·방산 등 광범위한 수요.",
+      COIN: "미국 대표 암호화폐 거래소. 리테일/기관 수수료와 스테이킹/커스터디 수익.",
+      COST: "멤버십 기반 창고형 할인점. 가격 경쟁력과 충성 고객으로 꾸준한 성장.",
+      CRDO: "100G~1.6T 액티브 전기 케이블(AEC)·고속 SerDes 팹리스. AI 데이터센터 내부 배선에 필수.",
+      CRM: "Salesforce – 클라우드 기반 CRM·세일즈·마케팅 SaaS. 기업 데이터 허브 역할.",
+      CSCO: "엔터프라이즈/서비스프로바이더 네트워크 장비 대장. 라우터·스위치·보안/협업 솔루션.",
+      C3AI: "엔터프라이즈용 도메인 특화 AI 애플리케이션과 플랫폼을 제공.",
+      CRS: "고성능 합금 소재 제조사. 항공·에너지·산업용으로 공급.",
 
-      DASH: "DoorDash – 음식 배달·라스트마일 물류 플랫폼.",
-      DDOG: "Datadog – 클라우드·마이크로서비스 환경의 모니터링·로그·APM·보안 플랫폼.",
-      DE: "Deere & Company – 트랙터·콤바인 등 농기계와 건설장비를 제조.",
-      DLR: "Digital Realty – 하이퍼스케일·기업용 데이터센터를 보유한 리츠(REIT).",
-      DHI: "D.R. Horton – 미국 최대 주택 건설사 중 하나.",
-      DIS: "Walt Disney – 콘텐츠·영화·IP·테마파크·스트리밍(Disney+)을 보유한 엔터테인먼트 그룹.",
+      DASH: "음식 배달·라스트 마일 로지스틱스 플랫폼. 도시 단위 배송 인프라.",
+      DDOG: "클라우드 관측성(Observability) 플랫폼. 로그·APM·보안·인프라 모니터링 통합.",
+      DE: "농기계·건설 장비 대장. 정밀 농업 장비로 데이터 기반 농업에 노출.",
+      DLR: "하이퍼스케일·콜로케이션 데이터센터 리츠. 클라우드/AIs 서버 인프라 수혜.",
+      DHI: "미국 대형 주택 건설사. 주택 수요와 금리 사이클에 연동.",
+      DIS: "디즈니 – 콘텐츠·IP·테마파크·스트리밍(Disney+)을 가진 엔터테인먼트 그룹.",
 
-      ETN: "Eaton – 전력관리·배전·산업용 전력 장비를 공급하는 전기·산업 기업.",
-      ETOR: "eToro Group – 소셜 트레이딩·복사매매 기능을 가진 멀티자산 브로커 플랫폼.",
-      ETRN: "Equitrans Midstream – 천연가스 파이프라인과 미드스트림 자산을 보유.",
-      EW: "Edwards Lifesciences – 인공심장판막·중환자 모니터링 등 심혈관 의료기기 전문 기업.",
-      EXAS: "Exact Sciences – 대장암 비침습 진단(Cologuard) 등 분자진단 테스트 회사.",
-      EQIX: "Equinix – 글로벌 코로케이션·인터커넥트 데이터센터 리츠. 클라우드 허브 역할.",
+      ETN: "전력 관리·배전·산업용 전기 장비 글로벌 플레이어.",
+      ETOR: "eToro – 주식·암호화폐·CFD 등 멀티자산 소셜 트레이딩 플랫폼.",
+      ETRN: "천연가스 미드스트림 기업. 파이프라인·저장 인프라 운영.",
+      EW: "심장판막·중환자 모니터링 기기 전문. 구조적 성장 산업.",
+      EXAS: "대장암 등 암 조기 진단 테스트. 비침습 진단 수혜.",
+      EQIX: "Equinix – 글로벌 데이터센터 리츠. 클라우드 허브·인터커넥트 역할.",
 
-      FABR: "Fabrinet – 광통신·레이저·산업 장비를 위한 정밀 제조 EMS/ODM 업체.",
-      FSLR: "First Solar – 박막형 태양광 모듈과 발전 프로젝트를 제공하는 재생에너지 기업.",
-      FUTU: "Futu Holdings – 홍콩/중국 기반의 온라인 증권·트레이딩 플랫폼(Moomoo 등).",
+      FABR: "광통신·레이저 모듈 등 정밀 제조에 특화된 EMS/ODM.",
+      FSLR: "박막형 태양광 모듈과 발전 프로젝트. 유틸리티급 태양광에 집중.",
+      FUTU: "홍콩/중국 기반 온라인 브로커. Moomoo 등 앱으로 개인투자자 대상.",
 
-      GE: "GE Aerospace – 항공기 엔진과 관련 서비스에 집중하는 항공우주 기업.",
-      GEL: "Genesis Energy – 중간재 정제·파이프라인·터미널 등 에너지 인프라 운영.",
-      GEN: "Generac – 가정·상업용 발전기와 분산 에너지 솔루션을 제공.",
-      GME: "GameStop – 게임/전자기기 리테일 체인. 밈 주식으로 유명.",
-      GOOGL: "Alphabet – 구글 검색·유튜브·안드로이드·GCP 등을 보유한 빅테크. AI·클라우드 인프라 중심.",
-      GCM: "Genius Sports 계열 티커로, 스포츠 데이터·베팅 관련 데이터/미디어 솔루션 제공.",
+      GE: "GE Aerospace – 항공기 엔진 제작/정비 비즈니스 중심.",
+      GEL: "중간재·파이프라인·터미널 등 에너지 인프라 운영.",
+      GEN: "Generac – 가정/상업용 비상 발전기 및 분산 에너지 솔루션.",
+      GME: "게임 리테일 체인. 밈 주식으로 유명하지만 본업은 점포 기반 판매.",
+      GOOGL: "검색·유튜브·안드로이드·GCP를 보유한 빅테크. 광고와 클라우드, AI 인프라 중심.",
+      GCM: "Genius Sports – 스포츠 데이터·미디어·베팅 기술 제공 업체.",
 
-      HPE: "Hewlett Packard Enterprise – 서버·스토리지·네트워킹·서비스를 제공하는 엔터프라이즈 IT 인프라 업체.",
-      HUT: "Hut 8 Mining – 북미 기반 비트코인 채굴 및 데이터센터 인프라 기업.",
+      HPE: "서버·스토리지·네트워크·서비스를 제공하는 엔터프라이즈 IT 인프라 업체.",
+      HUT: "북미 비트코인 채굴 및 데이터센터 인프라 운영.",
 
-      IBM: "IBM – 메인프레임·하이브리드 클라우드·컨설팅·AI 소프트웨어를 제공하는 전통 IT 기업.",
-      IESC: "IES Holdings – 전기·통신·기계 설비 등 산업·상업용 특수 시공을 수행.",
-      INTC: "Intel – CPU·칩셋·파운드리 사업을 영위하는 종합 반도체 기업.",
-      IONQ: "IonQ – 이온트랩 방식을 사용하는 양자컴퓨팅 하드웨어·클라우드 서비스 기업.",
-      ISRG: "Intuitive Surgical – 다빈치(da Vinci) 수술로봇 시스템을 개발·판매.",
-      ITRI: "Itron – 스마트 미터·그리드 관리 솔루션을 제공하는 전력·수도 계량 인프라 업체.",
-      IVZ: "Invesco – 자산운용사. ETF·뮤추얼펀드 등 다양한 투자 상품 제공.",
+      IBM: "레거시 IT·컨설팅·하이브리드 클라우드·AI를 결합한 전통 IT 대형사.",
+      IESC: "전기·통신·기계 설비 공사와 유지보수 수행.",
+      INTC: "CPU·칩셋·파운드리 사업을 하는 종합 반도체 기업.",
+      IONQ: "이온트랩 기반 양자컴퓨터 하드웨어·클라우드 서비스.",
+      ISRG: "다빈치 수술 로봇으로 독점적 지위. 로봇 수술 보급 수혜.",
+      ITRI: "스마트 미터·그리드 관리 솔루션. 전력·수도 인프라에 필수.",
+      IVZ: "ETF·펀드를 운용하는 자산운용사.",
 
-      JBL: "Jabil – 다양한 산업의 전자제품을 제조·조립하는 글로벌 EMS 업체.",
-      JNPR: "Juniper Networks – 라우터·스위치·보안 제품을 제공하는 네트워크 장비 기업.",
+      JBL: "다양한 산업 전자제품을 제조하는 글로벌 EMS 업체.",
+      JNPR: "Juniper – 라우터·스위치·보안 솔루션 네트워킹 기업.",
 
-      KO: "Coca-Cola – 탄산음료·주스·차 등 음료 브랜드 포트폴리오를 가진 글로벌 소비재 기업.",
-      KTOS: "Kratos Defense – 무인기·미사일 표적·위성 통신 등 방산·국방 기술 기업.",
+      KO: "코카콜라 – 탄산음료·주스·차 등 글로벌 음료 브랜드.",
+      KTOS: "무인기·미사일 표적·위성통신 등 방산/국방 특화.",
 
-      LLY: "Eli Lilly – 당뇨·비만·자면증 등 치료제와 항암제에서 강한 파이프라인을 가진 제약사.",
-      LMT: "Lockheed Martin – 전투기·미사일·우주 시스템 등 방산·항공우주 대표 기업.",
-      LRCX: "Lam Research – 식각·증착 등 반도체 제조 공정 장비를 공급.",
-      LOW: "Lowe’s – 미국 주택 리모델링·자재 유통 체인(홈디포와 경쟁).",
+      LLY: "당뇨·비만·면역질환 등에서 혁신약을 보유한 빅파마.",
+      LMT: "전투기·미사일·우주 시스템 등 방산 대장.",
+      LRCX: "식각·증착 등 웨이퍼 공정 장비. 선단 공정 CAPEX에 레버리지.",
+      LOW: "미국 홈리모델링·자재 유통 업체. 주택 수리/DIY 수요에 연동.",
 
-      MARA: "Marathon Digital – 대규모 비트코인 채굴 기업. 저가 전력과 대형 설비에 집중.",
-      MCHP: "Microchip Technology – MCU·아날로그·혼합신호 반도체를 공급하는 팹리스/IDM.",
-      META: "Meta Platforms – 페이스북·인스타그램·와츠앱과 광고·리얼스·메타버스·AI를 전개하는 소셜/광고 플랫폼.",
-      MNTK: "Montauk Renewables – 바이오가스·재생 천연가스(RNG)를 생산하는 에너지 기업.",
-      MRNA: "Moderna – mRNA 플랫폼 기반 백신·치료제를 개발하는 바이오텍.",
-      MRVL: "Marvell – 데이터센터·5G·스토리지·자동차용 고속 칩/SoC를 설계하는 팹리스.",
-      MP: "MP Materials – 미국 내 희토류 광산과 정제 설비를 운영.",
-      MU: "Micron – DRAM·NAND·HBM 등 메모리 반도체를 제조.",
-      MSFT: "Microsoft – 윈도우·오피스·애저(Azure)·GitHub·LinkedIn을 보유한 종합 빅테크. Copilot·AI 인프라 중심.",
-      MPW: "Medical Properties Trust – 병원·의료시설에 특화된 헬스케어 리츠.",
+      MARA: "대형 비트코인 채굴사. 해시레이트와 비트코인 가격에 높은 레버리지.",
+      MCHP: "MCU·아날로그·혼합신호 반도체를 공급하는 팹리스/IDM.",
+      META: "페이스북·인스타그램·와츠앱·리얼스를 보유한 광고/소셜 플랫폼.",
+      MNTK: "바이오가스·RNG 등 재생 천연가스 생산.",
+      MRNA: "mRNA 백신·치료제 플랫폼. 코로나 이후 파이프라인 확장 중.",
+      MRVL: "데이터센터·5G·스토리지·자동차용 고속 SoC를 설계.",
+      MP: "미국 내 희토류 광산·정제. 공급망 안보 테마.",
+      MU: "DRAM·NAND·HBM 등 메모리 반도체 공급.",
+      MSFT: "윈도우·오피스·애저·GitHub·LinkedIn 등 포트폴리오. Copilot·AI 인프라가 성장 축.",
+      MPW: "병원·의료시설 리츠. 금리와 헬스케어 임대 수요에 연동.",
 
-      NET: "Cloudflare – CDN·보안·엣지 컴퓨팅·서버리스 플랫폼을 제공하는 네트워크 서비스 기업.",
-      NEE: "NextEra Energy – 미국 최대 재생에너지 발전·송배전 회사.",
-      NFLX: "Netflix – 구독형 스트리밍 플랫폼. 오리지널 콘텐츠 제작에 집중.",
-      NIO: "NIO – 전기차 SUV·세단과 배터리 교환 인프라를 운영하는 중국 EV 회사.",
-      NRIX: "Nurix Therapeutics – 단백질 분해 기반 항암제/면역치료제 개발 바이오텍.",
-      NOW: "ServiceNow – IT 서비스 관리·워크플로우 자동화 SaaS 플랫폼.",
-      NU: "Nu Holdings – 브라질 중심의 디지털 은행/핀테크(Nubank).",
-      NVDA: "NVIDIA – GPU·AI 가속기·네트워킹·소프트웨어 스택을 제공하는 AI 인프라 핵심 반도체 기업.",
-      NUE: "Nucor – 전기로 기반 철강 생산 기업. 북미 철강 수요에 레버리지.",
+      NET: "Cloudflare – CDN·보안·엣지·서버리스 플랫폼. 인터넷 인프라의 엣지 계층.",
+      NEE: "재생에너지 발전·유틸리티 대장. 풍력/태양광 자산 대규모 보유.",
+      NFLX: "스트리밍 구독 서비스. 오리지널 콘텐츠와 글로벌 확대가 핵심.",
+      NIO: "중국 전기차 브랜드. 교환식 배터리 스테이션 등 인프라 차별화.",
+      NRIX: "단백질 분해 기반 항암제 개발 바이오텍.",
+      NOW: "ServiceNow – IT/업무 워크플로우 자동화 SaaS. 디지털 트랜스포메이션 수혜.",
+      NU: "브라질·라틴아메리카 디지털 은행/핀테크.",
+      NVDA: "GPU·AI 가속기·네트워킹·소프트웨어 스택까지 갖춘 AI 인프라 핵심 기업.",
+      NUE: "전기로 기반 철강 생산사. 북미 건설·제조 수요에 레버리지.",
 
-      OKLO: "Oklo – 데이터센터·원격 지역용 소형 원전/마이크로 원자로 개발사.",
-      ORCL: "Oracle – 데이터베이스·ERP 등 엔터프라이즈 소프트웨어와 클라우드 인프라를 제공.",
-      OTTR: "Otter Tail – 전력·제조·인프라를 아우르는 지역 기반 유틸리티/산업 기업.",
+      OKLO: "데이터센터·원격지역용 소형 원자로/마이크로 원자로 개발사.",
+      ORCL: "데이터베이스·ERP·클라우드 인프라 공급. 레거시 워크로드에 강점.",
+      OTTR: "전력·제조·인프라를 결합한 지역 유틸리티/산업 회사.",
 
-      PAGS: "PagSeguro – 브라질 기반 결제·핀테크 플랫폼.",
-      PANW: "Palo Alto Networks – 네트워크/클라우드/엔드포인트 보안 플랫폼 기업.",
-      PATH: "UiPath – 로봇 프로세스 자동화(RPA) 소프트웨어를 제공.",
-      PEP: "PepsiCo – 음료·스낵·식품 브랜드를 보유한 글로벌 소비재 기업.",
-      PH: "Parker-Hannifin – 유압·공압·모션컨트롤 등 산업용 부품·시스템 공급.",
-      PLTR: "Palantir – 정부·기업을 위한 데이터 통합·분석·AI 플랫폼을 제공.",
-      PNW: "Pinnacle West Capital – 전력 유틸리티(Arizona Public Service)를 보유.",
-      PYPL: "PayPal – 온라인 결제·P2P 송금(Venmo) 플랫폼.",
+      PAGS: "브라질 결제·핀테크 플랫폼. 상점·소비자 결제에 노출.",
+      PANW: "Palo Alto – 네트워크/클라우드/엔드포인트 보안 플랫폼 대장.",
+      PATH: "UiPath – RPA(로봇 프로세스 자동화) 소프트웨어.",
+      PEP: "PepsiCo – 음료·스낵 포트폴리오를 가진 글로벌 소비재.",
+      PH: "Parker-Hannifin – 유압·공압·모션컨트롤 등 산업 부품 공급.",
+      PLTR: "Palantir – 데이터 통합·분석·AI 플랫폼. 정부·국방·엔터프라이즈 고객 비중 높음.",
+      PNW: "Pinnacle West – 아리조나 지역 전력 유틸리티.",
+      PYPL: "PayPal – 온라인 결제·Venmo 등 디지털 지갑 서비스.",
 
-      QCOM: "Qualcomm – 모바일·통신용 SoC와 모뎀, 특허 라이선스 사업을 영위.",
-      QSR: "Restaurant Brands International – 버거킹·팀호튼·파파이스 등을 보유한 QSR 프랜차이즈 그룹.",
+      QCOM: "Qualcomm – 모바일 SoC·모뎀과 특허 라이선스 사업.",
+      QSR: "Burger King·Tim Hortons·Popeyes 등을 보유한 QSR 프랜차이즈 그룹.",
 
-      RBLX: "Roblox – 유저 생성 게임·메타버스 플랫폼.",
-      RDFN: "Redfin – 온라인 부동산 중개·리스트 플랫폼.",
-      RIOT: "Riot Platforms – 대형 비트코인 채굴 설비를 운영하는 채굴 기업.",
+      RBLX: "Roblox – UGC 기반 게임/메타버스 플랫폼.",
+      RDFN: "온라인 부동산 중개/플랫폼. 커미션 기반 비즈니스 모델.",
+      RIOT: "Riot – 대형 비트코인 채굴사. 해시레이트와 BTC 가격에 레버리지.",
 
-      SBUX: "Starbucks – 글로벌 커피 체인. 매장 경험과 브랜드 파워에 강점.",
-      SMCI: "Super Micro Computer – AI 서버·고밀도 랙 솔루션을 제공하는 서버 ODM/OEM 업체.",
-      SMR: "NuScale Power – 소형 모듈형 원자로(SMR) 설계·인허가를 추진 중인 원전 기술 기업.",
-      SITM: "SiTime – MEMS 기반 타이밍/클럭 칩을 설계하는 전문 팹리스.",
-      SHOP: "Shopify – 온라인 상점 구축·결제·물류를 통합 제공하는 커머스 플랫폼.",
-      SNOW: "Snowflake – 클라우드 기반 데이터 웨어하우스·데이터 클라우드 서비스.",
-      SOFI: "SoFi – 디지털 뱅킹·대출·투자·카드 등을 제공하는 핀테크.",
-      SPOT: "Spotify – 음악·팟캐스트 스트리밍 플랫폼.",
-      SQ: "Block – 결제 단말기·캐시앱·비트코인 사업 등을 영위하는 핀테크.",
-      STLD: "Steel Dynamics – 철강 생산 및 가공 기업.",
-      STRL: "Sterling Infrastructure – 교통·공공 인프라 건설·엔지니어링 기업.",
-      STX: "Seagate – HDD·스토리지 솔루션을 제공하는 저장장치 기업.",
-      SWKS: "Skyworks Solutions – RF 프론트엔드·무선 통신용 아날로그 반도체 공급.",
+      SBUX: "Starbucks – 글로벌 커피 체인. 브랜드·매장 경험 강점.",
+      SMCI: "Supermicro – AI 서버·랙 솔루션 ODM/OEM. NVIDIA 등과 긴밀한 생태계.",
+      SMR: "NuScale – 소형 모듈형 원자로(SMR) 설계·인허가 단계.",
+      SITM: "SiTime – MEMS 타이밍/클럭 칩 팹리스. 전통 쿼츠 대비 성능·유연성이 강점.",
+      SHOP: "Shopify – 온라인 상점 구축·결제·물류를 제공하는 커머스 플랫폼.",
+      SNOW: "Snowflake – 클라우드 기반 데이터 웨어하우스·데이터 클라우드.",
+      SOFI: "SoFi – 디지털 은행·대출·투자·카드 등 올인원 핀테크.",
+      SPOT: "Spotify – 음악/팟캐스트 스트리밍 플랫폼.",
+      SQ: "Block – 소상공인 결제 단말기와 Cash App·비트코인을 아우르는 핀테크.",
+      STLD: "전자 아크로 전기로 기반 철강사. 효율적인 생산 구조.",
+      STRL: "교통·공공 인프라 건설·엔지니어링 회사.",
+      STX: "Seagate – HDD·스토리지 솔루션 제조.",
+      SWKS: "Skyworks – 스마트폰·통신용 RF 프론트엔드 칩.",
 
-      TDY: "Teledyne – 센서·이미징·계측·우주·방산용 전자 장비를 제공.",
-      TEAM: "Atlassian – Jira·Confluence 등 협업·이슈트래킹 소프트웨어를 제공.",
-      TEVA: "Teva – 제네릭 의약품과 일부 브랜드 약을 보유한 제약사.",
-      TMO: "Thermo Fisher – 연구실 장비·시약·분석 장비를 공급하는 생명과학 인프라 기업.",
-      TSLA: "Tesla – 전기차·배터리·에너지 저장 시스템과 자율주행 소프트웨어를 개발.",
-      TSM: "TSMC – 세계 최대 파운드리. 첨단 공정에서 사실상 독점적 위치.",
-      TTM: "TTM Technologies – 인쇄회로기판(PCB) 및 관련 솔루션을 공급.",
-      TWLO: "Twilio – 메시지·통화·영상·인증 등 통신 API 플랫폼을 제공.",
+      TDY: "Teledyne – 센서·이미징·계측·우주/방산용 전자 장비.",
+      TEAM: "Atlassian – Jira·Confluence 등 협업·이슈 추적 SaaS.",
+      TEVA: "제네릭 의약품·일부 브랜드 약을 보유한 제약사.",
+      TMO: "Thermo Fisher – 연구 장비·시약·분석 장비를 제공하는 생명과학 인프라.",
+      TSLA: "Tesla – 전기차·배터리·에너지 저장·자율주행 소프트웨어.",
+      TSM: "TSMC – 세계 최대 파운드리. 첨단 공정의 핵심.",
+      TTM: "TTM Technologies – PCB 및 관련 솔루션 공급.",
+      TWLO: "Twilio – 메시지·전화·영상·인증 등 통신 API 플랫폼.",
 
-      UBER: "Uber – 라이드헤일링·배달(Uber Eats)·물류를 제공하는 플랫폼 기업.",
-      UPST: "Upstart – AI 기반 신용평가를 통해 대출을 중개하는 핀테크.",
+      UBER: "Uber – 라이드 헤일링·배달·물류를 운영하는 모빌리티 플랫폼.",
+      UPST: "Upstart – AI 기반 신용평가로 대출을 중개하는 핀테크.",
 
-      VCYT: "Veracyte – 암 진단 등 분자병리 테스트를 제공하는 진단 회사.",
-      VMC: "Vulcan Materials – 골재·아스팔트·콘크리트 등 건설 자재 생산.",
-      VRTX: "Vertex – 낭포성 섬유증 등 희귀질환 치료제에 강점을 가진 바이오/제약사.",
-      VRT: "Vertiv – 데이터센터·통신 시설용 전력·쿨링·랙 인프라 솔루션.",
-      VZ: "Verizon – 미국 통신 캐리어. 무선·유선 통신 서비스 제공.",
+      VCYT: "Veracyte – 암 진단 등 분자병리 테스트 회사.",
+      VMC: "Vulcan – 골재·아스팔트·콘크리트 등 건설 자재 생산.",
+      VRTX: "Vertex – 낭포성 섬유증 등 희귀질환 치료제 강점.",
+      VRT: "Vertiv – 데이터센터·통신시설용 전력·쿨링·랙 인프라 솔루션.",
+      VZ: "Verizon – 미국 통신 캐리어. 무선·유선 통신 서비스.",
 
-      WDC: "Western Digital – HDD·SSD·스토리지 시스템을 제조.",
-      WMT: "Walmart – 오프라인/온라인 리테일을 운영하는 세계 최대 유통업체.",
-      WTW: "Willis Towers Watson – 보험·리스크 관리·인사 컨설팅을 제공하는 브로커/컨설팅사.",
+      WDC: "Western Digital – HDD·SSD 스토리지 솔루션.",
+      WMT: "Walmart – 세계 최대 오프라인/온라인 리테일러.",
+      WTW: "Willis Towers Watson – 보험·리스크·인사 컨설팅/브로커.",
 
-      ZI: "ZoomInfo – B2B 영업·마케팅용 기업/연락처 데이터 플랫폼.",
-      ZBRA: "Zebra Technologies – 바코드·RFID·모바일 단말 등 현장 데이터 수집 장비 제공.",
-      ZM: "Zoom Video – 화상회의·협업 플랫폼."
+      ZI: "ZoomInfo – B2B 세일즈·마케팅용 기업/연락처 데이터 플랫폼.",
+      ZBRA: "Zebra – 바코드·RFID·모바일 단말 등 현장 데이터 수집 장비.",
+      ZM: "Zoom – 화상회의·협업 플랫폼."
     };
 
     const stakingManual = [
@@ -712,7 +731,7 @@
     ];
 
     let usdKrwRate = null;
-    const quoteCache = {};
+    let quoteCache = {};
 
     function formatNumber(n, decimals = 2) {
       if (n === null || n === undefined || isNaN(n)) return "–";
@@ -751,9 +770,9 @@
             <tr class="clickable-row" data-symbol="${s.symbol}">
               <td>${s.symbol}</td>
               <td>${s.name}</td>
-              <td id="price-${s.symbol}" class="muted">Click</td>
-              <td id="chg-${s.symbol}" class="muted">–</td>
-              <td id="chgPct-${s.symbol}" class="muted">–</td>
+              <td id="price-${s.symbol}" class="muted">…</td>
+              <td id="chg-${s.symbol}" class="muted">…</td>
+              <td id="chgPct-${s.symbol}" class="muted">…</td>
             </tr>
           `).join("");
         return `
@@ -762,11 +781,11 @@
             <table>
               <thead>
                 <tr>
-                  <th>Symbol</th>
-                  <th>Name</th>
-                  <th>Price (USD)</th>
-                  <th>Change</th>
-                  <th>Δ%</th>
+                  <th data-col="symbol" class="sortable">Symbol</th>
+                  <th data-col="name">Name</th>
+                  <th data-col="price" class="sortable">Price (USD)</th>
+                  <th data-col="change" class="sortable">Change</th>
+                  <th data-col="changePct" class="sortable">Δ%</th>
                 </tr>
               </thead>
               <tbody>
@@ -779,19 +798,67 @@
 
       container.innerHTML = html;
 
+      // 행 클릭 이벤트
       document
         .querySelectorAll("#stocks-container .clickable-row")
         .forEach((row) => {
           row.addEventListener("click", () => {
             const sym = row.getAttribute("data-symbol");
             showInlineInsight(row, sym);
-            loadQuote(sym);
           });
         });
+
+      // 헤더 정렬 이벤트
+      attachSortingHandlers();
     }
 
-    async function loadQuote(symbol) {
-      if (quoteCache[symbol]) {
+    function attachSortingHandlers() {
+      const sectorBlocks = document.querySelectorAll("#stocks-container .sector-block");
+      sectorBlocks.forEach((block) => {
+        const table = block.querySelector("table");
+        const tbody = table.querySelector("tbody");
+        const headers = table.querySelectorAll("th");
+
+        headers.forEach((th, idx) => {
+          const col = th.getAttribute("data-col");
+          if (!col || (col !== "price" && col !== "change" && col !== "changePct" && col !== "symbol" && col !== "name")) {
+            return;
+          }
+          th.classList.add("sortable");
+          th.addEventListener("click", () => {
+            const currentDir = th.getAttribute("data-sort-dir") || "none";
+            const newDir = currentDir === "asc" ? "desc" : "asc";
+            headers.forEach(h => h.removeAttribute("data-sort-dir"));
+            th.setAttribute("data-sort-dir", newDir);
+
+            const rows = Array.from(tbody.querySelectorAll("tr"))
+              .filter(r => !r.classList.contains("insight-row"));
+
+            rows.sort((a, b) => {
+              const aText = a.children[idx].innerText.replace(/,/g,"");
+              const bText = b.children[idx].innerText.replace(/,/g,"");
+              let comp = 0;
+              if (col === "symbol" || col === "name") {
+                comp = aText.localeCompare(bText);
+              } else {
+                const aVal = parseFloat(aText);
+                const bVal = parseFloat(bText);
+                if (isNaN(aVal) && isNaN(bVal)) comp = 0;
+                else if (isNaN(aVal)) comp = 1;
+                else if (isNaN(bVal)) comp = -1;
+                else comp = aVal - bVal;
+              }
+              return newDir === "asc" ? comp : -comp;
+            });
+
+            rows.forEach(r => tbody.appendChild(r));
+          });
+        });
+      });
+    }
+
+    async function loadQuote(symbol, force=false) {
+      if (!force && quoteCache[symbol]) {
         applyQuoteToRow(symbol, quoteCache[symbol]);
         return;
       }
@@ -836,6 +903,16 @@
       }
     }
 
+    async function loadAllQuotes() {
+      quoteCache = {};
+      for (const s of stocks) {
+        // Alpha Vantage 무료키는 분당 5회 제한이라 실제로는 레이트 리밋이 걸릴 수 있음.
+        // 구조 상은 "한 번에 쫙" 불러오도록 설계.
+        // 필요하면 여기서 setTimeout으로 속도 조절 가능.
+        await loadQuote(s.symbol, true);
+      }
+    }
+
     function applyQuoteToRow(symbol, quote) {
       const priceEl = document.getElementById(`price-${symbol}`);
       const chgEl = document.getElementById(`chg-${symbol}`);
@@ -858,18 +935,27 @@
     }
 
     function showInlineInsight(row, symbol) {
+      const next = row.nextElementSibling;
+      const hasCurrent = next && next.classList.contains("insight-row");
+      const isSame = hasCurrent && next.getAttribute("data-symbol") === symbol;
+
+      // 현재 열려있는 인사이트 전부 제거
       document
         .querySelectorAll("#stocks-container .insight-row")
         .forEach((r) => r.remove());
+
+      // 같은 행을 다시 클릭한 경우 → 접기만 하고 끝
+      if (isSame) return;
 
       const info = stocks.find(s => s.symbol === symbol);
       const sector = sectorTag[symbol] || "Other / Unclassified";
       if (!info) return;
 
-      const profile = companyProfiles[symbol];
+      const profile = companyProfiles[symbol] || "이 종목에 대한 요약이 아직 정리되지 않았습니다.";
 
       const tr = document.createElement("tr");
       tr.className = "insight-row";
+      tr.setAttribute("data-symbol", symbol);
       const td = document.createElement("td");
       td.colSpan = 5;
 
@@ -894,7 +980,7 @@
       if (window.TradingView) {
         new TradingView.widget({
           container_id: containerId,
-          symbol: symbol,   // 필요하면 나중에 'NASDAQ:NVDA' 등으로 개별 튜닝
+          symbol: symbol,
           interval: "60",
           timezone: "Etc/UTC",
           theme: "light",
@@ -917,9 +1003,7 @@
 
       const symbols = ["USD","EUR","CHF","JPY","CNY"];
       try {
-        const res = await fetch(
-          `https://api.exchangerate.host/latest?base=KRW&symbols=${symbols.join(",")}`
-        );
+        const res = await fetch("https://open.er-api.com/v6/latest/KRW");
         if (!res.ok) throw new Error("FX HTTP error");
         const data = await res.json();
         const rates = data.rates || {};
@@ -934,7 +1018,9 @@
               <td class="muted">–</td>
             </tr>`;
           }
-          const rate = 1 / v; // 1 sym = ? KRW
+          // base = KRW, rates[sym] = 1 KRW 대비 sym
+          // 1 sym = ? KRW => 1 / (1 KRW in sym)
+          const rate = 1 / v;
           if (sym === "USD") usdKrwRate = rate;
 
           return `<tr>
@@ -1017,6 +1103,7 @@
       renderStakingManual();
       await fetchFX();
       await fetchCryptos();
+      await loadAllQuotes(); // 전 종목 가격 한 번에 로딩 시도
     }
 
     document
@@ -1025,6 +1112,7 @@
         refreshAll();
       });
 
+    // 초기 렌더
     renderStocksTableSkeleton();
     refreshAll();
   </script>
