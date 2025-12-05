@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>Market Studio – Dashboard</title>
+  <title>Market Studio – Yahoo Edition</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -15,25 +15,21 @@
       --positive: #16a34a;
       --negative: #dc2626;
     }
-
     * {
       box-sizing: border-box;
       font-family: system-ui, -apple-system, BlinkMacSystemFont,
         "Segoe UI", sans-serif;
     }
-
     body {
       margin: 0;
       padding: 32px 24px 40px;
       background: var(--bg);
       color: var(--text-main);
     }
-
     .page {
       max-width: 1200px;
       margin: 0 auto;
     }
-
     header {
       display: flex;
       justify-content: space-between;
@@ -43,7 +39,6 @@
       border-bottom: 1px solid var(--line);
       padding-bottom: 16px;
     }
-
     .title-block h1 {
       margin: 0 0 4px;
       font-weight: 500;
@@ -51,21 +46,18 @@
       text-transform: uppercase;
       font-size: 18px;
     }
-
     .title-block .sub {
       font-size: 12px;
       color: var(--text-sub);
       letter-spacing: 0.16em;
       text-transform: uppercase;
     }
-
     .meta {
       text-align: right;
       font-size: 11px;
       color: var(--text-sub);
       line-height: 1.5;
     }
-
     .controls {
       margin-top: 6px;
       display: flex;
@@ -73,18 +65,6 @@
       align-items: center;
       gap: 8px;
     }
-
-    .controls input {
-      width: 64px;
-      padding: 4px 6px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: #f9fafb;
-      color: var(--text-main);
-      font-size: 11px;
-      text-align: right;
-    }
-
     .controls button {
       border-radius: 999px;
       border: 1px solid var(--text-main);
@@ -96,18 +76,14 @@
       letter-spacing: 0.12em;
       cursor: pointer;
     }
-
-    .controls button.off {
-      background: transparent;
-      color: var(--text-main);
+    .controls button:hover {
+      opacity: 0.9;
     }
-
     main {
       display: grid;
       grid-template-columns: 3fr 2fr;
       gap: 16px;
     }
-
     @media (max-width: 900px) {
       main {
         grid-template-columns: 1fr;
@@ -120,35 +96,30 @@
         text-align: left;
       }
     }
-
     section.card {
       background: var(--card-bg);
       border-radius: 16px;
       padding: 16px 18px 14px;
       border: 1px solid var(--line);
     }
-
     .card-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
       margin-bottom: 10px;
     }
-
     .card-title {
       font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.14em;
       font-weight: 500;
     }
-
     .card-sub {
       font-size: 11px;
       color: var(--text-sub);
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
-
     .tag {
       font-size: 10px;
       border-radius: 999px;
@@ -159,25 +130,21 @@
       letter-spacing: 0.12em;
       white-space: nowrap;
     }
-
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 12px;
     }
-
     th, td {
       padding: 6px 4px;
       border-bottom: 1px solid #f3f4f6;
       text-align: right;
       white-space: nowrap;
     }
-
     th:first-child,
     td:first-child {
       text-align: left;
     }
-
     th {
       font-weight: 500;
       color: var(--text-sub);
@@ -185,114 +152,88 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
-
     tbody tr:last-child td {
       border-bottom: none;
     }
-
-    .muted {
-      color: var(--text-sub);
-    }
-
-    .positive {
-      color: var(--positive);
-    }
-
-    .negative {
-      color: var(--negative);
-    }
-
-    .clickable-row {
-      cursor: pointer;
-    }
-
-    .clickable-row:hover {
-      background: #f9fafb;
-    }
-
+    .muted { color: var(--text-sub); }
+    .positive { color: var(--positive); }
+    .negative { color: var(--negative); }
+    .clickable-row { cursor: pointer; }
+    .clickable-row:hover { background: #f9fafb; }
     .small-note {
       margin-top: 8px;
       font-size: 11px;
       color: var(--text-sub);
     }
-
-    /* 뉴스 영역 */
     .news-layout {
       display: grid;
       grid-template-columns: 1fr;
       gap: 10px;
       margin-top: 4px;
     }
-
     .news-column-header {
       display: flex;
       justify-content: space-between;
       align-items: baseline;
       margin-bottom: 4px;
     }
-
     .news-column-title {
       font-size: 11px;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--text-sub);
     }
-
     .news-symbol-label {
       font-size: 11px;
       color: var(--text-sub);
     }
-
     .news-list {
       list-style: none;
       padding: 0;
       margin: 0;
     }
-
     .news-item {
       padding: 6px 0;
       border-bottom: 1px solid #f3f4f6;
     }
-
     .news-item:last-child {
       border-bottom: none;
     }
-
     .news-title {
       font-size: 12px;
       margin-bottom: 2px;
     }
-
     .news-meta {
       font-size: 10px;
       color: var(--text-sub);
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
-
     .news-title a {
       color: var(--text-main);
       text-decoration: none;
     }
+    .news-title a:hover { text-decoration: underline; }
 
-    .news-title a:hover {
-      text-decoration: underline;
+    .sector-block {
+      margin-top: 10px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 8px;
+    }
+    .sector-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-sub);
+      margin-bottom: 4px;
     }
 
-    /* Company insight 패널 */
     #company-insight {
       font-size: 12px;
       line-height: 1.6;
       min-height: 80px;
     }
-
-    #company-insight strong {
-      font-weight: 600;
-    }
-
-    #company-insight-section {
-      margin-top: 12px;
-    }
+    #company-insight strong { font-weight: 600; }
   </style>
 </head>
 <body>
@@ -305,15 +246,13 @@
       <div class="meta">
         <div id="last-updated">Last update – –</div>
         <div class="controls">
-          <span>Auto refresh (sec)</span>
-          <input type="number" id="refresh-interval" value="60" min="10" />
-          <button id="toggle-auto" class="">On</button>
+          <button id="manual-refresh">REFRESH</button>
         </div>
       </div>
     </header>
 
     <main>
-      <!-- 왼쪽 컬럼: 주식 + 코인 -->
+      <!-- 왼쪽 -->
       <div class="left-column">
         <section class="card">
           <div class="card-header">
@@ -321,24 +260,25 @@
               <div class="card-title">Equities</div>
               <div class="card-sub">AI · Data Center · Ecosystem</div>
             </div>
-            <div class="tag">Alpha Vantage</div>
+            <div class="tag">Yahoo Finance (unofficial)</div>
           </div>
-          <table id="stocks-table">
-            <thead>
-              <tr>
-                <th>Symbol</th>
-                <th>Name</th>
-                <th>Price (USD)</th>
-                <th>Change</th>
-                <th>Δ%</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- JS -->
-            </tbody>
-          </table>
-          <div class="small-note">
-            Equities 테이블에서 종목을 클릭하면, 오른쪽에 뉴스와 Company Insight가 함께 표시됩니다.
+          <div id="stocks-container"></div>
+        </section>
+
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Company Insight</div>
+              <div class="card-sub">Sector · Role · Moat</div>
+            </div>
+            <div class="tag">Curated</div>
+          </div>
+          <div id="company-insight">
+            <div class="small-note">
+              왼쪽 Equities 섹션에서 종목을 클릭하면
+              이 영역에 간단한 섹터/역할/AI·데이터센터 포지션을 보여줄 수 있게
+              확장할 수 있습니다. 지금은 기본 안내만 표시합니다.
+            </div>
           </div>
         </section>
 
@@ -346,7 +286,7 @@
           <div class="card-header">
             <div>
               <div class="card-title">Crypto</div>
-              <div class="card-sub">Spot Reference · USD · KRW</div>
+              <div class="card-sub">Spot · USD & KRW</div>
             </div>
             <div class="tag">CoinGecko</div>
           </div>
@@ -360,35 +300,31 @@
                 <th>24h</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- JS -->
-            </tbody>
+            <tbody></tbody>
           </table>
         </section>
       </div>
 
-      <!-- 오른쪽 컬럼: 환율 + 스테이킹 + 뉴스 + 회사 설명 -->
+      <!-- 오른쪽 -->
       <div class="right-column">
         <section class="card">
           <div class="card-header">
             <div>
               <div class="card-title">FX</div>
-              <div class="card-sub">Reference · USD / KRW</div>
+              <div class="card-sub">USD / KRW</div>
             </div>
-            <div class="tag">exchangerate.host</div>
+            <div class="tag">Frankfurter</div>
           </div>
           <table id="fx-table">
             <thead>
               <tr>
-                <th>Pair</</th>
+                <th>Pair</th>
                 <th>Rate</th>
                 <th>Base</th>
                 <th>Quote</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- JS -->
-            </tbody>
+            <tbody></tbody>
           </table>
         </section>
 
@@ -409,12 +345,10 @@
                 <th>Note</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- JS -->
-            </tbody>
+            <tbody></tbody>
           </table>
           <div class="small-note">
-            지금은 수동 입력 값입니다. 나중에 DeFiLlama 등 on-chain API로 자동화할 수 있습니다.
+            지금은 수동 입력 값입니다. 나중에 DeFiLlama 같은 곳에서 자동화 가능.
           </div>
         </section>
 
@@ -422,47 +356,13 @@
           <div class="card-header">
             <div>
               <div class="card-title">News</div>
-              <div class="card-sub">Market · Symbol Stream</div>
+              <div class="card-sub">(옵션) Finnhub / 기타 API</div>
             </div>
-            <div class="tag">Finnhub</div>
-          </div>
-          <div class="news-layout">
-            <div>
-              <div class="news-column-header">
-                <div class="news-column-title">Market</div>
-              </div>
-              <ul id="market-news-list" class="news-list">
-                <!-- JS -->
-              </ul>
-            </div>
-            <div>
-              <div class="news-column-header">
-                <div class="news-column-title">Symbol</div>
-                <div class="news-symbol-label" id="company-news-label">–</div>
-              </div>
-              <ul id="company-news-list" class="news-list">
-                <!-- JS -->
-              </ul>
-            </div>
+            <div class="tag">Placeholder</div>
           </div>
           <div class="small-note">
-            무료 플랜 기준으로 최근 뉴스 일부만 표시됩니다.
-          </div>
-        </section>
-
-        <section class="card" id="company-insight-section">
-          <div class="card-header">
-            <div>
-              <div class="card-title">Company Insight</div>
-              <div class="card-sub">Sector · Role · Moat</div>
-            </div>
-            <div class="tag">Curated</div>
-          </div>
-          <div id="company-insight">
-            <div class="small-note">
-              왼쪽 Equities 테이블에서 종목을 클릭하면,
-              여기에서 섹터 / 비즈니스 / 데이터센터·AI 포지션 / 독점력 / 성장성 / 생태계 요약을 볼 수 있습니다.
-            </div>
+            지금은 뉴스 API를 연결하지 않았습니다. Finnhub 키를 쓰고 싶으면
+            여기에 바로 붙일 수 있게 구조는 미리 잡아둔 상태입니다.
           </div>
         </section>
       </div>
@@ -470,17 +370,7 @@
   </div>
 
   <script>
-    // ===============================
-    // 1) 설정 영역
-    // ===============================
-
-    // Alpha Vantage 키 (네가 준 값)
-    const ALPHAVANTAGE_KEY = "R7DXANGD15UFEE8K";
-
-    // Finnhub 키 (발급받으면 여기 넣기)
-    const FINNHUB_KEY = "YOUR_FINNHUB_KEY_HERE";
-
-    // 관심 주식 목록 (네가 보낸 티커 전부)
+    // ===== 데이터 정의 =====
     const stocks = [
       { symbol: "AAPL",  name: "Apple" },
       { symbol: "ABNB",  name: "Airbnb" },
@@ -601,11 +491,11 @@
       { symbol: "PEP",   name: "PepsiCo" },
       { symbol: "PH",    name: "Parker-Hannifin" },
       { symbol: "PLTR",  name: "Palantir" },
-      { symbol: "PNW",   name: "Pinnacle West Capital" },
+      { symbol: "PNW",   name: "Pinnacle West" },
       { symbol: "PYPL",  name: "PayPal" },
 
       { symbol: "QCOM",  name: "Qualcomm" },
-      { symbol: "QSR",   name: "Restaurant Brands International" },
+      { symbol: "QSR",   name: "Restaurant Brands Intl." },
 
       { symbol: "RBLX",  name: "Roblox" },
       { symbol: "RDFN",  name: "Redfin" },
@@ -617,20 +507,20 @@
       { symbol: "SITM",  name: "SiTime" },
       { symbol: "SHOP",  name: "Shopify" },
       { symbol: "SNOW",  name: "Snowflake" },
-      { symbol: "SOFI",  name: "SoFi Technologies" },
+      { symbol: "SOFI",  name: "SoFi" },
       { symbol: "SPOT",  name: "Spotify" },
       { symbol: "SQ",    name: "Block" },
       { symbol: "STLD",  name: "Steel Dynamics" },
       { symbol: "STRL",  name: "Sterling Infrastructure" },
-      { symbol: "STX",   name: "Seagate Technology" },
-      { symbol: "SWKS",  name: "Skyworks Solutions" },
+      { symbol: "STX",   name: "Seagate" },
+      { symbol: "SWKS",  name: "Skyworks" },
 
-      { symbol: "TDY",   name: "Teledyne Technologies" },
+      { symbol: "TDY",   name: "Teledyne" },
       { symbol: "TEAM",  name: "Atlassian" },
-      { symbol: "TEVA",  name: "Teva Pharma" },
-      { symbol: "TMO",   name: "Thermo Fisher Scientific" },
+      { symbol: "TEVA",  name: "Teva" },
+      { symbol: "TMO",   name: "Thermo Fisher" },
       { symbol: "TSLA",  name: "Tesla" },
-      { symbol: "TSM",   name: "Taiwan Semiconductor" },
+      { symbol: "TSM",   name: "Taiwan Semi" },
       { symbol: "TTM",   name: "TTM Technologies" },
       { symbol: "TWLO",  name: "Twilio" },
 
@@ -639,7 +529,7 @@
 
       { symbol: "VCYT",  name: "Veracyte" },
       { symbol: "VMC",   name: "Vulcan Materials" },
-      { symbol: "VRTX",  name: "Vertex Pharma" },
+      { symbol: "VRTX",  name: "Vertex" },
       { symbol: "VRT",   name: "Vertiv" },
       { symbol: "VZ",    name: "Verizon" },
 
@@ -648,11 +538,120 @@
       { symbol: "WTW",   name: "Willis Towers Watson" },
 
       { symbol: "ZI",    name: "ZoomInfo" },
-      { symbol: "ZBRA",  name: "Zebra Technologies" },
+      { symbol: "ZBRA",  name: "Zebra" },
       { symbol: "ZM",    name: "Zoom Video" }
     ];
 
-    // 관심 코인 (예시)
+    const sectorTag = {
+      // AI / 데이터센터 코어
+      NVDA: "AI / Data Center Core",
+      MSFT: "AI / Data Center Core",
+      AMZN: "AI / Data Center Core",
+      META: "AI / Data Center Core",
+      GOOGL:"AI / Data Center Core",
+      SMCI: "AI / Data Center Core",
+      ANET: "AI / Data Center Core",
+      VRT:  "AI / Data Center Core",
+      EQIX: "AI / Data Center Core",
+      DLR:  "AI / Data Center Core",
+      NOW:  "AI / Data Center Core",
+      NET:  "AI / Data Center Core",
+      SNOW: "AI / Data Center Core",
+      DDOG: "AI / Data Center Core",
+      PLTR: "AI / Data Center Core",
+      CRM:  "AI / Data Center Core",
+
+      // 반도체 / EDA
+      AVGO: "Semiconductors & EDA",
+      ASML: "Semiconductors & EDA",
+      CDNS: "Semiconductors & EDA",
+      MRVL: "Semiconductors & EDA",
+      TSM:  "Semiconductors & EDA",
+      SITM: "Semiconductors & EDA",
+      INTC: "Semiconductors & EDA",
+      MU:   "Semiconductors & EDA",
+      AMAT: "Semiconductors & EDA",
+      LRCX: "Semiconductors & EDA",
+      MCHP: "Semiconductors & EDA",
+      COHR: "Semiconductors & EDA",
+      ARM:  "Semiconductors & EDA",
+      SWKS: "Semiconductors & EDA",
+
+      // 에너지 / 전력 / 원전
+      BE:   "Energy / Power / Nuclear",
+      CEG:  "Energy / Power / Nuclear",
+      NEE:  "Energy / Power / Nuclear",
+      SMR:  "Energy / Power / Nuclear",
+      OKLO: "Energy / Power / Nuclear",
+      MNTK: "Energy / Power / Nuclear",
+      ETN:  "Energy / Power / Nuclear",
+      PNW:  "Energy / Power / Nuclear",
+
+      // 금융 / 브로커 / 자산운용
+      BLK:  "Financials / Brokers",
+      BK:   "Financials / Brokers",
+      NU:   "Financials / Brokers",
+      SOFI: "Financials / Brokers",
+      COIN: "Financials / Brokers",
+      FUTU: "Financials / Brokers",
+      ETOR: "Financials / Brokers",
+      IVZ:  "Financials / Brokers",
+      PYPL: "Financials / Brokers",
+      UPST: "Financials / Brokers",
+
+      // 크립토 마이너
+      MARA:"Crypto Miners",
+      RIOT:"Crypto Miners",
+      BTDR:"Crypto Miners",
+      HUT: "Crypto Miners",
+      BMNR:"Crypto Miners",
+      CLSK:"Crypto Miners",
+
+      // 헬스케어
+      LLY:"Healthcare / Bio",
+      AMGN:"Healthcare / Bio",
+      MRNA:"Healthcare / Bio",
+      ISRG:"Healthcare / Bio",
+      EXAS:"Healthcare / Bio",
+      VRTX:"Healthcare / Bio",
+      TEVA:"Healthcare / Bio",
+      EW:"Healthcare / Bio",
+      CDNA:"Healthcare / Bio",
+      VCYT:"Healthcare / Bio",
+      NRIX:"Healthcare / Bio",
+      TMO:"Healthcare / Bio",
+
+      // 컨슈머 / 브랜드
+      AAPL:"Consumer / Brand",
+      ABNB:"Consumer / Brand",
+      CELH:"Consumer / Brand",
+      DIS:"Consumer / Brand",
+      NFLX:"Consumer / Brand",
+      PEP:"Consumer / Brand",
+      SBUX:"Consumer / Brand",
+      WMT:"Consumer / Brand",
+      SPOT:"Consumer / Brand",
+      KO:"Consumer / Brand",
+      COST:"Consumer / Brand",
+      RBLX:"Consumer / Brand",
+      GME:"Consumer / Brand",
+
+      // 인더스트리 / 방산 / 인프라
+      CAT:"Industrial / Infra",
+      DE:"Industrial / Infra",
+      STLD:"Industrial / Infra",
+      VMC:"Industrial / Infra",
+      MP:"Industrial / Infra",
+      OTTR:"Industrial / Infra",
+      STRL:"Industrial / Infra",
+      KTOS:"Industrial / Infra",
+      LMT:"Industrial / Infra",
+      GE:"Industrial / Infra",
+      PH:"Industrial / Infra",
+      TDY:"Industrial / Infra",
+      IESC:"Industrial / Infra"
+    };
+
     const cryptos = [
       { id: "bitcoin",      symbol: "BTC",  name: "Bitcoin" },
       { id: "ethereum",     symbol: "ETH",  name: "Ethereum" },
@@ -661,435 +660,157 @@
       { id: "aptos",        symbol: "APT",  name: "Aptos" }
     ];
 
-    // 스테이킹 APY 스냅샷 (수동)
     const stakingManual = [
       { asset: "AVAX", platform: "Bybit Earn",      apy: 7.5, note: "30d Lock" },
-      { asset: "SUI",  platform: "On-chain Staking", apy: 6.2, note: "Validator yield" },
-      { asset: "APT",  platform: "On-chain Staking", apy: 7.0, note: "Est. range" }
+      { asset: "SUI",  platform: "On-chain Staking", apy: 6.2, note: "Validator" },
+      { asset: "APT",  platform: "On-chain Staking", apy: 7.0, note: "Est." }
     ];
 
-    // 종목 설명 데이터 (핵심 AI/데이터센터 위주 예시 – 나머지는 추후 추가 가능)
-    const companyProfiles = {
-      NVDA: {
-        name: "NVIDIA",
-        sector: "Semiconductors · AI Accelerators · Data Center",
-        whatItDoes:
-          "GPU와 AI 가속기를 설계·판매하는 회사로, 데이터센터·클라우드·HPC에 들어가는 핵심 칩과 시스템(서버)을 공급.",
-        roleInAI:
-          "대형 언어모델, 추천 시스템, 생성형 AI 학습·추론용 GPU에서 사실상 표준 플랫폼. 주요 하이퍼스케일러(클라우드)들이 엔비디아 아키텍처 위에서 AI 인프라를 구축.",
-        moatAndMargins:
-          "CUDA 생태계, 소프트웨어 라이브러리, 개발자 락인 효과로 진입장벽이 높고, 데이터센터 부문에서 업계 최상위 수준의 마진 구조를 확보.",
-        growthAndDurability:
-          "AI 데이터센터 CAPEX, 모델 파라미터 증가, 추론 트래픽 증가가 장기 수요를 지지. 다만 클라우드의 자체 칩, 경쟁사 GPU·ASIC 등장, 규제 리스크가 변수.",
-        ecosystem:
-          "GPU 하드웨어뿐 아니라 CUDA, cuDNN, TensorRT 등 소프트웨어 스택과 OEM 서버 파트너, CSP와의 레퍼런스 아키텍처까지 포함한 플랫폼 생태계를 형성."
-      },
-      AVGO: {
-        name: "Broadcom",
-        sector: "Semiconductors · Networking · Custom Silicon",
-        whatItDoes:
-          "네트워크 스위치용 ASIC, 스토리지 칩, 커스텀 SoC, RF/아날로그 등 데이터센터·통신 인프라 핵심 반도체를 공급.",
-        roleInAI:
-          "AI 데이터센터 네트워크 스위치용 ASIC(예: Tomahawk 계열)과 대형 고객(하이퍼스케일러)을 위한 커스텀 AI 가속기/SoC를 제공, GPU만큼은 아니지만 인프라 측 핵심 축.",
-        moatAndMargins:
-          "네트워킹 ASIC과 커스텀 실리콘에서 고객의 전환 비용이 크고, 장기 공급 계약 기반으로 안정적인 높은 마진을 유지.",
-        growthAndDurability:
-          "AI 트래픽 증가에 따라 스위칭/인터커넥트 수요가 구조적으로 늘어나며, 대형 고객의 자체 칩 외주 생산을 잡으면 성장 지속 가능성이 높음.",
-        ecosystem:
-          "하이퍼스케일러, 텔코, 스토리지·네트워킹 OEM과 깊게 얽힌 공급망을 형성하며, 소프트웨어 인수(VMware 등)로 데이터센터 스택 상단으로도 확장 중."
-      },
-      ASML: {
-        name: "ASML",
-        sector: "Semiconductor Equipment · Lithography",
-        whatItDoes:
-          "EUV/DUV 노광 장비를 독점적으로 공급하는 반도체 장비 회사로, 최첨단 공정(3nm 이하)을 가능하게 하는 핵심 장비를 생산.",
-        roleInAI:
-          "고성능 AI GPU·CPU·메모리를 생산하는 파운드리(예: TSMC, 삼성)의 첨단 공정에 필수적인 EUV 장비를 공급하는 ‘인프라 중의 인프라’.",
-        moatAndMargins:
-          "EUV 장비는 사실상 독점 공급자이고, 공급 능력이 제한적이라 강한 가격·마진 파워를 가짐.",
-        growthAndDurability:
-          "노드 미세화가 지속되는 한 구조적 수요가 이어지고, EUV·High-NA EUV로의 업그레이드 사이클이 장기 성장 동력.",
-        ecosystem:
-          "TSMC·삼성·인텔 등 주요 파운드리와 긴밀히 협력하며, 소재·광원·광학 파트너와 함께 복잡한 공급망 생태계를 형성."
-      },
-      CDNS: {
-        name: "Cadence Design Systems",
-        sector: "EDA Software · Semiconductor Design Tools",
-        whatItDoes:
-          "반도체 설계(EDA) 툴과 IP(코어)를 제공하는 소프트웨어 회사로, 칩 설계자들이 사용하는 필수 툴체인을 제공.",
-        roleInAI:
-          "AI 가속기, 고속 인터커넥트, 메모리 컨트롤러 등 복잡한 칩을 설계할 때 Cadence의 EDA 툴이 필수적이며, 설계 난이도가 높아질수록 툴 의존도가 증가.",
-        moatAndMargins:
-          "EDA 시장은 올리고폴리 구조로, 고객의 툴 전환 비용이 극단적으로 높아 높은 마진과 반복 매출(구독/라이선스)이 가능.",
-        growthAndDurability:
-          "AI·데이터센터용 고성능 칩, 자동차/산업용 고신뢰성 칩 증가로 장기적으로 설계 수요가 견조하게 유지될 가능성이 큼.",
-        ecosystem:
-          "파운드리(예: TSMC)의 공정 설계 키트(PDK)와 밀접하게 통합되고, 주요 팹리스·IDM과 장기 관계를 구축한 소프트웨어 중심 생태계."
-      },
-      ANET: {
-        name: "Arista Networks",
-        sector: "Networking · Data Center Switches",
-        whatItDoes:
-          "대규모 데이터센터에서 사용하는 스위치·라우터와 네트워크 OS를 공급하는 네트워킹 회사.",
-        roleInAI:
-          "AI 클러스터를 구성하는 이더넷 기반 데이터센터 네트워크의 핵심 공급자로, AI 트래픽 확대로 스위치·라우터 수요가 증가.",
-        moatAndMargins:
-          "대형 클라우드 고객과의 레퍼런스 아키텍처, 소프트웨어(네트워크 OS) 경쟁력으로 높은 마진과 sticky한 고객 관계.",
-        growthAndDurability:
-          "AI/클라우드 데이터센터 증설이 계속되는 한 스위치 포트 수요는 구조적으로 성장. 다만 경쟁사(예: Cisco, Broadcom 기반 화이트박스 스위치)와의 경쟁이 상존.",
-        ecosystem:
-          "하이퍼스케일 데이터센터, 서버 OEM, 반도체 공급자(ASIC)들과 엮인 네트워크 레이어 생태계의 핵심 플레이어 중 하나."
-      },
-      SMCI: {
-        name: "Super Micro Computer",
-        sector: "Servers · Data Center Systems",
-        whatItDoes:
-          "GPU 서버, 랙 솔루션, AI/클라우드용 하드웨어 시스템을 설계·제조하는 서버 전문 업체.",
-        roleInAI:
-          "NVIDIA·AMD·Intel 칩을 탑재한 AI 서버 및 랙 스케일 시스템을 공급하며, AI 데이터센터 하드웨어 구축의 ‘박스’ 측면에서 중요한 위치.",
-        moatAndMargins:
-          "커스터마이즈된 서버 설계·조립 역량으로 빠른 제품 출시와 폭넓은 SKU 제공이 강점이나, 구조적으로 제조/조립 마진 특성을 가짐.",
-        growthAndDurability:
-          "AI 서버 수요 확대의 직접적인 수혜. 다만 서버 제조 경쟁 심화, 가격 경쟁, 사이클 변동에 따라 실적 변동성이 클 수 있음.",
-        ecosystem:
-          "GPU/CPU 공급자, 데이터센터 운영사, ODM/OEM 파트너와 긴밀한 공급망을 형성하며, 레퍼런스 디자인 기반 AI 서버 생태계의 중요한 노드."
-      },
-      VRT: {
-        name: "Vertiv",
-        sector: "Data Center Infrastructure · Power · Cooling",
-        whatItDoes:
-          "데이터센터용 전력(UPS, 배전)·냉각·랙·인프라 솔루션을 제공하는 회사.",
-        roleInAI:
-          "고밀도 AI 서버가 늘어날수록 전력 공급과 냉각이 병목이 되는데, Vertiv는 이 영역의 핵심 공급자로 AI 데이터센터 CAPEX의 직접 수혜.",
-        moatAndMargins:
-          "프로젝트·솔루션 기반 사업으로 고객 사이트에 깊숙이 들어가며, 전환 비용이 크고 서비스·유지보수 매출도 발생.",
-        growthAndDurability:
-          "AI 데이터센터의 전력 밀도 상승, 신규/증설 수요 확대에 따라 장기적으로 구조적인 성장 스토리를 갖지만, 경기 민감한 CAPEX와 프로젝트 사이클 리스크 존재.",
-        ecosystem:
-          "데이터센터 사업자, 전력 회사, EPC·시공사와 함께 ‘물리적 인프라’ 레이어 생태계를 구성하며, 전력·냉각 장비 OEM 중 핵심 플레이어."
-      },
-      CLS: {
-        name: "Celestica",
-        sector: "Electronics Manufacturing Services · Hardware",
-        whatItDoes:
-          "서버, 통신 장비, 산업/항공우주 장비 등 다양한 전자제품을 위탁생산(EMS)·설계하는 회사.",
-        roleInAI:
-          "AI 서버·스토리지 등 데이터센터 하드웨어를 위한 제조/조립 파트너 역할을 수행, 특정 하이퍼스케일러 향 매출 비중이 높은 것으로 알려져 있음.",
-        moatAndMargins:
-          "고객 맞춤 설계·제조 역량으로 전환 비용을 높이지만, 기본적으로 EMS 특성상 마진은 제한적이며 운영 효율이 중요.",
-        growthAndDurability:
-          "AI 서버 및 인프라 수요가 증가하는 동안은 성장 여지가 크지만, 고객 특정·사이클·단가 압박 등의 리스크를 동반.",
-        ecosystem:
-          "반도체·부품 공급자, 서버·네트워크 OEM, 클라우드 고객과의 제조 파트너 생태계에 속하며, 공급망 최적화와 품질/납기 관리가 핵심 역할."
-      },
-      CRDO: {
-        name: "Credo Technology",
-        sector: "High-Speed Connectivity · SerDes · Cables",
-        whatItDoes:
-          "AI 데이터센터용 고속 인터커넥트(SerDes, AEC 케이블, PHY)를 설계하는 팹리스 반도체 회사.",
-        roleInAI:
-          "GPU·CPU·스위치 간 고대역폭 연결이 필수인 AI 클러스터에서, 전기적 연결(AEC, 액티브 케이블)과 고속 SerDes IP로 중요해진 플레이어.",
-        moatAndMargins:
-          "고속 신호 설계 전문성과 고객 인증, IP 기반의 비즈니스 모델로 기술 장벽이 있으나, 대형 경쟁사와의 경쟁 압력 존재.",
-        growthAndDurability:
-          "AI 클러스터의 포트 수, 대역폭 요구가 증가할수록 구조적인 수요 확대 가능성이 있으나, 특정 고객 의존과 제품 경쟁 심화 리스크.",
-        ecosystem:
-          "스위치/서버 벤더, GPU 공급자, 케이블·커넥터 업체와 함께 ‘인터커넥트’ 레이어 생태계를 형성."
-      },
-      SITM: {
-        name: "SiTime",
-        sector: "MEMS Timing · Clocks · Oscillators",
-        whatItDoes:
-          "반도체 및 전자기기에 사용되는 정밀 타이밍 칩(MEMS 기반 오실레이터, 클럭)을 설계·판매.",
-        roleInAI:
-          "고속 데이터센터·네트워크 장비·서버에서 안정적인 클럭·동기화가 중요해지면서, 기존 석영 대비 온도·진동 안정성이 높은 MEMS 타이밍 솔루션로서 포지셔닝.",
-        moatAndMargins:
-          "전통적인 타이밍 시장에서 차별화된 MEMS 기술과 제품 포트폴리오로 높은 마진을 추구하나, 아직 시장 점유율 확대 단계.",
-        growthAndDurability:
-          "AI 데이터센터, 통신, 자동차·산업용 고신뢰성 영역에서 TAM 확장 여지가 있으나, 경기·재고 사이클에 민감.",
-        ecosystem:
-          "서버·네트워크 장비, 자동차/산업용 제어 시스템 등 다양한 전자 시스템 제조사와 연관된 타이밍 부품 생태계."
-      },
-      OKLO: {
-        name: "Oklo",
-        sector: "Advanced Nuclear · SMR",
-        whatItDoes:
-          "소형 모듈 원자로(SMR)·고급 원자로 기술을 개발해 데이터센터·산업 시설용 분산 전력을 제공하는 것을 목표로 하는 회사.",
-        roleInAI:
-          "AI 데이터센터의 전력 수요 폭증에 대응하기 위한 ‘현지 분산형 에너지 공급원’ 후보로, 장기적으로 AI 인프라 전력 측의 잠재적 솔루션.",
-        moatAndMargins:
-          "기술·규제 허들, 초기 CAPEX가 매우 크지만, 성공 시 전력 단가·안정성 측면에서 진입장벽이 형성될 수 있음.",
-        growthAndDurability:
-          "규제 승인, 안전성, 상용화 타이밍에 따라 리스크가 매우 크며, 장기 옵션 성격의 스토리.",
-        ecosystem:
-          "규제 당국, 유틸리티, 데이터센터 운영사와 얽힌 에너지·원자력 생태계 안에서 NICHE 플레이어를 지향."
-      },
-      SMR: {
-        name: "NuScale Power",
-        sector: "Small Modular Reactor · Nuclear",
-        whatItDoes:
-          "소형 모듈 원자로(SMR) 설계와 프로젝트 개발에 초점을 둔 원자력 기술 회사.",
-        roleInAI:
-          "데이터센터·산업 시설에 안정적인 저탄소 전력을 공급할 수 있는 차세대 전원 옵션으로, AI·클라우드 인프라의 전력 문제를 장기적으로 해결할 가능성이 있는 후보.",
-        moatAndMargins:
-          "기술·IP·규제 승인이 진입장벽 역할을 하지만, 상용화 전까지 수익성이 낮고 자본 소모적.",
-        growthAndDurability:
-          "원자력 정책·규제·사회적 수용성에 강하게 의존하며, 성공 시 장기 인프라 자산으로서 의미 있는 캐시플로우를 만들 수 있음.",
-        ecosystem:
-          "정부, 유틸리티, 대형 고객(데이터센터, 산업 설비)과 함께 에너지 인프라 생태계의 일부로 편입되는 구조."
-      },
-      PLTR: {
-        name: "Palantir",
-        sector: "Data Analytics · AI Platforms",
-        whatItDoes:
-          "정부·기업 고객을 위한 데이터 통합·분석·AI 플랫폼(Foundry, Gotham 등)을 제공.",
-        roleInAI:
-          "AI 모델 그 자체보다는, 데이터를 모으고 정제·분석해 의사결정·운영에 적용하는 레이어에서 강점. 특히 방산·정부, 산업·제조, 헬스케어 등.",
-        moatAndMargins:
-          "장기 계약, 고객 내 깊은 침투(커스텀 프로젝트), 고전환 비용으로 소프트웨어 마진 구조를 가지며, 점진적으로 효율성 개선 중.",
-        growthAndDurability:
-          "기업·공공의 AI 도입이 확산될수록 플랫폼 채택 기회가 늘어나지만, 대형 클라우드/플랫폼과의 경쟁도 함께 심화.",
-        ecosystem:
-          "클라우드·데이터웨어하우스(Snowflake, Databricks 등)·온프렘 시스템과 연동해 상위 레이어에서 ‘AI 애플리케이션’ 생태계 일부를 형성."
-      },
-      AMZN: {
-        name: "Amazon",
-        sector: "E-commerce · Cloud (AWS)",
-        whatItDoes:
-          "전자상거래와 클라우드(AWS)를 중심으로 한 플랫폼 기업.",
-        roleInAI:
-          "AWS를 통해 AI 인프라(GPU/TPU/HW), AI 서비스, AI 개발 도구를 제공하는 하이퍼스케일 클라우드 플레이어 중 하나.",
-        moatAndMargins:
-          "클라우드에서 규모의 경제·서비스 폭·생태계로 강한 경쟁력을 가지며, 리테일보다 높은 마진의 클라우드가 그룹 밸류의 핵심.",
-        growthAndDurability:
-          "클라우드·AI 워크로드 전환이 계속 진행되는 한 구조적 성장 여지가 크지만, 경쟁 심화와 CAPEX 확대, 규제 리스크 존재.",
-        ecosystem:
-          "수많은 SaaS, 스타트업, 엔터프라이즈 워크로드가 AWS 위에서 돌아가는 거대한 클라우드·AI 생태계를 형성."
-      },
-      MSFT: {
-        name: "Microsoft",
-        sector: "Software · Cloud · Productivity",
-        whatItDoes:
-          "윈도우, 오피스, Azure 클라우드, 엔터프라이즈 소프트웨어, Copilot 등 생산성/AI 서비스를 제공.",
-        roleInAI:
-          "Azure 기반 AI 인프라, 오픈AI 파트너십, Copilot 제품군을 통해 AI를 클라우드와 생산성 소프트웨어 전반에 깊게 녹이고 있음.",
-        moatAndMargins:
-          "엔터프라이즈 고객·생산성 스택·클라우드까지 이어지는 락인 구조와 높은 소프트웨어 마진.",
-        growthAndDurability:
-          "기존 고객 베이스 위에 AI 기능을 업셀하는 구조로, 장기 매출·마진 성장 스토리를 갖지만, 경쟁사·규제 이슈가 변수가 될 수 있음.",
-        ecosystem:
-          "Windows/Office/Teams/Azure/Copilot까지 이어지는 통합 생태계로, 개발자·기업 워크로드가 집중된 플랫폼."
-      },
-      META: {
-        name: "Meta Platforms",
-        sector: "Social · Advertising · AI Infra",
-        whatItDoes:
-          "Facebook, Instagram, WhatsApp 등 소셜 플랫폼과 광고 비즈니스, VR/AR(Reality Labs)를 운영.",
-        roleInAI:
-          "추천·광고·콘텐츠 랭킹에 AI를 깊게 사용하고 있으며, 자체 AI 인프라·모델(Llama 등)을 구축해 오픈소스 생태계에도 영향력을 행사.",
-        moatAndMargins:
-          "강력한 소셜 그래프와 광고 인프라 덕분에 높은 마진을 유지, 다만 VR/AR 투자는 단기적으로 마진을 희석.",
-        growthAndDurability:
-          "광고·소셜 기반 캐시플로우에 AI 툴·모델을 얹는 구조로, 사용자 규모와 광고 수요에 따라 성장 지속 가능성이 결정.",
-        ecosystem:
-          "광고주·크리에이터·사용자·개발자 커뮤니티와 오픈소스 AI(예: Llama)까지 포함한 플랫폼 생태계를 형성."
-      },
-      TSLA: {
-        name: "Tesla",
-        sector: "EV · Energy Storage · AI (Autonomy)",
-        whatItDoes:
-          "전기차, 에너지 저장 시스템, 태양광 솔루션과 자율주행 소프트웨어를 개발·판매.",
-        roleInAI:
-          "자율주행 FSD, Dojo 등 자체 AI 칩/학습 인프라를 통해 ‘모빌리티+AI’ 교차점에 있는 회사. 차량이라는 엣지 디바이스에 AI를 탑재.",
-        moatAndMargins:
-          "브랜드·규모·소프트웨어 수직 통합 구조로 기존 자동차 OEM 대비 높은 소프트웨어 옵션 마진을 추구하나, EV 경쟁 심화로 마진 압력도 커짐.",
-        growthAndDurability:
-          "EV 보급률 확대와 자율주행 상용화 단계에 따라 성장 경로가 달라지며, 에너지/로보틱스 등 신사업이 옵션.",
-        ecosystem:
-          "차량·충전 인프라·에너지 저장·FSD/로보틱스 등 하드웨어+소프트웨어 통합 생태계를 지향."
-      }
-      // 필요하면 여기 아래로 나머지 종목들 계속 추가 가능
-    };
+    let usdKrwRate = null;
 
-    // ===============================
-    // 2) 유틸 함수
-    // ===============================
-
-    function formatNumber(num, decimals = 2) {
-      if (num === null || num === undefined || isNaN(num)) return "–";
-      return Number(num).toFixed(decimals);
-    }
-
-    function formatPercent(num) {
-      if (num === null || num === undefined || isNaN(num)) return "–";
-      const v = Number(num);
-      const sign = v > 0 ? "+" : "";
-      return sign + v.toFixed(2) + "%";
+    // ===== 유틸 =====
+    function formatNumber(n, decimals = 2) {
+      if (n === null || n === undefined || isNaN(n)) return "–";
+      return Number(n).toLocaleString("en-US", {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
     }
 
     function setLastUpdated() {
       const el = document.getElementById("last-updated");
       const now = new Date();
-      const formatted = now.toLocaleString("ko-KR", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit"
-      });
-      el.textContent = "Last update – " + formatted;
+      const pad = (x) => String(x).padStart(2, "0");
+      el.textContent =
+        `Last update ${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} `
+        + `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
     }
 
-    // ===============================
-    // 3) Alpha Vantage – 주식
-    // ===============================
+    // ===== Equities 렌더링 =====
+    function renderStocksTableSkeleton() {
+      const container = document.getElementById("stocks-container");
+      if (!container) return;
 
-    async function fetchStocks() {
-      const tbody = document.querySelector("#stocks-table tbody");
-      tbody.innerHTML = `
-        <tr><td colspan="5" class="muted">Loading quotes...</td></tr>
-      `;
+      const groups = {};
+      for (const s of stocks) {
+        const sector = sectorTag[s.symbol] || "Other / Unclassified";
+        if (!groups[sector]) groups[sector] = [];
+        groups[sector].push(s);
+      }
+      const sectorNames = Object.keys(groups).sort();
 
-      const rows = [];
+      const html = sectorNames.map((sector) => {
+        const rows = groups[sector]
+          .sort((a, b) => a.symbol.localeCompare(b.symbol))
+          .map((s) => `
+            <tr class="clickable-row" data-symbol="${s.symbol}">
+              <td>${s.symbol}</td>
+              <td>${s.name}</td>
+              <td id="price-${s.symbol}">–</td>
+              <td id="chg-${s.symbol}" class="muted">–</td>
+              <td id="chgPct-${s.symbol}" class="muted">–</td>
+            </tr>
+          `).join("");
+        return `
+          <div class="sector-block">
+            <div class="sector-title">${sector}</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Symbol</th>
+                  <th>Name</th>
+                  <th>Price (USD)</th>
+                  <th>Change</th>
+                  <th>Δ%</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows}
+              </tbody>
+            </table>
+          </div>
+        `;
+      }).join("");
 
-      for (const stock of stocks) {
-        try {
-          const url =
-            `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${
-              encodeURIComponent(stock.symbol)
-            }&apikey=${ALPHAVANTAGE_KEY}`;
+      container.innerHTML = html;
 
-          const res = await fetch(url);
-          const data = await res.json();
-          const quote = data["Global Quote"];
+      document.querySelectorAll("#stocks-container .clickable-row")
+        .forEach((row) => {
+          row.addEventListener("click", () => {
+            const sym = row.getAttribute("data-symbol");
+            showCompanyInsight(sym);
+          });
+        });
+    }
 
-          if (!quote) {
-            rows.push(`
-              <tr class="clickable-row" data-symbol="${stock.symbol}">
-                <td>${stock.symbol}</td>
-                <td>${stock.name}</td>
-                <td colspan="3" class="muted">No data / API limit</td>
-              </tr>
-            `);
-            continue;
-          }
+    async function fetchYahooQuotes() {
+      try {
+        const symbolsParam = stocks.map(s => s.symbol).join(",");
+        const url = `https://query1.finance.yahoo.com/v7/finance/quote?symbols=${encodeURIComponent(symbolsParam)}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Yahoo quote HTTP error");
+        const data = await res.json();
+        const results = data?.quoteResponse?.result || [];
 
-          const price = parseFloat(quote["05. price"]);
-          const change = parseFloat(quote["09. change"]);
-          const changePercentRaw = parseFloat(
-            (quote["10. change percent"] || "").replace("%", "")
-          );
+        for (const q of results) {
+          const sym = q.symbol;
+          const price = q.regularMarketPrice;
+          const change = q.regularMarketChange;
+          const changePct = q.regularMarketChangePercent;
+
+          const priceEl = document.getElementById(`price-${sym}`);
+          const chgEl = document.getElementById(`chg-${sym}`);
+          const chgPctEl = document.getElementById(`chgPct-${sym}`);
+          if (!priceEl || !chgEl || !chgPctEl) continue;
+
           const cls =
             change > 0 ? "positive" : change < 0 ? "negative" : "muted";
+          priceEl.textContent = formatNumber(price, 2);
+          chgEl.textContent = formatNumber(change, 2);
+          chgPctEl.textContent =
+            changePct === null || changePct === undefined || isNaN(changePct)
+              ? "–"
+              : `${changePct > 0 ? "+" : ""}${changePct.toFixed(2)}%`;
 
-          rows.push(`
-            <tr class="clickable-row" data-symbol="${stock.symbol}">
-              <td>${stock.symbol}</td>
-              <td>${stock.name}</td>
-              <td>${formatNumber(price, 2)}</td>
-              <td class="${cls}">${formatNumber(change, 2)}</td>
-              <td class="${cls}">${formatPercent(changePercentRaw)}</td>
-            </tr>
-          `);
-        } catch (err) {
-          console.error(err);
-          rows.push(`
-            <tr class="clickable-row" data-symbol="${stock.symbol}">
-              <td>${stock.symbol}</td>
-              <td>${stock.name}</td>
-              <td colspan="3" class="muted">Error</td>
-            </tr>
-          `);
+          chgEl.className = cls;
+          chgPctEl.className = cls;
         }
+      } catch (e) {
+        console.error("Yahoo quote error", e);
       }
-
-      tbody.innerHTML = rows.join("");
-
-      // 행 클릭 → 종목 뉴스 + 인사이트
-      tbody.querySelectorAll("tr.clickable-row").forEach((tr) => {
-        tr.addEventListener("click", () => {
-          const symbol = tr.getAttribute("data-symbol");
-          if (symbol) {
-            fetchCompanyNews(symbol);
-            renderCompanyInsight(symbol);
-          }
-        });
-      });
     }
 
-    // ===============================
-    // 4) CoinGecko – 코인
-    // ===============================
+    // ===== Company Insight (간단 버전) =====
+    function showCompanyInsight(symbol) {
+      const box = document.getElementById("company-insight");
+      const info = stocks.find(s => s.symbol === symbol);
+      const sector = sectorTag[symbol] || "Other / Unclassified";
+      if (!info || !box) return;
 
-    async function fetchCryptos() {
-      const tbody = document.querySelector("#crypto-table tbody");
-      tbody.innerHTML = `
-        <tr><td colspan="5" class="muted">Loading crypto...</td></tr>
+      box.innerHTML = `
+        <p><strong>${symbol}</strong> · ${info.name}</p>
+        <p class="muted" style="margin-top:4px;">Sector group: ${sector}</p>
+        <p style="margin-top:8px;">
+          이 종목에 대한 상세 프로필은 아직 텍스트로 작성하지 않았습니다.
+          나중에 섹터, 역할, AI·데이터센터 노출 정도, 마진/성장 특성 등을
+          여기에 서술형으로 채워 넣을 수 있습니다.
+        </p>
       `;
-
-      const ids = cryptos.map(c => c.id).join(",");
-      const url =
-        `https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(
-          ids
-        )}&vs_currencies=usd,krw&include_24hr_change=true`;
-
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-
-        const rows = cryptos.map(c => {
-          const info = data[c.id];
-          if (!info) {
-            return `
-              <tr>
-                <td>${c.symbol}</td>
-                <td>${c.name}</td>
-                <td colspan="3" class="muted">No data</td>
-              </tr>
-            `;
-          }
-
-          const usd = info.usd;
-          const krw = info.krw;
-          const chg = info.usd_24h_change;
-          const cls = chg > 0 ? "positive" : chg < 0 ? "negative" : "muted";
-
-          return `
-            <tr>
-              <td>${c.symbol}</td>
-              <td>${c.name}</td>
-              <td>${formatNumber(usd, 4)}</td>
-              <td>${formatNumber(krw, 0)}</td>
-              <td class="${cls}">${formatPercent(chg)}</td>
-            </tr>
-          `;
-        });
-
-        tbody.innerHTML = rows.join("");
-      } catch (err) {
-        console.error(err);
-        tbody.innerHTML = `
-          <tr><td colspan="5" class="muted">Failed to load crypto data</td></tr>
-        `;
-      }
     }
 
-    // ===============================
-    // 5) 환율 – USD / KRW
-    // ===============================
-
+    // ===== FX (USD/KRW) =====
     async function fetchFX() {
       const tbody = document.querySelector("#fx-table tbody");
+      if (!tbody) return;
       tbody.innerHTML = `
-        <tr><td colspan="4" class="muted">Loading FX...</td></tr>
+        <tr><td>USD/KRW</td><td colspan="3" class="muted">Loading…</td></tr>
       `;
-
       try {
-        const url = "https://api.exchangerate.host/latest?base=USD&symbols=KRW";
-        const res = await fetch(url);
+        const res = await fetch("https://api.frankfurter.app/latest?from=USD&to=KRW");
+        if (!res.ok) throw new Error("FX HTTP error");
         const data = await res.json();
-        const rate = data?.rates?.KRW ?? null;
+        const rate = data?.rates?.KRW;
+        usdKrwRate = rate || null;
 
         tbody.innerHTML = `
           <tr>
@@ -1099,293 +820,94 @@
             <td>KRW</td>
           </tr>
         `;
-      } catch (err) {
-        console.error(err);
+      } catch (e) {
+        console.error("FX error", e);
         tbody.innerHTML = `
-          <tr><td colspan="4" class="muted">Failed to load FX</td></tr>
+          <tr>
+            <td>USD/KRW</td>
+            <td colspan="3" class="muted">Error</td>
+          </tr>
         `;
       }
     }
 
-    // ===============================
-    // 6) 스테이킹 APY 렌더링
-    // ===============================
+    // ===== Crypto =====
+    async function fetchCryptos() {
+      const tbody = document.querySelector("#crypto-table tbody");
+      if (!tbody) return;
+      tbody.innerHTML = `<tr><td colspan="5" class="muted">Loading…</td></tr>`;
 
+      try {
+        const ids = cryptos.map(c => c.id).join(",");
+        const url =
+          `https://api.coingecko.com/api/v3/simple/price?ids=${encodeURIComponent(ids)}`
+          + "&vs_currencies=usd,krw&include_24hr_change=true";
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("CG HTTP error");
+        const data = await res.json();
+
+        const rows = cryptos.map((c) => {
+          const d = data[c.id] || {};
+          const usd = d.usd;
+          const krw = d.krw !== undefined ? d.krw :
+                      (usdKrwRate && usd ? usd * usdKrwRate : null);
+          const chg = d.usd_24h_change;
+          const cls =
+            chg > 0 ? "positive" : chg < 0 ? "negative" : "muted";
+          const pctText =
+            chg === null || chg === undefined || isNaN(chg)
+              ? "–"
+              : `${chg > 0 ? "+" : ""}${chg.toFixed(2)}%`;
+
+          return `
+            <tr>
+              <td>${c.symbol}</td>
+              <td>${c.name}</td>
+              <td>${formatNumber(usd, 2)}</td>
+              <td>${formatNumber(krw, 0)}</td>
+              <td class="${cls}">${pctText}</td>
+            </tr>
+          `;
+        }).join("");
+
+        tbody.innerHTML = rows;
+      } catch (e) {
+        console.error("crypto error", e);
+        tbody.innerHTML = `<tr><td colspan="5" class="muted">Error</td></tr>`;
+      }
+    }
+
+    // ===== Staking (수동) =====
     function renderStakingManual() {
       const tbody = document.querySelector("#staking-table tbody");
-      if (!stakingManual.length) {
-        tbody.innerHTML = `
-          <tr><td colspan="4" class="muted">No staking data</td></tr>
-        `;
-        return;
-      }
-
-      const rows = stakingManual.map(p => `
+      if (!tbody) return;
+      const rows = stakingManual.map((s) => `
         <tr>
-          <td>${p.asset}</td>
-          <td>${p.platform}</td>
-          <td>${formatNumber(p.apy, 2)}%</td>
-          <td>${p.note || ""}</td>
+          <td>${s.asset}</td>
+          <td>${s.platform}</td>
+          <td>${s.apy.toFixed(2)}%</td>
+          <td>${s.note}</td>
         </tr>
-      `);
-
-      tbody.innerHTML = rows.join("");
+      `).join("");
+      tbody.innerHTML = rows;
     }
 
-    // ===============================
-    // 7) Finnhub – 뉴스
-    // ===============================
-
-    async function fetchMarketNews() {
-      const list = document.getElementById("market-news-list");
-      list.innerHTML = `
-        <li class="news-item"><div class="news-title muted">Loading market news...</div></li>
-      `;
-
-      if (!FINNHUB_KEY || FINNHUB_KEY === "YOUR_FINNHUB_KEY_HERE") {
-        list.innerHTML = `
-          <li class="news-item">
-            <div class="news-title muted">Finnhub 키를 설정하면 시장 뉴스가 표시됩니다.</div>
-          </li>
-        `;
-        return;
-      }
-
-      try {
-        const url = `https://finnhub.io/api/v1/news?category=general&token=${FINNHUB_KEY}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        const items = Array.isArray(data) ? data.slice(0, 6) : [];
-
-        if (!items.length) {
-          list.innerHTML = `
-            <li class="news-item"><div class="news-title muted">No market news</div></li>
-          `;
-          return;
-        }
-
-        list.innerHTML = items.map(n => {
-          const dt = n.datetime ? new Date(n.datetime * 1000) : null;
-          const ts = dt
-            ? dt.toLocaleString("ko-KR", {
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit"
-              })
-            : "";
-          return `
-            <li class="news-item">
-              <div class="news-title">
-                <a href="${n.url}" target="_blank" rel="noopener noreferrer">
-                  ${n.headline}
-                </a>
-              </div>
-              <div class="news-meta">
-                ${(n.source || "").toUpperCase()} · ${ts}
-              </div>
-            </li>
-          `;
-        }).join("");
-      } catch (err) {
-        console.error(err);
-        list.innerHTML = `
-          <li class="news-item"><div class="news-title muted">Failed to load market news</div></li>
-        `;
-      }
-    }
-
-    async function fetchCompanyNews(symbol) {
-      const list = document.getElementById("company-news-list");
-      const label = document.getElementById("company-news-label");
-      label.textContent = symbol || "–";
-
-      list.innerHTML = `
-        <li class="news-item"><div class="news-title muted">Loading ${symbol} news...</div></li>
-      `;
-
-      if (!FINNHUB_KEY || FINNHUB_KEY === "YOUR_FINNHUB_KEY_HERE") {
-        list.innerHTML = `
-          <li class="news-item">
-            <div class="news-title muted">Finnhub 키를 설정하면 종목 뉴스가 표시됩니다.</div>
-          </li>
-        `;
-        return;
-      }
-
-      try {
-        const today = new Date();
-        const to = today.toISOString().slice(0, 10);
-        const fromDate = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-        const from = fromDate.toISOString().slice(0, 10);
-
-        const url =
-          `https://finnhub.io/api/v1/company-news?symbol=${encodeURIComponent(
-            symbol
-          )}&from=${from}&to=${to}&token=${FINNHUB_KEY}`;
-
-        const res = await fetch(url);
-        const data = await res.json();
-        const items = Array.isArray(data) ? data.slice(0, 6) : [];
-
-        if (!items.length) {
-          list.innerHTML = `
-            <li class="news-item"><div class="news-title muted">No recent news</div></li>
-          `;
-          return;
-        }
-
-        list.innerHTML = items.map(n => {
-          const dt = n.datetime ? new Date(n.datetime * 1000) : null;
-          const ts = dt
-            ? dt.toLocaleString("ko-KR", {
-                month: "2-digit",
-                day: "2-digit",
-                hour: "2-digit",
-                minute: "2-digit"
-              })
-            : "";
-          return `
-            <li class="news-item">
-              <div class="news-title">
-                <a href="${n.url}" target="_blank" rel="noopener noreferrer">
-                  ${n.headline}
-                </a>
-              </div>
-              <div class="news-meta">
-                ${(n.source || "").toUpperCase()} · ${ts}
-              </div>
-            </li>
-          `;
-        }).join("");
-      } catch (err) {
-        console.error(err);
-        list.innerHTML = `
-          <li class="news-item"><div class="news-title muted">Failed to load symbol news</div></li>
-        `;
-      }
-    }
-
-    // ===============================
-    // 8) Company Insight 렌더링
-    // ===============================
-
-    function renderCompanyInsight(symbol) {
-      const container = document.getElementById("company-insight");
-
-      if (!symbol) {
-        container.innerHTML = `
-          <div class="small-note">
-            왼쪽 Equities 테이블에서 종목을 클릭하면,
-            여기에서 섹터 / 비즈니스 / 데이터센터·AI 포지션 / 독점력 / 성장성 / 생태계 요약을 볼 수 있습니다.
-          </div>
-        `;
-        return;
-      }
-
-      const profile = companyProfiles[symbol];
-
-      if (!profile) {
-        container.innerHTML = `
-          <div class="small-note">
-            <strong>${symbol}</strong> 에 대한 상세 프로필이 아직 등록되지 않았습니다.
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = `
-        <div>
-          <div style="font-size:13px; font-weight:500; margin-bottom:4px;">
-            ${symbol} · ${profile.name || ""}
-          </div>
-          <div class="muted" style="margin-bottom:8px;">
-            ${profile.sector || ""}
-          </div>
-
-          <div style="margin-bottom:6px;">
-            <strong>What it does</strong><br />
-            ${profile.whatItDoes || ""}
-          </div>
-
-          <div style="margin-bottom:6px;">
-            <strong>Role in Data Center & AI</strong><br />
-            ${profile.roleInAI || ""}
-          </div>
-
-          <div style="margin-bottom:6px;">
-            <strong>Moat · Margin Profile</strong><br />
-            ${profile.moatAndMargins || ""}
-          </div>
-
-          <div style="margin-bottom:6px;">
-            <strong>Growth & Durability</strong><br />
-            ${profile.growthAndDurability || ""}
-          </div>
-
-          <div>
-            <strong>Ecosystem</strong><br />
-            ${profile.ecosystem || ""}
-          </div>
-        </div>
-      `;
-    }
-
-    // ===============================
-    // 9) 전체 리프레시 + 자동 새로고침
-    // ===============================
-
+    // ===== 전체 새로고침 =====
     async function refreshAll() {
       setLastUpdated();
       renderStakingManual();
-      await Promise.all([
-        fetchStocks(),
-        fetchCryptos(),
-        fetchFX(),
-        fetchMarketNews()
-      ]);
-
-      if (stocks.length) {
-        const defaultSymbol = stocks[0].symbol;
-        fetchCompanyNews(defaultSymbol);
-        renderCompanyInsight(defaultSymbol);
-      }
+      await fetchFX();
+      await fetchCryptos();
+      await fetchYahooQuotes();
     }
 
-    let autoTimer = null;
-    const toggleBtn = document.getElementById("toggle-auto");
-    const intervalInput = document.getElementById("refresh-interval");
-
-    function startAuto() {
-      const sec = Number(intervalInput.value) || 60;
-      if (autoTimer) clearInterval(autoTimer);
-      autoTimer = setInterval(refreshAll, sec * 1000);
-      toggleBtn.textContent = "On";
-      toggleBtn.classList.remove("off");
-    }
-
-    function stopAuto() {
-      if (autoTimer) clearInterval(autoTimer);
-      autoTimer = null;
-      toggleBtn.textContent = "Off";
-      toggleBtn.classList.add("off");
-    }
-
-    toggleBtn.addEventListener("click", () => {
-      if (autoTimer) {
-        stopAuto();
-      } else {
-        startAuto();
-      }
+    document.getElementById("manual-refresh").addEventListener("click", () => {
+      refreshAll();
     });
 
-    intervalInput.addEventListener("change", () => {
-      if (autoTimer) startAuto();
-    });
-
-    // 초기 실행
+    // 초기화
+    renderStocksTableSkeleton();
     refreshAll();
-    startAuto();
   </script>
 </body>
 </html>
