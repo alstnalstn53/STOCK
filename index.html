@@ -257,11 +257,11 @@
               <div class="card-title">Equities</div>
               <div class="card-sub">AI · Data Center · Ecosystem</div>
             </div>
-            <div class="tag">Polygon · TradingView · Finnhub</div>
+            <div class="tag">Polygon(Massive) · TradingView · Finnhub</div>
           </div>
           <div id="stocks-container"></div>
           <div class="small-note">
-            * 페이지 로딩/REFRESH 시 전 종목 가격을 Polygon으로 한 번에 불러옵니다.<br>
+            * 페이지 로딩/REFRESH 시 전 종목 가격을 백엔드에서 한 번에 불러옵니다.<br>
             행을 클릭하면 Company Insight + 실시간 차트 + 최신 뉴스가 펼쳐지고, 다시 클릭하면 접힙니다.<br>
             섹터별 테이블에서 Symbol / Price / Change / Δ% 헤더를 클릭하면 오름차순·내림차순 정렬이 됩니다.
           </div>
@@ -342,9 +342,8 @@
   </div>
 
   <script>
-    // ---------- API Keys ----------
-    const POLYGON_KEY = "0iKefMr7YqIw6uf_JpP2ZOrshixFvBK4";
-    const FINNHUB_KEY = "d4ph189r01qjpnav88m0d4ph189r01qjpnav88mg";
+    // ---------- 여기에 네 FINNHUB 키 직접 넣기 ----------
+    const FINNHUB_KEY = "YOUR_FINNHUB_KEY_HERE"; // <- 여기만 네 키로 교체
 
     // ---------- 종목 리스트 ----------
     const stocks = [
@@ -578,7 +577,7 @@
       ETRN:"Industrial / Infra", CLS:"Industrial / Infra"
     };
 
-    // ---------- 회사 설명 (대표적인 몇 개 + 기본 문구) ----------
+    // ---------- 회사 설명 (핵심 종목 상세 + 나머지 기본 문구) ----------
     const companyProfiles = {
       NVDA: `
 NVIDIA는 GPU 하드웨어뿐 아니라 CUDA 소프트웨어 스택, 라이브러리, 개발툴, DGX/MGX 서버 레퍼런스 디자인까지 보유한 AI 인프라 플랫폼 기업이다.
@@ -726,7 +725,7 @@ Coinbase는 미국 중심의 암호화폐 거래소로, 리테일·기관을 대
       `
     };
 
-    // 기본 설명 없는 종목에 대해 짧은 기본 문장 추가
+    // 나머지 종목은 기본 설명 문구
     stocks.forEach(s => {
       if (!companyProfiles[s.symbol]) {
         companyProfiles[s.symbol] =
@@ -808,7 +807,6 @@ Coinbase는 미국 중심의 암호화폐 거래소로, 리테일·기관을 대
 
       container.innerHTML = html;
 
-      // 행 클릭 이벤트
       document
         .querySelectorAll("#stocks-container .clickable-row")
         .forEach((row) => {
@@ -818,7 +816,6 @@ Coinbase는 미국 중심의 암호화폐 거래소로, 리테일·기관을 대
           });
         });
 
-      // 헤더 정렬 이벤트
       attachSortingHandlers();
     }
 
@@ -888,32 +885,25 @@ Coinbase는 미국 중심의 암호화폐 거래소로, 리테일·기관을 대
       priceEl.className = "";
     }
 
-    async function loadAllQuotesPolygon() {
+    // ---------- 백엔드에서 가격 로딩 (/api/quotes) ----------
+    async function loadAllQuotesFromBackend() {
       quoteCache = {};
-      const BATCH_SIZE = 40;
-      for (let i = 0; i < stocks.length; i += BATCH_SIZE) {
-        const batch = stocks.slice(i, i + BATCH_SIZE);
-        const tickers = batch.map(s => s.symbol).join(",");
-        try {
-          const url = `https://api.polygon.io/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(tickers)}&apiKey=${POLYGON_KEY}`;
-          const res = await fetch(url);
-          const data = await res.json();
-          if (!data || !data.tickers) continue;
-          data.tickers.forEach(t => {
-            const symbol = t.ticker;
-            const price = t.lastTrade && t.lastTrade.p ? t.lastTrade.p : null;
-            const change = t.todaysChange ?? null;
-            const changePct = t.todaysChangePerc ?? null;
-            const quote = { price, change, changePct };
-            quoteCache[symbol] = quote;
-            applyQuoteToRow(symbol, quote);
-          });
-        } catch (e) {
-          console.error("Polygon batch error", e);
-        }
+      const symbols = stocks.map(s => s.symbol).join(",");
+      try {
+        const res = await fetch(`/api/quotes?symbols=${encodeURIComponent(symbols)}`);
+        if (!res.ok) throw new Error("quotes api error " + res.status);
+        const data = await res.json();
+        if (!data || !data.quotes) return;
+        Object.entries(data.quotes).forEach(([sym, q]) => {
+          quoteCache[sym] = q;
+          applyQuoteToRow(sym, q);
+        });
+      } catch (e) {
+        console.error("loadAllQuotesFromBackend error", e);
       }
     }
 
+    // ---------- 인사이트 토글 + 차트 + 뉴스 ----------
     function toggleInsight(row, symbol) {
       const next = row.nextElementSibling;
       const hasInsight = next && next.classList.contains("insight-row");
@@ -951,7 +941,7 @@ Coinbase는 미국 중심의 암호화폐 거래소로, 리테일·기관을 대
           <strong>${symbol}</strong> · ${info.name}<br/>
           <span class="muted">Sector group: ${sector}</span>
           <p style="margin-top:6px; white-space:pre-line;">${profile.trim()}</p>
-          <div style="margin-top:8px; height:260px;">
+          <div style="margin-top:8px; height:340px;">
             <div id="${containerId}" style="width:100%; height:100%;"></div>
           </div>
           <div class="news-title">Latest News (Finnhub)</div>
@@ -1126,7 +1116,7 @@ Coinbase는 미국 중심의 암호화폐 거래소로, 리테일·기관을 대
       await fetchFX();
       await Promise.all([
         fetchCryptos(),
-        loadAllQuotesPolygon()
+        loadAllQuotesFromBackend()
       ]);
     }
 
